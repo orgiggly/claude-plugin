@@ -687,16 +687,23 @@ type AppOptions = CommonOptions & DataOptions & {
   customCss?: string;
 };
 
-/** Generic container with variants: 'none' (default), 'tabGroup', 'tab', 'folder'. */
-type AppNodeOptions = CommonOptions & ContainerOptions & DataOptions & {
-  type: "appNode";
-  /**
-   * `none`: A plain container that just groups its children
-   * `tabGroup`: Renders its children as a tab bar
-   * `tab`: One tab inside a tabGroup
-   * `folder`: Groups children in the designer tree
-   */
-  variant: "none" | "tabGroup" | "tab" | "folder";
+/** Generic container. Authored only through its variants — `tabGroup`, `tab`, `folder` — each written as its own `type`; a bare `appNode` is a plain container that just groups its children. */
+type AppNodeBaseOptions = CommonOptions & ContainerOptions & DataOptions & {
+};
+
+/** Renders its children as a tab bar; each `tab` child is one tab. */
+type TabGroupOptions = AppNodeBaseOptions & {
+  type: "tabGroup";
+};
+
+/** One tab inside a tabGroup. */
+type TabOptions = AppNodeBaseOptions & {
+  type: "tab";
+};
+
+/** Groups screens that aren't top-level in the designer tree; renders as a plain container. */
+type FolderOptions = AppNodeBaseOptions & {
+  type: "folder";
 };
 
 /** A navigable page/view in the app. Can contain subsections and inputs. */
@@ -984,7 +991,6 @@ type FileInputOptions = InputOptions & {
 
 /** An async step within a flow. */
 type FlowStepBaseOptions = CommonOptions & {
-  type: "flowStep";
   /**
    * Auto-advance flow on completion. Default true.
    * `true`: Moves to the next step as soon as this one finishes
@@ -1031,7 +1037,7 @@ type FlowStepBaseOptions = CommonOptions & {
 
 /** AI query with structured output. */
 type AiQueryStepOptions = FlowStepBaseOptions & {
-  variant: "aiQuery";
+  type: "aiQuery";
   /**
    * Formula for AI prompt template. References sibling step values via @prefix.
    * The prompt sent to the AI. It can interpolate earlier steps' values.
@@ -1085,7 +1091,7 @@ type AiQueryStepOptions = FlowStepBaseOptions & {
 
 /** A streaming AI conversation. The assistant opens from promptTemplate; the user replies, steers mid-stream, or stops; text renders as it generates. Ends on Done (or maxUserTurns), optionally distilling the transcript into a typed result at .result. The transcript is formula-visible at .chat.turns and the in-flight text at .chat.partialText. */
 type AiChatStepOptions = FlowStepBaseOptions & {
-  variant: "aiChat";
+  type: "aiChat";
   /**
    * The conversation brief — persona, level, task — sent as the opening user message. The assistant always takes the first turn from it.
    * The brief the assistant opens from: who it is, who the user is, what to do. It always speaks first.
@@ -1169,7 +1175,7 @@ type AiChatStepOptions = FlowStepBaseOptions & {
 
 /** Async data fetch. */
 type FetchDataStepOptions = FlowStepBaseOptions & {
-  variant: "fetchData";
+  type: "fetchData";
   /**
    * URL formula for data fetch.
    * URL to fetch. Formula-capable, so it can be built from earlier steps' values.
@@ -1180,7 +1186,7 @@ type FetchDataStepOptions = FlowStepBaseOptions & {
 
 /** Generates an image using AI with a configurable prompt. The prompt is a template formula — reference earlier flow step values to incorporate user input. */
 type ImageGenerationStepOptions = FlowStepBaseOptions & {
-  variant: "imageGeneration";
+  type: "imageGeneration";
   /**
    * Prompt as a backtick template — write plain prose and interpolate an earlier step's result inside ${...} (e.g. @`A scene: ${story.result.title}`). This is the complete prompt sent to the AI.
    * The complete prompt sent to the image model.
@@ -1212,7 +1218,7 @@ type ImageGenerationStepOptions = FlowStepBaseOptions & {
 
 /** Generates a short audio clip (jingle / sound effect / vocal song) using AI with a configurable prompt. The prompt is a template formula — reference earlier flow step values to incorporate user input. Supports two models: Replicate's meta/musicgen (instrumental, has duration knob) and minimax/music-2.5 (vocal with lyrics, length derived from lyrics). */
 type AudioGenerationStepOptions = FlowStepBaseOptions & {
-  variant: "audioGeneration";
+  type: "audioGeneration";
   /**
    * Prompt template formula. Reference sibling step values via @prefix (e.g. @'Upbeat jingle for: ' + intro.result.title). For musicgen this is the full prompt. For minimax-music-2.5 this is the style/scene only — put singable text in the lyrics field.
    * What to generate.
@@ -1258,7 +1264,7 @@ type AudioGenerationStepOptions = FlowStepBaseOptions & {
 
 /** Transcribes an audio clip to text using a speech-to-text model. Point it at a sibling fileInput's uploaded audio (e.g. a fileInput with variant 'audio'); the resulting text is a plain value, so it flows into a downstream aiQueryStep exactly like any other step result. */
 type TranscribeStepOptions = FlowStepBaseOptions & {
-  variant: "transcribe";
+  type: "transcribe";
   /**
    * Formula resolving to the audio clip's URL — typically a sibling fileInput's uploaded value.
    * The audio clip to transcribe. Formula-capable — usually a sibling fileInput's uploaded url.
@@ -1293,7 +1299,7 @@ type TranscribeStepOptions = FlowStepBaseOptions & {
 
 /** Publishes data to storage from a previous step's result. */
 type PublishDataStepOptions = FlowStepBaseOptions & {
-  variant: "publishData";
+  type: "publishData";
   /**
    * Formula resolving to the data object to publish.
    * Formula resolving to the object to publish.
@@ -1328,7 +1334,7 @@ publishData({type: "Photo", data: photos.map((p) => ({Image: p.url, takenAt: p.t
 setAppValue("whoAmI", AuthorId)
 ``` */
 type ScriptStepOptions = FlowStepBaseOptions & {
-  variant: "script";
+  type: "script";
   /**
    * Imperative script body (statements separated by `;`). See the node description for the host function allow-list and worked example.
    * Imperative script body — statements separated by `;`. Not an `@`formula: written raw.
@@ -1435,7 +1441,9 @@ type FunctionOptions = CommonOptions & {
 // All node types
 type NodeOptions =
   | AppOptions
-  | AppNodeOptions
+  | TabGroupOptions
+  | TabOptions
+  | FolderOptions
   | ScreenOptions
   | SubsectionOptions
   | FormOptions

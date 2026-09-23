@@ -1,6 +1,6 @@
 {
   "name": "orgiggly",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Build and manage an Orgiggly app with Claude Code — Claude authors the config, the closed og CLI publishes it to orgiggly.com under your namespace. No AI backend, no credits.",
   "author": {
     "name": "Orgiggly",
