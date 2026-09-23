@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+// `og` → the bundled public CLI (og-public.mjs). This shim exists so the command
+// on PATH is named `og` — what the develop-app skill invokes — while the bundle
+// keeps its descriptive filename. Spawning (rather than importing the bundle's
+// shebang'd module) keeps it robust across Node versions and independent of the
+// caller's cwd. (#1318)
+import { spawnSync } from "node:child_process";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const bundle = join(dirname(fileURLToPath(import.meta.url)), "og-public.mjs");
+// Announce the name we were invoked as, so every hint the bundle prints ("run
+// `og login`") names a command that's actually on the caller's PATH. argv can't
+// carry this: we SPAWN the bundle, so its argv[1] is og-public.mjs regardless.
+const res = spawnSync(process.execPath, [bundle, ...process.argv.slice(2)], {
+  stdio: "inherit",
+  env: { ...process.env, OG_CLI_NAME: "og" },
+});
+process.exit(res.status ?? 1);

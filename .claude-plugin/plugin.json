@@ -1,0 +1,13 @@
+{
+  "name": "orgiggly",
+  "version": "0.2.0",
+  "description": "Build and manage an Orgiggly app with Claude Code — Claude authors the config, the closed og CLI publishes it to orgiggly.com under your namespace. No AI backend, no credits.",
+  "author": {
+    "name": "Orgiggly",
+    "url": "https://orgiggly.com"
+  },
+  "homepage": "https://orgiggly.com",
+  "repository": "https://github.com/orgiggly/claude-plugin",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": ["orgiggly", "no-code", "apps", "crm", "realtime"]
+}
