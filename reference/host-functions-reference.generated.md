@@ -56,6 +56,20 @@ joined = joinGroup({inviteCode: enteredCode})
 joinGroup({groupKey: $args.tab, claimEmail: myEmail})
 ```
 
+### `leaveGroup` _(async)_
+
+```
+leaveGroup({groupKey: string}): {groupKey: string, changed: boolean}
+```
+
+Removes the caller from a group, which revokes their access to its `scope: "group"` data — the group's records drop out of `$data` for them. It deletes nothing: the other members keep the group and everything in it, so tombstone or un-claim your own records first if the flow calls for it. Leaving a group you are not in succeeds with `changed: false`, so a re-entered step is safe. Use this for a "leave this tab / household / team" step.
+
+**Examples:**
+
+```
+leaveGroup({groupKey: curTabId})
+```
+
 ### `setAppValue` _(async)_
 
 ```
@@ -370,6 +384,20 @@ joined = joinGroup({inviteCode: enteredCode})
 joinGroup({groupKey: $args.tab, claimEmail: myEmail})
 ```
 
+### `leaveGroup` _(async)_
+
+```
+leaveGroup({groupKey: string}): {groupKey: string, changed: boolean}
+```
+
+Removes the caller from a group, which revokes their access to its `scope: "group"` data — the group's records drop out of `$data` for them. It deletes nothing: the other members keep the group and everything in it, so tombstone or un-claim your own records first if the flow calls for it. Leaving a group you are not in succeeds with `changed: false`, so a re-entered step is safe. Use this for a "leave this tab / household / team" step.
+
+**Examples:**
+
+```
+leaveGroup({groupKey: curTabId})
+```
+
 ### `setAppValue` _(async)_
 
 ```
@@ -609,6 +637,20 @@ Admits the caller to an existing group so its `scope: "group"` data becomes read
 ```
 joined = joinGroup({inviteCode: enteredCode})
 joinGroup({groupKey: $args.tab, claimEmail: myEmail})
+```
+
+### `leaveGroup` _(async)_
+
+```
+leaveGroup({groupKey: string}): {groupKey: string, changed: boolean}
+```
+
+Removes the caller from a group, which revokes their access to its `scope: "group"` data — the group's records drop out of `$data` for them. It deletes nothing: the other members keep the group and everything in it, so tombstone or un-claim your own records first if the flow calls for it. Leaving a group you are not in succeeds with `changed: false`, so a re-entered step is safe. Use this for a "leave this tab / household / team" step.
+
+**Examples:**
+
+```
+leaveGroup({groupKey: curTabId})
 ```
 
 ### `setAppValue` _(async)_

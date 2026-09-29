@@ -68,6 +68,7 @@ Arrow functions (`=>`) are first-class values: `(x) => x * 2` evaluates to a lam
 - `fuzzyMatch(userAnswer, correctAnswer)` - Fuzzy string matching
 - `toJson(value, indent?: number)` - Convert to JSON string
 - `rand(max: number)` - Random integer from 0 to max (exclusive)
+- `handRank(cardIds: string[])` - Rank a Texas Hold'em hand of 5-7 card ids (card_{s|h|d|c}{2-9|T|J|Q|K|A}, the cassino/bluffy id grammar). Returns { category (0 high card … 8 straight flush), categoryName, rank (one comparable integer: higher wins, equal splits), best (the five ids used, strongest first), label ('two pair, kings and fours') }. Pure and deterministic. A malformed id, duplicate, or wrong count is a formula error, never a silent low rank.
 - `replace(string, needle, replacement?)` - Replace every occurrence of a substring. The needle is literal text, never a regex. Null/undefined inputs degrade: a nothing subject gives '', a nothing needle returns the subject unchanged, a nothing replacement deletes the needle.
 - `omit(object, keys: string | string[])` - Copy an object without the named keys. Keys can be an array or a single key; a non-object input gives {}. The standard way to strip meta fields before re-emitting a record.
 - `pick(object, keys: string | string[])` - Copy an object keeping only the named keys. Keys can be an array or a single key; a non-object input gives {}.

@@ -601,10 +601,18 @@ type InputOptions = CommonOptions & {
    * Help text or formula
    * Hint shown under the input.
    * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
-   * Written as a template literal so it can interpolate data. Keep it to a line — it renders under the field at every width, phones included.
+   * Written as a template literal so it can interpolate data. Keep it to a line — it renders under the field at every width, phones included. For a format example inside the empty field, use `placeholder`.
    * Examples: @`What should the story be about?`, @`A short blurb shown on your profile. Up to 500 characters.`
    */
   help?: string;
+  /**
+   * Placeholder text shown inside the empty field
+   * Greyed example shown inside the field while it is empty.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Complements `help` rather than replacing it: a placeholder is a format example (e.g. an email address) and vanishes on the first keystroke, so never put anything in it the user still needs while typing — that belongs in `help`, under the field. Shown by text and number fields and the combobox picker; ignored by checkboxes, radios and plain select dropdowns.
+   * Examples: @`jane@example.com`, @`e.g. 07700 900123`
+   */
+  placeholder?: string;
   /**
    * Display size
    * `small`: Compact field, for dense forms and inline edits
@@ -716,9 +724,16 @@ type ScreenOptions = CommonOptions & ContainerOptions & DataOptions & {
   icon?: string;
 };
 
-/** A grouping container for organizing content. Can be repeating for lists. */
-type SubsectionOptions = CommonOptions & ContainerOptions & DataOptions & {
+/** A grouping container for organizing content. Repeating for collections; a repeating subsection can render inline (the default) or as a master/detail editor with add, remove and reorder controls. */
+type SubsectionOptions = CommonOptions & ContainerOptions & IterationOptions & DataOptions & {
   type: "subsection";
+  /**
+   * `inline`: Every item rendered in a row, laid out by the subsection's layout
+   * `masterDetail`: A list of the items beside a detail pane for the selected one, with Add, Delete and drag-to-reorder controls
+   * Only read when the subsection is repeating. Master/detail is the editing shape: the master list captions each row with iterationLabel (falling back to nounLabel + index), and the detail pane shows the row's children. Inline is the display shape most orgs use for data-bound collections.
+   * Examples: masterDetail
+   */
+  variant?: "inline" | "masterDetail";
   /**
    * Shows a labeled header bar above the subsection content. For repeating subsections, the header displays a generic label like 'Item 1', 'Item 2'. Only enable this when items lack their own visual title and need an external label to distinguish them. If the subsection content already contains a visible title or heading, leave showHeader off (the default) to avoid redundant labeling.
    * `true`: The subsection will have a header showing its title and a border
@@ -765,18 +780,6 @@ type FlowOptions = CommonOptions & DataOptions & {
   hideNav?: boolean | string;
 };
 
-/** An implicitly repeating container for displaying collections. */
-type ListOptions = CommonOptions & IterationOptions & DataOptions & {
-  type: "list";
-  isRepeating: true;
-  /**
-   * `masterDetail`: List with a detail pane for the selected row
-   * `table`: Not implemented
-   * Nothing reads this field at render time — a list always renders as master/detail.
-   */
-  inputVariant: "masterDetail" | "table";
-};
-
 /** A hierarchical data structure with typed nodes and parent-child relationships. When data-bound (data.source set), nodeTypes keys are ObjectType names and the hierarchy is linked via each type's parentRef field; renders as a mobile-first drill-in editor on the site. */
 type TreeOptions = CommonOptions & IterationOptions & DataOptions & {
   type: "tree";
@@ -810,16 +813,15 @@ type TreeOptions = CommonOptions & IterationOptions & DataOptions & {
 // ── Input Nodes ──
 // These nodes capture user input and bind to data.
 
-/** Text entry field. Variants: 'basic', 'multiline', 'richText'. */
+/** Text entry field. Variants: 'basic', 'multiline', 'stringArray'. */
 type TextInputOptions = InputOptions & {
   type: "textInput";
   /**
    * `basic`: Single-line text field
    * `multiline`: Text area that grows with the content
-   * `richText`: Not implemented — renders as a single-line field
    * `stringArray`: A list of strings the user can add to and remove from
    */
-  variant?: "basic" | "multiline" | "richText" | "stringArray" | string;
+  variant?: "basic" | "multiline" | "stringArray" | string;
   /**
    * Auto-transform the field's text as the user types — e.g. force UPPERCASE for a room or booking code so the entry always matches a case-insensitive lookup.
    * `none`: Leaves the text exactly as typed
@@ -837,25 +839,25 @@ type NumberInputOptions = InputOptions & {
    * `integer`: Whole numbers only
    * `slider`: Drag-to-set slider — pair with `min`, `max` and `step`
    * `decimal`: Decimal numbers, stepping by 0.01
-   * `money`: No distinct input — renders like `integer`; it only changes how the field is described to the org-gen agent
+   * `money`: Currency amount — decimal, stepping by 0.01, shown and stored to 2 places. No symbol: format that in the org's own formulas
    * `intArray`: A list of whole numbers the user can add to and remove from
    */
   variant?: "integer" | "slider" | "decimal" | "money" | "intArray" | string;
   /**
-   * Lowest value the slider allows. Formula-capable.
-   * Only the `slider` variant reads it — the text variants ignore `min`, `max` and `step` entirely. Defaults to 1.
+   * Lowest value allowed. Formula-capable.
+   * Every variant honours it: a typed value below `min` is clamped up to it on commit. The slider defaults it to 1; the text variants have no lower bound unless set.
    * Examples: @0, @1
    */
   min?: number | string;
   /**
-   * Highest value the slider allows. Formula-capable.
-   * Slider only, the same as `min`. Defaults to 100.
+   * Highest value allowed. Formula-capable.
+   * Every variant honours it, the same as `min` — a typed value above it is clamped down on commit. The slider defaults it to 100; the text variants have no upper bound unless set.
    * Examples: @100, @10
    */
   max?: number | string;
   /**
-   * Increment the slider moves in. Formula-capable.
-   * Slider only; defaults to 1. The text variants hardcode their step from the variant instead — 0.01 for `decimal`, 1 otherwise.
+   * Increment the value moves in. Formula-capable.
+   * The slider snaps to it; the text variants use it for the spinner arrows. When unset it follows the variant — 0.01 for `decimal` and `money`, 1 otherwise.
    * Examples: @1, @5
    */
   step?: number | string;
@@ -895,6 +897,7 @@ type SelectInputOptions = InputOptions & {
    * `select`: Dropdown menu — the default
    * `radio`: Every option visible as a radio button; best for two to four choices
    * `combobox`: Type-to-filter box; best when the list is long
+   * On touch devices a combobox renders as the plain dropdown instead, so focusing it never pops the virtual keyboard. Type-ahead is a desktop affordance.
    */
   idiom?: "select" | "radio" | "combobox" | string;
   /**
@@ -1448,7 +1451,6 @@ type NodeOptions =
   | SubsectionOptions
   | FormOptions
   | FlowOptions
-  | ListOptions
   | TreeOptions
   | TextInputOptions
   | NumberInputOptions
@@ -1474,7 +1476,11 @@ type NodeOptions =
 ## Object Types (objectTypes section)
 
 Object types define the data schema for your app. They live in the
-top-level `objectTypes` array — a SIBLING of `appConfig`, never inside it.
+top-level `objectTypes` section — a SIBLING of `appConfig`, never inside it.
+`objectTypes` is a FOLDER, not an array: each object type is an entry in its
+`_children`, carrying `"type": "objectType"`. A bare array fails the
+closing gate as `missing-objectType` on every `dataType` that names it (#1997):
+`"objectTypes": { "type": "folder", "name": "", "_children": [ { "type": "objectType", "name": "Expense", "icon": "receipt", "fields": [ { "name": "merchant", "type": "text" } ] } ] }`.
 Every node `dataType` and every foreign-key field `type` must match a
 declared object type `name`. A field `type` is a builtin (`text`, `number`,
 `boolean`, `temporal`, `variable`, `parentRef`, `image`, `imageUpload`), a
@@ -1483,7 +1489,7 @@ The framework stamps `id`, `createdAt`, `createdBy`, `updatedAt` and
 `updatedBy` on every record — do not declare them as fields.
 
 ```typescript
-/** One entry of the top-level `objectTypes` array — a sibling of `appConfig`, NOT inside it. Declares the data schema for one record type: its fields, an optional icon, and optionally the parent type its records belong to. Node `dataType` values and foreign-key field types must match a declared `name`. */
+/** One entry in the `_children` of the top-level `objectTypes` folder — a sibling of `appConfig`, NOT inside it, and a folder rather than an array: `{ "type": "folder", "name": "", "_children": [ { "type": "objectType", "name": "Expense", … } ] }`. Declares the data schema for one record type: its fields, an optional icon, and optionally the parent type its records belong to. Node `dataType` values and foreign-key field types must match a declared `name`. */
 interface ObjectType {
   /**
    * Unique object type name — what `dataType`, foreign-key field types and `parent.type` refer to.
@@ -1541,8 +1547,8 @@ interface ObjectTypeField {
    */
   multiline?: boolean;
   /**
-   * Input variant for the field's editor: `basic`, `multiline` or `richText` for text fields.
-   * Picks the input widget for a `text` field: `basic` (default), `multiline`, `richText` or `stringArray`. Ignored on every other field type.
+   * Input variant for the field's editor: `basic` or `multiline` for text fields.
+   * Picks the input widget for a `text` field: `basic` (default), `multiline` or `stringArray`. Ignored on every other field type.
    * Only the text editor reads it; `variant: "integer"` on a number field has no effect.
    * Examples: multiline, basic
    */
