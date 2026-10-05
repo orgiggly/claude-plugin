@@ -91,8 +91,9 @@ interface FormConfigOptions {
    * `variant`: A per-URL-variant partition, admin-curated and so not form-writable.
    * `group`: A group partition, which needs `groupKey` to say which one.
    * `all`: Reads across every partition.
+   * `inbox`: Realtime only: each visitor's own write-only inbox, which org admins can read.
    */
-  scope?: "global" | "user" | "variant" | "group" | "all";
+  scope?: "global" | "user" | "variant" | "group" | "all" | "inbox";
   /**
    * Which group partition a submit writes into. Required when scope is "group" — a member can belong to several groups at once, so the key cannot be inferred from the session. Accepts an @-formula so the org can derive it from flow state.
    * Which group partition a submit writes into. Required when `scope` is group.
@@ -287,9 +288,9 @@ interface ValidationRule {
    */
   expression: string;
   /**
-   * Error message if validation fails
-   * Shown under the field when `expression` is false. Say what to do, not what went wrong.
-   * Examples: Enter a name., End date must be on or after the start date
+   * Error message if validation fails. Start it with @ to make it a formula, evaluated in the same scope as `expression`, so the message can name what clashes; if the formula fails to evaluate, its own text is shown instead.
+   * Shown under the field when `expression` is false. Say what to do, not what went wrong. Start with @ to build it from data, e.g. naming the slot that clashes.
+   * Examples: Enter a name., End date must be on or after the start date, @clash.name + ' is already helping at ' + clash.job + ' then.'
    */
   errorMessage: string;
 }
@@ -372,6 +373,21 @@ interface TreeNodeOptions {
    * Examples: @status == 'done' ? '#E6F6EC' : status == 'in-progress' ? '#FFF4E0' : status == 'blocked' ? '#FDE8E8' : status == 'ready' || status == 'assigned' ? '#E8F0FE' : ''
    */
   badgeColor?: string;
+  /**
+   * Fields of this type that render read-only in the detail form. A literal array locks them for every record; a value starting with @ is a formula evaluated with the record's fields in scope that returns the array per record.
+   * Fields that render read-only in this type's detail form. A literal array locks them for every record; a value starting with @ is a formula with the record's fields in scope returning the list per record.
+   * A locked field still round-trips on save, so its value is never lost; it just cannot be typed into. Nothing is locked on a new record. Use it when some fields are owned by an external sync (a mirror, an import) and editing them would silently revert.
+   * Examples: ["status", "priority"], @origin == 'gh-mirror' ? ['title', 'status'] : []
+   */
+  lockedFields?: string | string[];
+  /**
+   * Per-record gate on editing rows of this type, AND-ed with the tree's own canEdit. A value starting with @ is a formula evaluated with the record's fields in scope.
+   * `true`: Rows of this type can be edited (subject to the tree's canEdit)
+   * `false`: Rows of this type are read-only
+   * Takes a formula with the record's fields in scope, so one type can be editable for some records and read-only for others: ownership, status, origin. The tree-level canEdit still wins when false.
+   * Examples: @origin != 'gh-mirror'
+   */
+  canEdit?: boolean | string;
 }
 
 /** Ask before running the action. The dispatcher shows a small modal over the page and runs `script` only when the person confirms; dismissing it does nothing at all — no script, no navigation, no partial effect. It gates BOTH invocation channels, a template data-action click and a sandboxed widget's channel.runAction, so a widget can never skip a confirmation the config declared. */
@@ -403,6 +419,12 @@ interface ActionConfirm {
    * `false`: An ordinary confirmation. This is the default.
    */
   destructive?: boolean;
+  /**
+   * Just tell the person something: one OK button and no Cancel, for a message with no decision in it (e.g. why a slot can't be taken). `script` is optional; if declared it runs on OK. `data-confirm-title`/`data-confirm-body` still override the wording.
+   * `true`: One OK button, no Cancel — for telling the person something, not asking. The script, if any, runs on OK.
+   * `false`: An ordinary two-button confirmation. This is the default.
+   */
+  info?: boolean;
 }
 
 /** A named click behaviour declared on a content node, invoked from its template by a data-action attribute naming it (on a button element, preferably, or an anchor). Param values are bound with data-param-<name> attributes whose values are render-time interpolated literals — click-time dispatch does zero formula evaluation. The action runs `script` with $params in scope; navigation is a host call inside the script (navigate / replaceScreen / back), normally its last statement. */
@@ -525,15 +547,16 @@ interface DataOptions {
      */
     source?: "embedded" | "storage" | "realtime" | "callable";
     /**
-     * Data scope: global (shared), user (per-user partition), variant (per-URL-variant partition), or group (per-membership-group partition, served only through a membership-checked callable). On source "realtime", `user` selects the PRIVATE per-uid rail rather than a filter.
+     * Data scope: global (shared), user (per-user partition), variant (per-URL-variant partition), or group (per-membership-group partition, served only through a membership-checked callable). On source "realtime", `user` selects the PRIVATE per-uid rail rather than a filter, and `inbox` (realtime only) the per-uid INBOX: a visitor writes and reads only their own records there, org admins read them all, and the transition engine watches it like the public rail.
      * `global`: Only records in the org's shared collection
      * `user`: Only the signed-in user's own records — on a realtime block, their own PRIVATE subtree, unreadable by anyone else
      * `variant`: Only records for the current URL variant
      * `group`: Only records for the group the current user is acting in — fetched through a membership-checked callable, never readable by non-members
      * `all`: No partition filter — every record of this type written to the global or user scope (never group data)
-     * The mechanism differs per source. On `storage`, `global` and `user` FILTER on a `_scope` marker that only the storage-fetch path stamps, so they narrow nothing on embedded data, and `variant` partitions by storage path rather than by filter. `group` also partitions by storage path (`…/groups/{groupKey}`), but that path is gated by the org's membership registry, so the partition is also the privacy boundary — and `all` never expands into it: group data is only ever loaded by an explicit `scope: "group"` binding. On `realtime`, `user` is not a filter at all: it switches the subscription to `realtimePrivate/{uid}/{Type}`, whose RTDB rules grant read only where `auth.uid` matches, so the PATH is the partition and the records never reach another player's client. That makes `scope` load-bearing for security on the realtime rail — the closing gate rejects `user` on `embedded`/`callable`, where it would look like a privacy control while narrowing nothing.
+     * `inbox`: Realtime only: each visitor's own inbox — they write and read back only their own records, org admins read them all, and transition rules fire on them. For input that must never be public, like a phone number
+     * The mechanism differs per source. On `storage`, `global` and `user` FILTER on a `_scope` marker that only the storage-fetch path stamps, so they narrow nothing on embedded data, and `variant` partitions by storage path rather than by filter. `group` also partitions by storage path (`…/groups/{groupKey}`), but that path is gated by the org's membership registry, so the partition is also the privacy boundary — and `all` never expands into it: group data is only ever loaded by an explicit `scope: "group"` binding. On `realtime`, `user` is not a filter at all: it switches the subscription to `realtimePrivate/{uid}/{Type}`, whose RTDB rules grant read only where `auth.uid` matches, so the PATH is the partition and the records never reach another player's client. That makes `scope` load-bearing for security on the realtime rail — the closing gate rejects `user` on `embedded`/`callable`, where it would look like a privacy control while narrowing nothing. `inbox` (realtime only, named orgs only) puts the type at `realtimeInbox/{uid}/{Type}`: the writer's own uid subtree, readable by them and the org's admins, never by other visitors. `setRealtime` and friends route a declared inbox type there by themselves, the engine fires rules on it and writes `_moveOutcome` back onto the inbox record, and a rule may watch an inbox type but never target one.
      */
-    scope?: "global" | "user" | "variant" | "group" | "all";
+    scope?: "global" | "user" | "variant" | "group" | "all" | "inbox";
     /**
      * Which group partition this node WRITES into. Only read when scope is "group". Reads never need it — the group set is discovered from the caller's membership — but a write does, because a member can belong to several groups at once.
      * Which group this node saves into. Only needed when `scope` is "group", and only for saving — reading finds the user's groups by itself.
@@ -722,6 +745,13 @@ type ScreenOptions = CommonOptions & ContainerOptions & DataOptions & {
    * Shown beside this screen in the nav menu or tab strip.
    */
   icon?: string;
+  /**
+   * Hides the site header bar (logo, org name, sign-in, avatar menu, nav tabs) while this screen is showing, for an immersive screen such as a game table. Accepts a formula, evaluated in the screen's scope, so the header can hide only in one state (e.g. while a game is live). The screen must give the user its own way out, since the logo/home and avatar menu go with the header. The draft-preview banner still shows.
+   * `true`: The site header is hidden while this screen is showing
+   * `false`: The site header is shown (default)
+   * Examples: true, @curPhase == 'playing'
+   */
+  hideHeader?: boolean | string;
 };
 
 /** A grouping container for organizing content. Repeating for collections; a repeating subsection can render inline (the default) or as a master/detail editor with add, remove and reorder controls. */
@@ -750,6 +780,21 @@ type SubsectionOptions = CommonOptions & ContainerOptions & IterationOptions & D
    * `false`: The subsection will not be collapsed by default
    */
   collapsedByDefault?: boolean | string;
+  /**
+   * Lets the user drag the items of a repeating subsection into a new order. For a data-bound list the order is written onto the records as a dense integer in orderField; an app-state list just moves its slots.
+   * `true`: Each item gets a drag handle; dropping it writes the new order
+   * `false`: Items render in query order with no drag handle
+   * Takes a formula, so one list can be reorderable for the host only (@isHost). A data-bound list persists the order on the records: every displayed row whose position changed gets orderField written as 0..N-1, through updateData on the storage rail or updateRealtime on the realtime rail (owner-only there, so a host cannot reorder other players' records). Pair it with sort: {field: <orderField>} on the same data block or the drop will not stick visually.
+   * Examples: true, @isHost
+   */
+  reorderable?: boolean | string;
+  /**
+   * The record field a reorderable data-bound subsection writes the integer order to (default sortIndex). Pair with sort: {field: <orderField>}.
+   * The record field that holds each item's position; defaults to sortIndex.
+   * Declare it on the ObjectType as a number field and sort the same data block by it, so the persisted order is what renders. The platform writes a dense 0..N-1 on every drop and only touches records whose value changed.
+   * Examples: sortIndex, position
+   */
+  orderField?: string;
 };
 
 /** A data entry container bound to an object type. Auto-generates input fields. */
@@ -778,6 +823,39 @@ type FlowOptions = CommonOptions & DataOptions & {
    * `false`: The navigation bar is shown (default)
    */
   hideNav?: boolean | string;
+};
+
+/** A flow step that asks the same screens once per item, with "Add another?" in between, such as guests per booking or roles per rota. Only a direct child of a flow; its children are screens. Each pass is one iteration of the repeat, so a formula or script after it reads the repeat's name as an array of per-pass objects, with every screen's inputs merged flat into each one (roles reads as a list of name, from, until objects). Inside a pass, $index is the pass number. After each pass the platform draws a summary screen with Edit and Remove per pass, Add another, and Done. */
+type RepeatOptions = CommonOptions & {
+  type: "repeat";
+  /**
+   * One item's noun, used for "Add another {itemLabel}", the pass header ("Role 2 · 1 of 2") and the summary's empty state. Default "item".
+   * The noun for one item, as people should read it in the buttons and headers.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Lower case reads best: the platform capitalises it where a sentence starts. A formula is evaluated in the flow's scope, so an earlier step can set it ("stall", "station").
+   * Examples: guest, @roleSingular
+   */
+  itemLabel?: string;
+  /**
+   * One line of plain text per pass on the summary screen, evaluated in that pass's scope, so its inputs are bare names. Defaults to "{ItemLabel} {n}".
+   * The line that stands for one pass on the summary screen. Plain text, evaluated in the pass's scope.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Every input on the pass's screens is in scope by its bare name, and $index is the pass number. Keep it to one line at phone width.
+   * Examples: @name + ' · ' + email, @emoji + ' ' + name + ' · ' + hhmmFn(from) + '–' + hhmmFn(until)
+   */
+  summary?: string;
+  /**
+   * Done stays disabled until this many passes are complete. Default 0.
+   * How many items are needed before Done is allowed. Default 0.
+   * Examples: 1, @seats > 0 ? 1 : 0
+   */
+  min?: number | string;
+  /**
+   * "Add another" is hidden once there are this many passes. Default unlimited.
+   * The most items allowed; Add another disappears at this count. Leave empty for no limit.
+   * Examples: 20, @seats
+   */
+  max?: number | string;
 };
 
 /** A hierarchical data structure with typed nodes and parent-child relationships. When data-bound (data.source set), nodeTypes keys are ObjectType names and the hierarchy is linked via each type's parentRef field; renders as a mobile-first drill-in editor on the site. */
@@ -1441,6 +1519,18 @@ type FunctionOptions = CommonOptions & {
   returnTypeHint?: string;
 };
 
+/** A named constant (any JSON value), readable as a bare identifier from formulas AND transition rules. */
+type ConstOptions = CommonOptions & {
+  type: "const";
+  /**
+   * The constant's value — any JSON value (number, string, boolean, array or object). Never evaluated.
+   * The constant's value, as plain JSON. It is stored as written — never evaluated as a formula and never overridden by user input.
+   * Readable by its name from any formula (write the bare name or @name) and from a transition rule's condition/next/dueAt, so a tunable lives in one place instead of a zero-arg function repeated per org. The value is literal JSON: a string stays a string even if it starts with @.
+   * Examples: 6, 30000, ["s","h","d","c"], { "mostCards": 2, "sweep": 1 }
+   */
+  value: unknown;
+};
+
 // All node types
 type NodeOptions =
   | AppOptions
@@ -1451,6 +1541,7 @@ type NodeOptions =
   | SubsectionOptions
   | FormOptions
   | FlowOptions
+  | RepeatOptions
   | TreeOptions
   | TextInputOptions
   | NumberInputOptions
@@ -1469,7 +1560,8 @@ type NodeOptions =
   | CallableButtonOptions
   | ContentOptions
   | VariableOptions
-  | FunctionOptions;
+  | FunctionOptions
+  | ConstOptions;
 
 ```
 

@@ -1,0 +1,73 @@
+{
+  "_comment": "Pattern: Home screen with welcome header and plugin-based navigation cards linking to screens",
+  "appConfig_excerpt": {
+    "home_screen": {
+      "id": "screen-1",
+      "type": "screen",
+      "label": "Home",
+      "name": "home",
+      "layout": { "maxColumns": 1, "axis": "y", "mode": "columns", "minColumnWidth": 350 },
+      "data": { "source": "embedded" },
+      "_children": [
+        {
+          "id": "content-1",
+          "type": "content",
+          "name": "welcomeHeader",
+          "htmlTemplate": "@`<div style=\"padding: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; color: white; margin-bottom: 16px;\">\n  <h1 style=\"margin: 0 0 8px 0; font-family: system-ui; font-size: 28px;\">My App</h1>\n  <p style=\"margin: 0; opacity: 0.9;\">Welcome to your dashboard</p>\n</div>`"
+        },
+        {
+          "id": "subsection-1",
+          "type": "subsection",
+          "label": "Menu",
+          "name": "menu",
+          "isRepeating": true,
+          "layout": { "maxColumns": 2, "axis": "x", "mode": "columns", "minColumnWidth": 150 },
+          "data": { "dataType": "MenuItem", "source": "embedded" },
+          "_children": [
+            {
+              "id": "CardLink-1",
+              "type": "CardLink",
+              "name": "menuCard",
+              "parameters": {
+                "link": "@screen",
+                "title": "@title",
+                "icon": "@icon"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "objectTypes_excerpt": [
+    {
+      "id": "objectType-menu",
+      "type": "objectType",
+      "name": "MenuItem",
+      "icon": "menu",
+      "fields": [
+        { "name": "title", "type": "text" },
+        { "name": "screen", "type": "text" },
+        { "name": "icon", "type": "text" }
+      ]
+    }
+  ],
+  "objectInstances_excerpt": [
+    { "id": "MenuItem-1", "type": "MenuItem", "title": "Tasks", "screen": "tasks", "icon": "📋" },
+    { "id": "MenuItem-2", "type": "MenuItem", "title": "Settings", "screen": "settings", "icon": "⚙️" }
+  ],
+  "plugins_excerpt": [
+    {
+      "id": "plugin-1",
+      "type": "plugin",
+      "name": "CardLink",
+      "icon": "link",
+      "parameters": [
+        { "name": "link", "type": "text", "description": "Target screen name" },
+        { "name": "title", "type": "text", "description": "Card title" },
+        { "name": "icon", "type": "text", "description": "Emoji or icon" }
+      ],
+      "htmlTemplate": "@`<a href=\"${link}\" style=\"display: flex; flex-direction: column; align-items: center; padding: 24px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-decoration: none; color: #333;\">\n  <span style=\"font-size: 32px; margin-bottom: 8px;\">${icon}</span>\n  <span style=\"font-weight: 600; font-family: system-ui;\">${title}</span>\n</a>`"
+    }
+  ]
+}

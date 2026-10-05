@@ -1,0 +1,102 @@
+{
+  "_comment": "Pattern: List screen with repeating items → detail screen. The card is a `<button data-action=…>` that passes the record's id as a `data-param-*` binding; the declared action navigates with that id as a nav arg, and the detail screen resolves the record once with `byId('Type', $args.id)`. Passing the id (rather than relying on the clicked row's scope) is what lets the same detail screen serve every entry point.",
+  "appConfig_excerpt": {
+    "screens": [
+      {
+        "id": "screen-2",
+        "type": "screen",
+        "label": "Contacts",
+        "name": "contacts",
+        "layout": { "maxColumns": 1, "axis": "y", "mode": "columns", "minColumnWidth": 350 },
+        "data": { "source": "embedded" },
+        "_children": [
+          {
+            "id": "content-2",
+            "type": "content",
+            "name": "addBtn",
+            "htmlTemplate": "@`<a href=\"editContact\" style=\"display: inline-flex; align-items: center; padding: 12px 24px; background: #10b981; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 16px;\">+ Add Contact</a>`"
+          },
+          {
+            "id": "subsection-2",
+            "type": "subsection",
+            "label": "All Contacts",
+            "name": "contactList",
+            "isRepeating": true,
+            "layout": { "maxColumns": 2, "axis": "x", "mode": "columns", "minColumnWidth": 250 },
+            "data": {
+              "dataType": "Contact",
+              "source": "embedded",
+              "sort": { "field": "name", "direction": "asc" }
+            },
+            "_children": [
+              {
+                "id": "content-3",
+                "type": "content",
+                "name": "contactCard",
+                "htmlTemplate": "@`<button data-action=\"openContact\" data-param-id=\"${id}\" style=\"display: flex; gap: 12px; padding: 16px; background: white; border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #333; font: inherit; text-align: left; width: 100%; cursor: pointer;\">\n  <div style=\"width: 48px; height: 48px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center;\">👤</div>\n  <div>\n    <div style=\"font-weight: 600; font-family: system-ui;\">${name}</div>\n    <div style=\"font-size: 14px; color: #666;\">${email}</div>\n  </div>\n</button>`",
+                "actions": {
+                  "openContact": {
+                    "params": ["id"],
+                    "script": "navigate('contactDetail', {id: $params.id})"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "detail_screen_in_components_folder": {
+      "id": "screen-4",
+      "type": "screen",
+      "label": "Contact Detail",
+      "name": "contactDetail",
+      "layout": { "maxColumns": 1, "axis": "y", "mode": "columns", "minColumnWidth": 350 },
+      "data": { "source": "embedded" },
+      "_children": [
+        {
+          "id": "variable-1",
+          "type": "variable",
+          "name": "currentContact",
+          "compute": "@byId('Contact', $args.id)"
+        },
+        {
+          "id": "content-5",
+          "type": "content",
+          "name": "contactHeader",
+          "htmlTemplate": "@`<div style=\"padding: 20px; background: #f8fafc; border-radius: 12px; margin-bottom: 16px;\">\n  <h2 style=\"margin: 0 0 4px 0; font-family: system-ui;\">${currentContact.name}</h2>\n  <p style=\"margin: 0; color: #666;\">${currentContact.email}</p>\n</div>`"
+        },
+        {
+          "id": "content-6",
+          "type": "content",
+          "name": "actions",
+          "htmlTemplate": "@`<div style=\"display: flex; gap: 12px;\">\n  <button data-action=\"edit\" data-param-id=\"${currentContact.id}\" style=\"padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; font: inherit; cursor: pointer;\">Edit</button>\n  <button data-action=\"back\" style=\"padding: 10px 20px; background: #e2e8f0; color: #333; border: none; border-radius: 6px; font: inherit; cursor: pointer;\">Back</button>\n</div>`",
+          "actions": {
+            "edit": {
+              "params": ["id"],
+              "script": "navigate('editContact', {id: $params.id})"
+            },
+            "back": { "script": "back()" }
+          }
+        }
+      ]
+    }
+  },
+  "objectTypes_excerpt": [
+    {
+      "id": "objectType-1",
+      "type": "objectType",
+      "name": "Contact",
+      "icon": "person",
+      "fields": [
+        { "name": "name", "type": "text" },
+        { "name": "email", "type": "text" },
+        { "name": "phone", "type": "text" }
+      ]
+    }
+  ],
+  "objectInstances_excerpt": [
+    { "id": "Contact-1", "type": "Contact", "name": "Alice Johnson", "email": "alice@example.com", "phone": "+1 555-0101" },
+    { "id": "Contact-2", "type": "Contact", "name": "Bob Smith", "email": "bob@example.com", "phone": "+1 555-0102" }
+  ]
+}

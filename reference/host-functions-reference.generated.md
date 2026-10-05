@@ -159,19 +159,49 @@ deleteData({type: "Photo", id: photos.map((p) => p.id)})
 deleteData({type: "Post", id: id}) // Photo declares parent: {type: "Post", idField: "postId"}, so its photos go too
 ```
 
+### `deleteFile` _(async)_
+
+```
+deleteFile(url: string | string[]): void
+```
+
+Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record restorable, so calling `deleteFile` beside it sacrifices restore of the photo. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
+
+**Examples:**
+
+```
+deleteData({type: "Event", id: id}); deleteFile(Pic); navigate("calendar")
+deleteFile(photos.map((p) => p.url))
+```
+
 ### `setRealtime` _(async)_
 
 ```
 setRealtime(path: string, value: object): {ownerUid: string, ...}
 ```
 
-Creates or replaces ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. `value` must be an object; it is stamped with your `ownerUid`, and security rules let you write only records you own. Do NOT include an `id` field — the record's id IS the final path segment. Use for fixed-id records (a game room keyed by its code, a player keyed by identity).
+Creates or replaces ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. `value` must be an object; it is stamped with your `ownerUid`, and security rules let you write only records you own. The record's id IS the final path segment, so any `id` (and `type`) field in `value` is ignored — spreading a record read from `$data` is safe. It REPLACES the whole record: a field you leave out is deleted, so to change some fields of an existing record use `updateRealtime` instead. Use it to create fixed-id records (a game room keyed by its code, a player keyed by identity); it stamps the `createdAt` that cleanup timers key on.
 
 **Examples:**
 
 ```
 setRealtime("Game/" + roomCode, {phase: "lobby", hostId: whoAmI})
 setRealtime("Player/" + whoAmI, {name, gameId: roomCode})
+```
+
+### `updateRealtime` _(async)_
+
+```
+updateRealtime(path: string, patch: object): {ownerUid: string, ...patch}
+```
+
+MERGES `patch` into ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. Fields `patch` doesn't mention are KEPT — the safe way to change some fields of an existing record (a game's `phase`, a player's score) without re-listing the rest. Shallow: each top-level key replaces that field whole (a nested object is not merged into), and a `null` value deletes the field. Keys may not contain `/`, and `patch` must have at least one field; `id`/`type` are ignored. Security rules let you update only records you own. Create the record with `setRealtime` first: a merge onto a missing path does create it, but without the `createdAt` stamp cleanup timers key on. Returns the patch as written (with your `ownerUid`), not the whole merged record.
+
+**Examples:**
+
+```
+updateRealtime("Game/" + roomCode, {phase: "playing", round: 1})
+updateRealtime("Player/" + whoAmI, {score: me.score + 1})
 ```
 
 ### `pushRealtime` _(async)_
@@ -287,6 +317,35 @@ Stops any in-progress speech synthesis immediately (the legacy `data-speak-actio
 
 ```
 stopSpeech()
+```
+
+### `copyText` _(async)_
+
+```
+copyText(text: string): void
+```
+
+Copies `text` to the device's clipboard and shows a brief "Copied" note. Content actions only, because a browser lets a page write the clipboard only in response to a tap or click. Throws (so the action's error snackbar reports it) where the clipboard isn't available, e.g. a page not served over HTTPS.
+
+**Examples:**
+
+```
+copyText(rosterText)
+copyText($params.link)
+```
+
+### `enablePush` _(async)_
+
+```
+enablePush(): "subscribed" | "denied" | "unavailable" | "ios-not-installed" | "preview"
+```
+
+Asks for notification permission (only if it hasn't been asked) and registers this device for the org's pushes — the header bell's subscribe, as a button the org can place where it matters (🔔 Remind me). The device is registered against the visitor's auth uid, which is what a transition rule's `notifyTo` names. Content actions only, because the permission prompt needs a tap. Returns what happened, so store it and word the button from it: `subscribed`; `denied` (blocked — they must re-enable it in browser or phone settings); `unavailable` (this browser has no web push); `ios-not-installed` (iPhone/iPad in a browser tab — web push works only once the site is added to the home screen); `preview` (a design preview, nothing registered).
+
+**Examples:**
+
+```
+r = enablePush(); setAppValue("pushState", r)
 ```
 
 ### `setValue` _(async)_
@@ -487,19 +546,49 @@ deleteData({type: "Photo", id: photos.map((p) => p.id)})
 deleteData({type: "Post", id: id}) // Photo declares parent: {type: "Post", idField: "postId"}, so its photos go too
 ```
 
+### `deleteFile` _(async)_
+
+```
+deleteFile(url: string | string[]): void
+```
+
+Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record restorable, so calling `deleteFile` beside it sacrifices restore of the photo. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
+
+**Examples:**
+
+```
+deleteData({type: "Event", id: id}); deleteFile(Pic); navigate("calendar")
+deleteFile(photos.map((p) => p.url))
+```
+
 ### `setRealtime` _(async)_
 
 ```
 setRealtime(path: string, value: object): {ownerUid: string, ...}
 ```
 
-Creates or replaces ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. `value` must be an object; it is stamped with your `ownerUid`, and security rules let you write only records you own. Do NOT include an `id` field — the record's id IS the final path segment. Use for fixed-id records (a game room keyed by its code, a player keyed by identity).
+Creates or replaces ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. `value` must be an object; it is stamped with your `ownerUid`, and security rules let you write only records you own. The record's id IS the final path segment, so any `id` (and `type`) field in `value` is ignored — spreading a record read from `$data` is safe. It REPLACES the whole record: a field you leave out is deleted, so to change some fields of an existing record use `updateRealtime` instead. Use it to create fixed-id records (a game room keyed by its code, a player keyed by identity); it stamps the `createdAt` that cleanup timers key on.
 
 **Examples:**
 
 ```
 setRealtime("Game/" + roomCode, {phase: "lobby", hostId: whoAmI})
 setRealtime("Player/" + whoAmI, {name, gameId: roomCode})
+```
+
+### `updateRealtime` _(async)_
+
+```
+updateRealtime(path: string, patch: object): {ownerUid: string, ...patch}
+```
+
+MERGES `patch` into ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. Fields `patch` doesn't mention are KEPT — the safe way to change some fields of an existing record (a game's `phase`, a player's score) without re-listing the rest. Shallow: each top-level key replaces that field whole (a nested object is not merged into), and a `null` value deletes the field. Keys may not contain `/`, and `patch` must have at least one field; `id`/`type` are ignored. Security rules let you update only records you own. Create the record with `setRealtime` first: a merge onto a missing path does create it, but without the `createdAt` stamp cleanup timers key on. Returns the patch as written (with your `ownerUid`), not the whole merged record.
+
+**Examples:**
+
+```
+updateRealtime("Game/" + roomCode, {phase: "playing", round: 1})
+updateRealtime("Player/" + whoAmI, {score: me.score + 1})
 ```
 
 ### `pushRealtime` _(async)_
@@ -742,19 +831,49 @@ deleteData({type: "Photo", id: photos.map((p) => p.id)})
 deleteData({type: "Post", id: id}) // Photo declares parent: {type: "Post", idField: "postId"}, so its photos go too
 ```
 
+### `deleteFile` _(async)_
+
+```
+deleteFile(url: string | string[]): void
+```
+
+Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record restorable, so calling `deleteFile` beside it sacrifices restore of the photo. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
+
+**Examples:**
+
+```
+deleteData({type: "Event", id: id}); deleteFile(Pic); navigate("calendar")
+deleteFile(photos.map((p) => p.url))
+```
+
 ### `setRealtime` _(async)_
 
 ```
 setRealtime(path: string, value: object): {ownerUid: string, ...}
 ```
 
-Creates or replaces ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. `value` must be an object; it is stamped with your `ownerUid`, and security rules let you write only records you own. Do NOT include an `id` field — the record's id IS the final path segment. Use for fixed-id records (a game room keyed by its code, a player keyed by identity).
+Creates or replaces ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. `value` must be an object; it is stamped with your `ownerUid`, and security rules let you write only records you own. The record's id IS the final path segment, so any `id` (and `type`) field in `value` is ignored — spreading a record read from `$data` is safe. It REPLACES the whole record: a field you leave out is deleted, so to change some fields of an existing record use `updateRealtime` instead. Use it to create fixed-id records (a game room keyed by its code, a player keyed by identity); it stamps the `createdAt` that cleanup timers key on.
 
 **Examples:**
 
 ```
 setRealtime("Game/" + roomCode, {phase: "lobby", hostId: whoAmI})
 setRealtime("Player/" + whoAmI, {name, gameId: roomCode})
+```
+
+### `updateRealtime` _(async)_
+
+```
+updateRealtime(path: string, patch: object): {ownerUid: string, ...patch}
+```
+
+MERGES `patch` into ONE realtime record at `path` (shaped `{Type}/{recordId}`, relative to the org's realtime root), reflecting live to every subscriber of that type. Fields `patch` doesn't mention are KEPT — the safe way to change some fields of an existing record (a game's `phase`, a player's score) without re-listing the rest. Shallow: each top-level key replaces that field whole (a nested object is not merged into), and a `null` value deletes the field. Keys may not contain `/`, and `patch` must have at least one field; `id`/`type` are ignored. Security rules let you update only records you own. Create the record with `setRealtime` first: a merge onto a missing path does create it, but without the `createdAt` stamp cleanup timers key on. Returns the patch as written (with your `ownerUid`), not the whole merged record.
+
+**Examples:**
+
+```
+updateRealtime("Game/" + roomCode, {phase: "playing", round: 1})
+updateRealtime("Player/" + whoAmI, {score: me.score + 1})
 ```
 
 ### `pushRealtime` _(async)_
