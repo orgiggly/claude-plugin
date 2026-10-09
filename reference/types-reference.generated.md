@@ -221,6 +221,13 @@ interface ContainerStyle {
    * Only read when `overlay` is set.
    */
   overlayWidth?: number;
+  /**
+   * Widest this node may get, in px; centred when the space is wider. On a screen it overrides the app's contentMaxWidth, and 0 removes that inherited cap (full width).
+   * Widest this node may get, in px. It is centred when the space is wider.
+   * Lines built-in inputs and widgets up with HTML that caps its own width. On a screen it overrides the app's `contentMaxWidth`; `0` removes that cap, for a screen that needs the full width (a calendar, a wide table).
+   * Examples: 640, 0
+   */
+  maxWidth?: number;
 }
 
 interface Dimension {
@@ -716,6 +723,13 @@ type AppOptions = CommonOptions & DataOptions & {
    * Examples: .card { border-radius: 12px; padding: 16px }
    */
   customCss?: string;
+  /**
+   * Default maximum width in px of every screen's content column, centred on wider windows, so built-in inputs and widgets line up with the HTML instead of stretching across the window. A screen overrides it with containerStyle.maxWidth (0 = full width). Unset = full width.
+   * Widest every screen's content may get, in px. Centred on a wide window.
+   * Set it for a form or content org (640–760 suits most) so inputs and widgets share one column with the HTML. Leave it unset for a dashboard or grid that wants the whole window, or give one screen `containerStyle: { maxWidth: 0 }` to opt that screen out.
+   * Examples: 720
+   */
+  contentMaxWidth?: number;
 };
 
 /** Generic container. Authored only through its variants — `tabGroup`, `tab`, `folder` — each written as its own `type`; a bare `appNode` is a plain container that just groups its children. */
@@ -1605,7 +1619,7 @@ interface ObjectType {
   /**
    * Declared on the CHILD: the type this type's records belong to, and the field holding that parent's id. Deleting a parent record cascades to every child that points at it.
    * Makes records of this type belong to a record of another type, so deleting that parent record deletes these too (declared on the CHILD).
-   * Cascade runs on both rails: the realtime rail removes children in the cloud function; the Storage rail tombstones them (`isDeleted: true`) when a script calls `deleteData` (a form's delete toggle does not cascade yet, #1999). Restoring a parent does not restore its children. This is ownership; a record tree's `parentRef` field is placement and never cascades.
+   * Cascade runs on both rails: the realtime rail removes children in the cloud function; the Storage rail tombstones them (`isDeleted: true`) when a script calls `deleteData` or a form saves the parent with its delete toggle on — only children some node loads as a data source. Restoring a parent does not restore its children. This is ownership; a record tree's `parentRef` field is placement and never cascades.
    * Examples: {"type":"Game","idField":"gameId"}, {"type":"Post","idField":"postId"}
    */
   parent?: ParentRelation;

@@ -2,7 +2,7 @@
 
 Build and manage apps on [orgiggly.com](https://orgiggly.com) from Claude Code.
 Describe the app you want; Claude writes the config and publishes it live under
-your own namespace — with auth, realtime data, storage and hosting built in.
+your own name (`orgiggly.com/<name>/…`) — with auth, realtime data, storage and hosting built in.
 
 ## Install
 
@@ -15,14 +15,17 @@ Inside Claude Code:
 ```
 
 `/orgiggly` runs the on-ramp: it checks Node (≥ 22), puts the `og` command on
-your PATH, signs you in, claims your namespace, and hands off to building your
+your PATH, signs you in, picks your name on Orgiggly, and hands off to building your
 first app — stopping at whichever step you've already done. Safe to re-run at
 any point; it picks up where you left off.
 
-To update later: `/plugin update orgiggly@orgiggly`.
+To update later: `/plugin marketplace update orgiggly`, then
+`/plugin update orgiggly@orgiggly`, and restart Claude Code. The plugin checks
+once a day and tells you when a new version is out, and after an update it
+shows what's new ([full history](CHANGELOG.md)).
 
 **No invite code?** Email dave@orgiggly.com with a line about what you want to
-build. You don't need one to get started — enrollment records how you found us,
+build. You don't need one to get started — the code records how you found us,
 it doesn't unlock anything.
 
 ## How it works
@@ -32,17 +35,16 @@ it doesn't unlock anything.
   publishes it via the bundled CLI. There is **no Orgiggly AI backend, no
   credits, and no Anthropic key** in this path.
 - **The CLI runs as *you*.** `og login` stores a real user credential under
-  `~/.orgiggly/`, and every command is subject to the Firebase security rules —
-  there is no admin key. Your app is hosted on orgiggly.com under your own
-  namespace.
+  `~/.orgiggly/`, and every command is subject to the Firebase security rules.
+  Your app is hosted on orgiggly.com under your own name.
 - **Nothing to download separately.** The CLI ships inside this plugin as a
   self-contained bundle (`bin/og-public.mjs`) with a `bin/og` shim.
 
 ## Skills
 
 - **`getting-started`** — the on-ramp: install → sign in → invite code →
-  namespace → your first app. `/orgiggly` is its front door. Idempotent, so
-  re-running it is always safe.
+  your name → your first app. Type `/orgiggly` to start it, or to resume —
+  it's idempotent, so running it again is always safe.
 - **`develop-app`** — the one skill for both creating and maintaining an app.
   It figures out whether the app already exists and does the right thing:
   fetch-if-exists → author/edit config → `validate-org` → `create-org` /
@@ -56,7 +58,8 @@ bin/og-public.mjs        # the self-contained CLI bundle
 reference/*.md           # node-model schema docs `og reference` serves
 commands/orgiggly.md     # /orgiggly → the getting-started skill
 commands/og-setup.md     # legacy /og-setup → same place
-hooks/                   # SessionStart first-run check
+hooks/                   # SessionStart: first-run check, what's new, update nudge
+CHANGELOG.md             # what changed in each release
 skills/getting-started/  # the on-ramp
 skills/develop-app/      # the build-and-manage skill
 ```

@@ -1,0 +1,30 @@
+# Orgiggly plugin — changelog
+
+What changed for you in each release, newest first. After an update, Claude Code
+shows the items since the version you last had.
+
+## 0.5.0
+
+- After the plugin updates, you see what's new since the version you last had.
+- Once a day the plugin checks for a newer version and tells you how to update. Set `ORGIGGLY_PLUGIN_UPDATE_CHECK=0` to turn this off.
+- Claude looks at a few apps on the Orgiggly showcase before building yours, and borrows their structure.
+- Each app keeps its own `CLAUDE.md` with notes and a change log, which Claude reads before every edit.
+- Generators and data for an app live in the app's own folder, so you can re-run them later.
+- Claude checks a published draft against its real data and in a signed-out browser before handing it to you.
+- `og whoami` shows how many apps your plan allows, and Claude checks it before starting a new one.
+- New logos can be generated with your own Gemini or Replicate key (`OG_GEMINI_API_KEY` / `OG_REPLICATE_API_TOKEN`), with no Orgiggly credits.
+- Clearer guidance on who can see and change your app's data, and a safe way to move existing data between per-user and shared storage.
+- More reference docs for Claude: ready-made recipes, common pitfalls, a glossary, flows and realtime apps.
+- Sign-in is smoother: Claude runs `og login` for you and `/orgiggly` picks up where you left off.
+
+## 0.4.0
+
+- `og edit-org` changes an existing app by editing only the parts a request needs, and saves the result as a draft for you to review.
+
+## 0.3.0
+
+- `og outline` prints a compact summary of any app's structure, at the level of detail you ask for.
+
+## 0.2.0
+
+- First public release: install from `orgiggly/claude-plugin`, sign in with `og login`, and build and publish apps with `/orgiggly`.

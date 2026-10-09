@@ -10,9 +10,9 @@ Content nodes render dynamic HTML using template literals:
 }
 ```
 
-The `htmlTemplate` value starts with `@` followed by a backtick template literal. Use `${fieldName}` for dynamic values.
+Use `${fieldName}` for dynamic values. The `@` + backtick wrapper shown above is the canonical stored form, but a template written without it interpolates the same way.
 
-**Important:** Inside the template, `${...}` is the ONLY interpolation syntax — including for function calls like `${length(items)}`. The `@` is just the prefix that marks the whole string as a formula. Do not use `@()` or `@variable` inside:
+**Important:** Inside the template, `${...}` is the ONLY interpolation syntax — including for function calls like `${length(items)}`. Do not use `@()` or `@variable` inside:
 
 - ✅ `@` `` `<span>${name}</span>` ``
 - ❌ `@` `` `<span>@(items[$index].name)</span>` ``

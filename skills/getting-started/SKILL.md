@@ -1,6 +1,6 @@
 ---
 name: getting-started
-description: "Set up Orgiggly from scratch and build your first app. Use when the user is new to Orgiggly and needs onboarding — e.g. 'get started with Orgiggly', 'set up Orgiggly', 'help me build my first app', 'onboard me', 'I just installed this', '/getting-started' — or when any Orgiggly command reports they're not signed in, not enrolled, or have no namespace. Installs the og CLI, signs them in, redeems an invite code, claims their namespace, then hands the actual build to the develop-app skill."
+description: "Set up Orgiggly from scratch and build your first app. Use when the user is new to Orgiggly and needs onboarding — e.g. 'get started with Orgiggly', 'set up Orgiggly', 'help me build my first app', 'onboard me', 'I just installed this', '/getting-started' — or when any Orgiggly command reports they're not signed in, not enrolled, or have no namespace. Sets up the `og` command, signs them in, redeems an invite code, claims their name on Orgiggly, then hands the actual build to the develop-app skill."
 user-invocable: true
 allowed-tools:
   - Bash
@@ -24,7 +24,7 @@ Assume nothing but the installed plugin and a human at the keyboard: no repo, no
 
 **Probe before you act, at every step.** `og whoami` is the state of the world;
 read it and skip whatever's already done. That makes this skill idempotent and
-resumable — someone who gets halfway, quits, and re-runs `/getting-started`
+resumable — someone who gets halfway, quits, and types `/orgiggly` again
 tomorrow picks up exactly where they left off, and someone already set up drops
 straight to Step 5.
 
@@ -79,8 +79,8 @@ command -v og && og --version
   works the moment PATH picks it up, then hand them the one line to add and
   **stop**:
 
-  > Add this to your shell profile, open a new terminal, and re-run
-  > `/getting-started`:
+  > Add this to your shell profile, open a new terminal, and type `/orgiggly`
+  > again:
   > `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`
 
 ---
@@ -94,17 +94,23 @@ og whoami
 This one command answers all three of the questions below — read its output
 before doing anything else.
 
-- **"Not signed in"** (exit 1) → explain in one line that Orgiggly runs entirely
-  as *them* (no admin key, their own account, their own namespace), then:
+- **"Not signed in"** (exit 1) → say in one line that Orgiggly runs entirely as
+  *them* — their own Google account, their own apps — then **run it yourself**:
 
   ```bash
   og login
   ```
 
-  It opens a browser for Google sign-in and stores a credential under
-  `~/.orgiggly/`. If the shell can't open a browser or the flow needs interaction
-  you can't provide, hand them the command to run themselves (`! og login`) and
-  **stop** — resume by re-running this skill.
+  You can do this: `og login` opens **their** browser for Google sign-in and
+  waits for the callback, then stores a credential under `~/.orgiggly/`. Don't
+  pre-emptively hand it over because you "can't open a browser" — the command
+  opens it, not you. Tell them a browser tab is about to open, then run it.
+
+  Only if it **exits non-zero without having opened a browser** do you hand it
+  over, with one line of explanation, and **stop**:
+
+  > Please type `! og login` — the `!` runs the command in your own terminal, so
+  > the browser can open. Then type `/orgiggly` again and I'll carry on.
 
 - **Already signed in** → say who as, one line, and move on.
 
@@ -118,7 +124,8 @@ Steps 3 and 4.
 Read the `enrollment:` line from Step 2's `og whoami`.
 
 - **`enrolled ✓`** → say nothing, go to Step 4.
-- **`not enrolled`** → ask whether they were given an invite code.
+- **`not enrolled`** → ask whether they were given an invite code. (To them
+  it's "no invite code recorded yet" — "enrolled" is the CLI's word, not theirs.)
 
   **With a code:**
 
@@ -143,13 +150,15 @@ gate the platform doesn't actually have.
 
 ---
 
-## Step 4 — Claim a namespace
+## Step 4 — Claim their name on Orgiggly
 
-Read the `namespace:` line from Step 2's `og whoami`.
+Read the `namespace:` line from Step 2's `og whoami` (that's the CLI's word for
+it; to the user it's "your name on Orgiggly", the `<name>` in
+`orgiggly.com/<name>/…`).
 
 - **A name is shown** → that's theirs; mention it and go to Step 5.
 - **`none claimed`** (including the "profile says X, but the namespace isn't
-  yours" variant — that's *unclaimed*) → propose a handle and confirm it before
+  yours" variant — that's *unclaimed*) → propose a name and confirm it before
   claiming. Slug it from their name or what they've said they want to build. The
   rules: **2–20 characters, letters/digits/underscores only** — no hyphens, dots
   or spaces.
@@ -165,8 +174,8 @@ Read the `namespace:` line from Step 2's `og whoami`.
   If the name is taken or reserved, the CLI suggests alternatives. Offer them,
   let the user pick or supply their own, and retry.
 
-**Confirm with a fresh `og whoami`, not the claim's output.** The namespace
-record — not the profile — is what actually decides ownership, so re-probing is
+**Confirm with a fresh `og whoami`, not the claim's output.** The name's
+reservation record — not the profile — is what actually decides ownership, so re-probing is
 the only honest confirmation.
 
 ---
@@ -182,8 +191,8 @@ two or three nudges to make it concrete:
 > • a small business page — services, prices, contact
 
 Then **hand off to the `develop-app` skill** — invoke it with their answer and
-the namespace from Step 4, e.g. `Skill(skill="develop-app", args="a running-club
-page for {namespace}")`. It fetches-or-creates, authors the config, validates,
+their name from Step 4, e.g. `Skill(skill="develop-app", args="a running-club
+page for {name}")`. It fetches-or-creates, authors the config, validates,
 and publishes a draft with a preview link.
 
 **Do not author config here.** No schema reading, no JSON, no `create-org`. If
@@ -202,21 +211,21 @@ loop with the three things they'll want next — short, as a list, not a lecture
 - **Edit it visually** — `https://orgiggly.com/admin`, pick the app. Changes
   preview live. Anything they change there, `develop-app` will pick up next time
   it fetches.
-- **Share it** — the public URL `https://orgiggly.com/{namespace}/{appname}`.
+- **Share it** — the public URL `https://orgiggly.com/{name}/{appname}`.
   It's live for anyone with the link.
 
 Then stop. They have a working app; let them enjoy it.
 
-### If they ask about custom domains, removing branding, or lots of apps
+### If they ask about plans, more apps, or custom domains
 
-Be straight with them — **paid plans don't exist yet** (they're in development).
-Don't pitch, don't imply they can pay today:
+The free plan includes **1 app**. The paid plan is **£10/month (or £100/year)
+for up to 5 apps** — they upgrade with the **Upgrade button on
+`orgiggly.com/admin`**. `og whoami`'s `apps:` line shows where they stand.
+Custom domains aren't shipped yet; for that, or for more than 5 apps, point
+them at **dave@orgiggly.com**.
 
-> Custom domains and higher limits are on the roadmap, not shipped. If that's
-> what you need, email **dave@orgiggly.com** — knowing who's waiting is how it
-> gets prioritised.
-
-Only ever raise this if *they* bring it up. Never up front.
+Don't pitch: raise this only if *they* bring it up, or when `develop-app` finds
+them at the limit before a new app. Never up front.
 
 ---
 
@@ -229,5 +238,6 @@ Only ever raise this if *they* bring it up. Never up front.
   nothing.
 - **Never edit shell rc files** on the user's behalf — hand them the line.
 - **No dead ends.** Every failure branch ends in a concrete next action or an
-  explicit stop that says how to resume (re-run `/getting-started`).
-- **Don't promise what isn't built.** No paid plans, no features that aren't live.
+  explicit stop that says how to resume (type `/orgiggly` again).
+- **Don't promise what isn't built.** No custom domains, no features that
+  aren't live.

@@ -12,8 +12,16 @@ const bundle = join(dirname(fileURLToPath(import.meta.url)), "og-public.mjs");
 // Announce the name we were invoked as, so every hint the bundle prints ("run
 // `og login`") names a command that's actually on the caller's PATH. argv can't
 // carry this: we SPAWN the bundle, so its argv[1] is og-public.mjs regardless.
-const res = spawnSync(process.execPath, [bundle, ...process.argv.slice(2)], {
-  stdio: "inherit",
-  env: { ...process.env, OG_CLI_NAME: "og" },
-});
+// --disable-warning=DEP0169 silences Node 24's url.parse() deprecation, raised
+// by faye-websocket (the Firebase SDK's Node RTDB transport) the moment a
+// command opens the database — not our code. Targeted, so every other warning
+// still shows; not NODE_OPTIONS, which would leak into child processes. (#2450)
+const res = spawnSync(
+  process.execPath,
+  ["--disable-warning=DEP0169", bundle, ...process.argv.slice(2)],
+  {
+    stdio: "inherit",
+    env: { ...process.env, OG_CLI_NAME: "og" },
+  },
+);
 process.exit(res.status ?? 1);

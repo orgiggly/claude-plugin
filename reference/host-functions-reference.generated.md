@@ -84,6 +84,36 @@ Writes an app-level value to the given pointer key (relative to the app root). T
 setAppValue("whoAmI", AuthorId)
 ```
 
+### `clearValues` _(async)_
+
+```
+clearValues(...names: string[]): void
+```
+
+Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
+
+**Examples:**
+
+```
+clearValues("lineSlots")
+clearValues("answers", "notes"); setAppValue("roomCode", newCode)
+```
+
+### `sendToWidget` _(async)_
+
+```
+sendToWidget(widgetName: string, command: string, args?: object): void
+```
+
+Tells a sandboxed widget on the screen to DO something — e.g. `spotifyplayer`'s `play` / `stop` — so a button outside the widget can drive it. `widgetName` is the widget node's name, resolved like a formula read (an unknown or ambiguous name throws); which commands exist, and their args, is up to each widget. The command is delivered at once, BEFORE any value this same script just set reaches the widget as a parameter — so pass everything the command needs in `args` rather than relying on a `setValues` a line earlier. A widget that isn't showing (hidden, or on another screen) ignores it. No reply comes back. Runs in preview too.
+
+**Examples:**
+
+```
+sendToWidget("player", "play", {trackUri: q.uri, startMs: q.startMs, lengthMs: 3000})
+sendToWidget("player", "stop"); navigate("results")
+```
+
 ### `navigate` _(async)_
 
 ```
@@ -149,7 +179,7 @@ updateData({type: "Traveller", id, patch: {Name, Role, Bio}})
 deleteData({type: string, id: string | string[]}): void
 ```
 
-Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. Hard delete is a separate platform concern (#783). Throws if any referenced record is not currently loaded in $data.
+Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
 
 **Examples:**
 
@@ -172,6 +202,21 @@ Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL)
 ```
 deleteData({type: "Event", id: id}); deleteFile(Pic); navigate("calendar")
 deleteFile(photos.map((p) => p.url))
+```
+
+### `hardDelete` _(async)_
+
+```
+hardDelete({type: string, id: string | string[]}): {deleted: {type, id}[], notFound: string[], blobsDeleted: string[], blobsSkippedShared: string[]}
+```
+
+PERMANENTLY removes records — irreversible, unlike `deleteData`'s restorable soft delete. Runs on the server: removes every stored copy (a record and its soft-delete tombstone alike), cascades through declared parent relations across ALL stored records (not just those loaded in $data, so the child type needs no data source), and deletes this org's own uploaded files that no surviving record, realtime record or config still references (a file shared with something that survives is kept and reported in `blobsSkippedShared`). Only an org admin, or the user who created every named record, may call it; cascaded children go with their parent whoever made them. Refuses realtime-rail types, and throws in a `deployMode: "dev"` org or for an embedded type (nothing on the server to delete — use `deleteData`). Unknown ids are reported in `notFound`, not thrown. Prefer `deleteData` unless the records must really be gone (personal data, a mistaken import).
+
+**Examples:**
+
+```
+hardDelete({type: "Post", id: post.id})
+r = hardDelete({type: "Game", id: gameIds}); navigate("home")
 ```
 
 ### `setRealtime` _(async)_
@@ -288,6 +333,64 @@ End the video call for EVERYONE in the room, not just this device. Only whoever 
 
 ```
 endVideoRoom(); navigate("home")
+```
+
+### `spotifyIsConnected` _(async)_
+
+```
+spotifyIsConnected(): boolean
+```
+
+True when the person running the script has connected their own Spotify account (at orgiggly.com/connect/spotify). Read-only, so it also works in preview. Scripts have no `if`, so store the result and let a formula decide what to show — e.g. a "Connect Spotify" prompt.
+
+**Examples:**
+
+```
+ok = spotifyIsConnected(); setAppValue("spotifyReady", ok)
+```
+
+### `spotifySearchTracks` _(async)_
+
+```
+spotifySearchTracks(songs: {title: string, artist?: string}[], options?: {limit?: number}): {uri: string, id: string, title: string, artist: string, artists: string[], album: string, albumType: string, year: number | null, artUrl: string | null, durationMs: number, explicit: boolean}[][]
+```
+
+Looks every song up on the viewer's connected Spotify account and returns ONE candidate list per song, in the same order — an empty list when nothing matched (a miss never throws). Batch by design: a script has no loops and cannot call an async host inside `map`, so pass the whole list in one call, then pick the best candidate per song with ordinary formulas or a `function` node (prefer the matching artist; avoid live, remix, karaoke and cover versions). `limit` is candidates per song: default 5, at most 10. Throws "Connect Spotify first (orgiggly.com/connect/spotify)" when the viewer hasn't connected. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+results = spotifySearchTracks(songs.map((s) => ({title: s.title, artist: s.artist})))
+results = spotifySearchTracks([{title: "Mr. Brightside", artist: "The Killers"}], {limit: 3}); setAppValue("firstUri", results[0][0].uri)
+```
+
+### `spotifyListPlaylists` _(async)_
+
+```
+spotifyListPlaylists(): {id: string, name: string, trackCount: number, imageUrl: string | null}[]
+```
+
+The viewer's Spotify playlists that a quiz can be built from: the ones they own or collaborate on (Spotify won't let an app read the tracks of any other playlist, followed ones included). Feed it to a `selectInput`'s `pickerValues` (ids are strings) and pass the chosen id to `spotifyPlaylistTracks`. Throws "Connect Spotify first (orgiggly.com/connect/spotify)" when the viewer hasn't connected, and "Reconnect Spotify to use your playlists" when they connected before playlists were supported. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+spotifyListPlaylists()
+lists = spotifyListPlaylists(); setAppValue("playlistCount", length(lists))
+```
+
+### `spotifyPlaylistTracks` _(async)_
+
+```
+spotifyPlaylistTracks(playlistId: string): {uri: string, id: string, title: string, artist: string, artists: string[], album: string, albumType: string, year: number | null, artUrl: string | null, durationMs: number, explicit: boolean}[]
+```
+
+The tracks of one of the viewer's playlists, in playlist order and in the same shape as a `spotifySearchTracks` candidate (podcast episodes and local files are left out; up to 500 tracks). `playlistId` is an id from `spotifyListPlaylists`, a `spotify:playlist:…` URI or an open.spotify.com link. Shuffle with `shuffle(tracks, now())` to pick at random. Throws the same Connect / Reconnect errors as `spotifyListPlaylists`, and a clear error for a playlist the viewer neither owns nor collaborates on. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+tracks = spotifyPlaylistTracks(playlistId); picks = shuffle(tracks, now()).slice(0, 10)
 ```
 
 ### `speak` _(async)_
@@ -471,6 +574,36 @@ Writes an app-level value to the given pointer key (relative to the app root). T
 setAppValue("whoAmI", AuthorId)
 ```
 
+### `clearValues` _(async)_
+
+```
+clearValues(...names: string[]): void
+```
+
+Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
+
+**Examples:**
+
+```
+clearValues("lineSlots")
+clearValues("answers", "notes"); setAppValue("roomCode", newCode)
+```
+
+### `sendToWidget` _(async)_
+
+```
+sendToWidget(widgetName: string, command: string, args?: object): void
+```
+
+Tells a sandboxed widget on the screen to DO something — e.g. `spotifyplayer`'s `play` / `stop` — so a button outside the widget can drive it. `widgetName` is the widget node's name, resolved like a formula read (an unknown or ambiguous name throws); which commands exist, and their args, is up to each widget. The command is delivered at once, BEFORE any value this same script just set reaches the widget as a parameter — so pass everything the command needs in `args` rather than relying on a `setValues` a line earlier. A widget that isn't showing (hidden, or on another screen) ignores it. No reply comes back. Runs in preview too.
+
+**Examples:**
+
+```
+sendToWidget("player", "play", {trackUri: q.uri, startMs: q.startMs, lengthMs: 3000})
+sendToWidget("player", "stop"); navigate("results")
+```
+
 ### `navigate` _(async)_
 
 ```
@@ -536,7 +669,7 @@ updateData({type: "Traveller", id, patch: {Name, Role, Bio}})
 deleteData({type: string, id: string | string[]}): void
 ```
 
-Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. Hard delete is a separate platform concern (#783). Throws if any referenced record is not currently loaded in $data.
+Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
 
 **Examples:**
 
@@ -559,6 +692,21 @@ Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL)
 ```
 deleteData({type: "Event", id: id}); deleteFile(Pic); navigate("calendar")
 deleteFile(photos.map((p) => p.url))
+```
+
+### `hardDelete` _(async)_
+
+```
+hardDelete({type: string, id: string | string[]}): {deleted: {type, id}[], notFound: string[], blobsDeleted: string[], blobsSkippedShared: string[]}
+```
+
+PERMANENTLY removes records — irreversible, unlike `deleteData`'s restorable soft delete. Runs on the server: removes every stored copy (a record and its soft-delete tombstone alike), cascades through declared parent relations across ALL stored records (not just those loaded in $data, so the child type needs no data source), and deletes this org's own uploaded files that no surviving record, realtime record or config still references (a file shared with something that survives is kept and reported in `blobsSkippedShared`). Only an org admin, or the user who created every named record, may call it; cascaded children go with their parent whoever made them. Refuses realtime-rail types, and throws in a `deployMode: "dev"` org or for an embedded type (nothing on the server to delete — use `deleteData`). Unknown ids are reported in `notFound`, not thrown. Prefer `deleteData` unless the records must really be gone (personal data, a mistaken import).
+
+**Examples:**
+
+```
+hardDelete({type: "Post", id: post.id})
+r = hardDelete({type: "Game", id: gameIds}); navigate("home")
 ```
 
 ### `setRealtime` _(async)_
@@ -677,6 +825,64 @@ End the video call for EVERYONE in the room, not just this device. Only whoever 
 endVideoRoom(); navigate("home")
 ```
 
+### `spotifyIsConnected` _(async)_
+
+```
+spotifyIsConnected(): boolean
+```
+
+True when the person running the script has connected their own Spotify account (at orgiggly.com/connect/spotify). Read-only, so it also works in preview. Scripts have no `if`, so store the result and let a formula decide what to show — e.g. a "Connect Spotify" prompt.
+
+**Examples:**
+
+```
+ok = spotifyIsConnected(); setAppValue("spotifyReady", ok)
+```
+
+### `spotifySearchTracks` _(async)_
+
+```
+spotifySearchTracks(songs: {title: string, artist?: string}[], options?: {limit?: number}): {uri: string, id: string, title: string, artist: string, artists: string[], album: string, albumType: string, year: number | null, artUrl: string | null, durationMs: number, explicit: boolean}[][]
+```
+
+Looks every song up on the viewer's connected Spotify account and returns ONE candidate list per song, in the same order — an empty list when nothing matched (a miss never throws). Batch by design: a script has no loops and cannot call an async host inside `map`, so pass the whole list in one call, then pick the best candidate per song with ordinary formulas or a `function` node (prefer the matching artist; avoid live, remix, karaoke and cover versions). `limit` is candidates per song: default 5, at most 10. Throws "Connect Spotify first (orgiggly.com/connect/spotify)" when the viewer hasn't connected. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+results = spotifySearchTracks(songs.map((s) => ({title: s.title, artist: s.artist})))
+results = spotifySearchTracks([{title: "Mr. Brightside", artist: "The Killers"}], {limit: 3}); setAppValue("firstUri", results[0][0].uri)
+```
+
+### `spotifyListPlaylists` _(async)_
+
+```
+spotifyListPlaylists(): {id: string, name: string, trackCount: number, imageUrl: string | null}[]
+```
+
+The viewer's Spotify playlists that a quiz can be built from: the ones they own or collaborate on (Spotify won't let an app read the tracks of any other playlist, followed ones included). Feed it to a `selectInput`'s `pickerValues` (ids are strings) and pass the chosen id to `spotifyPlaylistTracks`. Throws "Connect Spotify first (orgiggly.com/connect/spotify)" when the viewer hasn't connected, and "Reconnect Spotify to use your playlists" when they connected before playlists were supported. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+spotifyListPlaylists()
+lists = spotifyListPlaylists(); setAppValue("playlistCount", length(lists))
+```
+
+### `spotifyPlaylistTracks` _(async)_
+
+```
+spotifyPlaylistTracks(playlistId: string): {uri: string, id: string, title: string, artist: string, artists: string[], album: string, albumType: string, year: number | null, artUrl: string | null, durationMs: number, explicit: boolean}[]
+```
+
+The tracks of one of the viewer's playlists, in playlist order and in the same shape as a `spotifySearchTracks` candidate (podcast episodes and local files are left out; up to 500 tracks). `playlistId` is an id from `spotifyListPlaylists`, a `spotify:playlist:…` URI or an open.spotify.com link. Shuffle with `shuffle(tracks, now())` to pick at random. Throws the same Connect / Reconnect errors as `spotifyListPlaylists`, and a clear error for a playlist the viewer neither owns nor collaborates on. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+tracks = spotifyPlaylistTracks(playlistId); picks = shuffle(tracks, now()).slice(0, 10)
+```
+
 <!-- END PROMPT-STRIP: host-context-content:data-script -->
 ## In `flowStep:script`
 
@@ -756,6 +962,36 @@ Writes an app-level value to the given pointer key (relative to the app root). T
 setAppValue("whoAmI", AuthorId)
 ```
 
+### `clearValues` _(async)_
+
+```
+clearValues(...names: string[]): void
+```
+
+Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
+
+**Examples:**
+
+```
+clearValues("lineSlots")
+clearValues("answers", "notes"); setAppValue("roomCode", newCode)
+```
+
+### `sendToWidget` _(async)_
+
+```
+sendToWidget(widgetName: string, command: string, args?: object): void
+```
+
+Tells a sandboxed widget on the screen to DO something — e.g. `spotifyplayer`'s `play` / `stop` — so a button outside the widget can drive it. `widgetName` is the widget node's name, resolved like a formula read (an unknown or ambiguous name throws); which commands exist, and their args, is up to each widget. The command is delivered at once, BEFORE any value this same script just set reaches the widget as a parameter — so pass everything the command needs in `args` rather than relying on a `setValues` a line earlier. A widget that isn't showing (hidden, or on another screen) ignores it. No reply comes back. Runs in preview too.
+
+**Examples:**
+
+```
+sendToWidget("player", "play", {trackUri: q.uri, startMs: q.startMs, lengthMs: 3000})
+sendToWidget("player", "stop"); navigate("results")
+```
+
 ### `navigate` _(async)_
 
 ```
@@ -821,7 +1057,7 @@ updateData({type: "Traveller", id, patch: {Name, Role, Bio}})
 deleteData({type: string, id: string | string[]}): void
 ```
 
-Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. Hard delete is a separate platform concern (#783). Throws if any referenced record is not currently loaded in $data.
+Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
 
 **Examples:**
 
@@ -844,6 +1080,21 @@ Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL)
 ```
 deleteData({type: "Event", id: id}); deleteFile(Pic); navigate("calendar")
 deleteFile(photos.map((p) => p.url))
+```
+
+### `hardDelete` _(async)_
+
+```
+hardDelete({type: string, id: string | string[]}): {deleted: {type, id}[], notFound: string[], blobsDeleted: string[], blobsSkippedShared: string[]}
+```
+
+PERMANENTLY removes records — irreversible, unlike `deleteData`'s restorable soft delete. Runs on the server: removes every stored copy (a record and its soft-delete tombstone alike), cascades through declared parent relations across ALL stored records (not just those loaded in $data, so the child type needs no data source), and deletes this org's own uploaded files that no surviving record, realtime record or config still references (a file shared with something that survives is kept and reported in `blobsSkippedShared`). Only an org admin, or the user who created every named record, may call it; cascaded children go with their parent whoever made them. Refuses realtime-rail types, and throws in a `deployMode: "dev"` org or for an embedded type (nothing on the server to delete — use `deleteData`). Unknown ids are reported in `notFound`, not thrown. Prefer `deleteData` unless the records must really be gone (personal data, a mistaken import).
+
+**Examples:**
+
+```
+hardDelete({type: "Post", id: post.id})
+r = hardDelete({type: "Game", id: gameIds}); navigate("home")
 ```
 
 ### `setRealtime` _(async)_
@@ -946,4 +1197,62 @@ End the video call for EVERYONE in the room, not just this device. Only whoever 
 
 ```
 endVideoRoom(); navigate("home")
+```
+
+### `spotifyIsConnected` _(async)_
+
+```
+spotifyIsConnected(): boolean
+```
+
+True when the person running the script has connected their own Spotify account (at orgiggly.com/connect/spotify). Read-only, so it also works in preview. Scripts have no `if`, so store the result and let a formula decide what to show — e.g. a "Connect Spotify" prompt.
+
+**Examples:**
+
+```
+ok = spotifyIsConnected(); setAppValue("spotifyReady", ok)
+```
+
+### `spotifySearchTracks` _(async)_
+
+```
+spotifySearchTracks(songs: {title: string, artist?: string}[], options?: {limit?: number}): {uri: string, id: string, title: string, artist: string, artists: string[], album: string, albumType: string, year: number | null, artUrl: string | null, durationMs: number, explicit: boolean}[][]
+```
+
+Looks every song up on the viewer's connected Spotify account and returns ONE candidate list per song, in the same order — an empty list when nothing matched (a miss never throws). Batch by design: a script has no loops and cannot call an async host inside `map`, so pass the whole list in one call, then pick the best candidate per song with ordinary formulas or a `function` node (prefer the matching artist; avoid live, remix, karaoke and cover versions). `limit` is candidates per song: default 5, at most 10. Throws "Connect Spotify first (orgiggly.com/connect/spotify)" when the viewer hasn't connected. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+results = spotifySearchTracks(songs.map((s) => ({title: s.title, artist: s.artist})))
+results = spotifySearchTracks([{title: "Mr. Brightside", artist: "The Killers"}], {limit: 3}); setAppValue("firstUri", results[0][0].uri)
+```
+
+### `spotifyListPlaylists` _(async)_
+
+```
+spotifyListPlaylists(): {id: string, name: string, trackCount: number, imageUrl: string | null}[]
+```
+
+The viewer's Spotify playlists that a quiz can be built from: the ones they own or collaborate on (Spotify won't let an app read the tracks of any other playlist, followed ones included). Feed it to a `selectInput`'s `pickerValues` (ids are strings) and pass the chosen id to `spotifyPlaylistTracks`. Throws "Connect Spotify first (orgiggly.com/connect/spotify)" when the viewer hasn't connected, and "Reconnect Spotify to use your playlists" when they connected before playlists were supported. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+spotifyListPlaylists()
+lists = spotifyListPlaylists(); setAppValue("playlistCount", length(lists))
+```
+
+### `spotifyPlaylistTracks` _(async)_
+
+```
+spotifyPlaylistTracks(playlistId: string): {uri: string, id: string, title: string, artist: string, artists: string[], album: string, albumType: string, year: number | null, artUrl: string | null, durationMs: number, explicit: boolean}[]
+```
+
+The tracks of one of the viewer's playlists, in playlist order and in the same shape as a `spotifySearchTracks` candidate (podcast episodes and local files are left out; up to 500 tracks). `playlistId` is an id from `spotifyListPlaylists`, a `spotify:playlist:…` URI or an open.spotify.com link. Shuffle with `shuffle(tracks, now())` to pick at random. Throws the same Connect / Reconnect errors as `spotifyListPlaylists`, and a clear error for a playlist the viewer neither owns nor collaborates on. Read-only, so it also runs in preview.
+
+**Examples:**
+
+```
+tracks = spotifyPlaylistTracks(playlistId); picks = shuffle(tracks, now()).slice(0, 10)
 ```
