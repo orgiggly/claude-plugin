@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.5.1
+
+- The bundled `og` command and the realtime-apps reference are updated with the latest platform changes.
+
 ## 0.5.0
 
 - After the plugin updates, you see what's new since the version you last had.
