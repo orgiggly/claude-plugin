@@ -284,7 +284,7 @@ the schema. The config is an **envelope** with these required top-level fields:
   "versionId": "v1",
   "apiVersion": "0.1",
   "users": {},
-  "appConfig": { "type": "app", "name": "{appname}", "authMode": "public", "deployMode": "prod", "_children": [ /* screens */ ] },
+  "appConfig": { "type": "app", "name": "{appname}", "authMode": "public", "_children": [ /* screens */ ] },
   "objectTypes": { "type": "folder", "name": "", "_children": [ /* objectType nodes */ ] },
   "objectInstances": {},
   "plugins": {}

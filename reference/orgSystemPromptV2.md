@@ -90,7 +90,6 @@ For any other node type (or before writing a non-trivial instance of one of the 
     "type": "app",
     "name": "myApp",
     "authMode": "public",
-    "deployMode": "dev",
     "_children": [
       { "id": "screen-1", "type": "screen", "name": "home", "label": "Home", ... },
       { "id": "screen-2", "type": "screen", "name": "items", ... },

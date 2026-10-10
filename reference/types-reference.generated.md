@@ -693,12 +693,6 @@ interface IterationOptions {
 type AppOptions = CommonOptions & DataOptions & {
   type: "app";
   /**
-   * `dev`: All data sources will be treated as "embedded"
-   * `prod`: "storage" and "realtime" data sources will be enabled
-   * Controls which data sources are live. In dev, every data block behaves as embedded so you can prototype without provisioning storage; in prod, storage and realtime bindings connect to Firebase.
-   */
-  deployMode?: "dev" | "prod";
-  /**
    * `public`: Anyone can open the site without signing in
    * `private`: Visitors must sign in before any screen renders
    */

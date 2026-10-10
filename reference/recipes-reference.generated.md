@@ -32,7 +32,6 @@ binds `"source": "storage"`.
     "type": "app",
     "name": "runlog",
     "authMode": "public",
-    "deployMode": "prod",
     "_children": [
       {
         "type": "screen",
@@ -116,7 +115,6 @@ Use `publishData` instead of `updateData` to create a new record.
     "type": "app",
     "name": "visits",
     "authMode": "public",
-    "deployMode": "prod",
     "_children": [
       {
         "type": "screen",
@@ -231,7 +229,6 @@ records.
     "type": "app",
     "name": "wishlist",
     "authMode": "public",
-    "deployMode": "prod",
     "_children": [
       {
         "type": "screen",
@@ -340,7 +337,6 @@ card.
     "type": "app",
     "name": "clubresults",
     "authMode": "public",
-    "deployMode": "prod",
     "_children": [
       {
         "type": "screen",
@@ -444,7 +440,6 @@ nothing lists it.
     "type": "app",
     "name": "visited",
     "authMode": "public",
-    "deployMode": "prod",
     "_children": [
       {
         "type": "screen",

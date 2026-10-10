@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.5.2
+
+- Apps no longer have a dev/prod `deployMode`. Each data block's `source` decides where it reads and writes: `embedded` stays on the device, while `storage` and `realtime` are live. An older app that still carries the setting keeps working, because it's ignored.
+- Realtime and group script calls now always run. Before, they silently did nothing in an app set to `"dev"`.
+- The bundled `og` command and the reference docs are updated with the latest platform changes.
+
 ## 0.5.1
 
 - The bundled `og` command and the realtime-apps reference are updated with the latest platform changes.
