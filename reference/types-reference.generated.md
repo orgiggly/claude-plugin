@@ -1617,6 +1617,14 @@ interface ObjectType {
    * Examples: {"type":"Game","idField":"gameId"}, {"type":"Post","idField":"postId"}
    */
   parent?: ParentRelation;
+  /**
+   * Who may save records of this type. Reading is unaffected: everyone who can open the app can read them. Defaults to anyone.
+   * `anyone`: Anyone using the app can save records of this type. This is the default, and the right choice for forms, submissions and per-visitor records.
+   * `admins`: Only the app's creator and its admins can save records of this type; everyone can still read them. Use it for an owner's public collection, portfolio or results.
+   * An admin is the app's creator or a user listed in its admins. The server checks it on every save the app makes. Until a later release locks direct storage writes, an out-of-date copy of the app or a direct storage write can still get past it, so don't rely on it for anything secret yet. Hiding the matching controls is a separate step: give them a hidden formula on $isOrgAdmin. Guest (demo) apps refuse `admins` outright, because their admin list isn't protected.
+   * Examples: admins
+   */
+  writeAccess?: "anyone" | "admins";
 }
 
 /** One field of an object type. `type` is a builtin (text, number, boolean, temporal, variable, parentRef, image, imageUpload), a declared object type name (a foreign key), or a collection of either: `list<T>` / `map<T>`. Every member is optional in the codec so a half-edited field never drops its object type out of the metamodel; a field the site can render needs at least `name` and `type` (the hand-kept `completeField` refinement in metamodel.ts). */

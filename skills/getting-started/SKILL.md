@@ -206,8 +206,8 @@ Once `develop-app` has published and the user has seen their app live, close the
 loop with the three things they'll want next — short, as a list, not a lecture:
 
 - **Add data** — "your app has a `Session` type but no sessions yet; want to add
-  some?" Another `develop-app` turn handles it, or `og data upload` /
-  `og data consolidate` for a batch they already have in a file.
+  some?" Another `develop-app` turn handles it, or `og data upload` for a
+  batch they already have in a file.
 - **Edit it visually** — `https://orgiggly.com/admin`, pick the app. Changes
   preview live. Anything they change there, `develop-app` will pick up next time
   it fetches.

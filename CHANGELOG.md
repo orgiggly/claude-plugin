@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.6.0
+
+- A record type can be owner-only: set `writeAccess: "admins"` and only the app's creator and its admins can save its records, while everyone can still read them. Use it for a public collection, portfolio or results page that only you should edit.
+- `$isOrgAdmin` tells a formula whether the visitor is the app's creator or an admin, so the app can hide the edit controls from everyone else.
+- Saves from your apps and from `og data upload` now go through Orgiggly's server, which checks who is saving and records it truthfully.
+- `og data consolidate` is gone: a type's records are folded back into one file automatically as they're saved.
+
 ## 0.5.2
 
 - Apps no longer have a dev/prod `deployMode`. Each data block's `source` decides where it reads and writes: `embedded` stays on the device, while `storage` and `realtime` are live. An older app that still carries the setting keeps working, because it's ignored.

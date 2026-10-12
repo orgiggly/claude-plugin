@@ -408,6 +408,24 @@ and functions available.
 Keep it **domain-agnostic** — there are no hardcoded schemas or app templates
 here; everything comes from the request + the schema reference.
 
+### Widget or content template?
+
+A **content template** (`htmlTemplate` on a `content` node, or an `html` plugin)
+is the right tool for markup: cards, lists, tables, badges, simple charts, and
+light interactivity through `actions`. It is re-rendered from data, so keep it
+small.
+
+Pan-and-zoom maps, drawing canvases and games need a **sandboxed widget**: a
+self-contained page the app hosts in a locked-down frame. You can't deploy
+widgets from here yet. When a request needs one, say so plainly, build the rest
+of the app with templates, and offer a simpler visual meanwhile. For example, a
+"countries I've visited" map can be a list or a flag grid, with the interactive
+map to come.
+
+**Don't fake a widget with a huge inline SVG or data blob in a template.** A
+template carrying tens of KB of SVG paths bloats the config, re-renders on every
+data change, and still can't zoom or pan.
+
 ---
 
 ## Step 5 — Validate (loop until clean)
