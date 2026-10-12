@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.6.2
+
+- A live or multiplayer app's rules can now be tested before you publish. Claude writes short scenarios (players join, a move is made, ten minutes pass) and `og sim` runs them through the same rules engine the live app uses, on your machine. A rule that would never fire shows up as a failed check instead of a broken game.
+
 ## 0.6.1
 
 - `og data upload` saves faster: it now reaches Orgiggly's server in Europe, next to where your app's data lives.

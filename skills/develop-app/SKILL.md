@@ -438,6 +438,32 @@ Read the findings. **Fix every `critical` finding and re-run** until validation
 passes with no critical findings (exit 0). Address warnings where they're clearly
 right. Don't publish a config that still has critical findings.
 
+### Step 5b — Test the rules (apps with `app.transitions`)
+
+A live / multiplayer app's rules run on the server, and a draft never runs them,
+so the preview can't show whether a rule fires. A rule whose `condition` is
+subtly wrong validates clean and then **silently never fires**. So whenever the
+config has `app.transitions`, run them through the real engine on your machine
+before every publish:
+
+```bash
+og sim {appname}/config.json {appname}/sim/{scenario}.json
+```
+
+`og sim --help` prints the scenario format: records to start from, then steps
+(`write`, `remove`, `advance` the clock) with the outcomes you expect. Write the
+scenarios yourself, in `{appname}/sim/`, one per thing the rules must do: at
+least one per `onWrite` rule (the move it applies, and one it must refuse) and
+one per timer (`advance` past its deadline). Run a new scenario once with no
+`expect` to see the outcome lines, then add the expectations. Exit 1 means a
+rule didn't do what the scenario says: fix the config (or the scenario, if it
+was wrong) and re-run every scenario. Keep them, since they're how the next
+change proves it broke nothing. Tell the user in one line ("6 rule checks
+pass"); they never need to read the files.
+
+It doesn't cover bot moves, push/SMS or security rules, so mention any of those
+the change touches as something to try on the preview.
+
 ---
 
 ## Step 6 — Publish (as a draft first)

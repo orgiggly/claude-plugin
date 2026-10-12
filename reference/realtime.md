@@ -1,5 +1,7 @@
 > **Written for the Orgiggly monorepo's own development harness.** Paths such as `orgs/…`, `apps/…`, `cloud-functions/…` or `.claude/…` point into that repository, which you don't have: read them as context, not as files to open. The authoring rules themselves apply to your app too.
 
+> **Testing rules:** wherever this says to test a rule with `createTransitionSim` in an org pack (`tests/`, `test:orgs`), you use `og sim <config.json> <scenario.json>` instead: the same engine, driven by a JSON scenario of writes, removes and clock advances with the outcomes you expect. `og sim --help` prints the format.
+
 # Realtime & Multiplayer Orgs — Authoring Transition Rules
 
 **The on-demand reference for org config authors building a realtime or
