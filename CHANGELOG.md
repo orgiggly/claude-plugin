@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.6.1
+
+- `og data upload` saves faster: it now reaches Orgiggly's server in Europe, next to where your app's data lives.
+
 ## 0.6.0
 
 - A record type can be owner-only: set `writeAccess: "admins"` and only the app's creator and its admins can save its records, while everyone can still read them. Use it for a public collection, portfolio or results page that only you should edit.
