@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Widget harness</title>
+<!--
+  Local review harness for a sandboxed widget. Put this file, the widget's
+  index.html and widget-bridge.js in one folder, serve the folder
+  (`npx --yes serve .` or `python3 -m http.server`; not file://) and open
+  harness.html. Each scenario renders at three widths, framed exactly as the
+  app frames it (sandbox="allow-scripts"), and every message the widget sends
+  is logged on the right.
+
+  Grow it per widget: add the scenarios that break layout, one worst case
+  with everything on at once, and (when tuning) controls that re-send `init`.
+-->
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; display: flex; height: 100vh; }
+  main { flex: 1; overflow: auto; padding: 12px; }
+  aside { width: 320px; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+  header { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  h2 { font-size: 14px; margin: 16px 0 6px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+  .cell { font-size: 11px; color: #666; }
+  iframe { display: block; border: 1px dashed #bbb; background: #fff; height: 120px; }
+  #log { flex: 1; overflow: auto; font: 11px ui-monospace, monospace; padding: 8px; margin: 0; white-space: pre-wrap; }
+  .flag { padding: 2px 8px; border-radius: 10px; background: #fde68a; font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <button id="reload">Reload widget</button>
+    <button id="reinit">Re-send init</button>
+    <span id="motion"></span>
+  </header>
+  <div id="scenarios"></div>
+</main>
+<aside><pre id="log"></pre></aside>
+
+<script>
+  const WIDGET = "index.html";
+  const WIDTHS = [330, 414, 900];
+  // Each scenario is one set of params, exactly what the app would send.
+  const SCENARIOS = [
+    { label: "Typical", params: { name: "Ada", start: 3 } },
+    { label: "Empty", params: {} },
+    { label: "Long text", params: { name: "A name long enough to wrap onto a second line", start: 999999 } },
+  ];
+
+  const logEl = document.getElementById("log");
+  const log = (who, text) => {
+    logEl.textContent = `${new Date().toLocaleTimeString()} ${who}: ${text}\n` + logEl.textContent;
+  };
+
+  // The OS reduced-motion setting: a correct widget won't animate with it on,
+  // which looks like a bug unless you know it's set.
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.getElementById("motion").innerHTML = '<span class="flag">reduced motion is ON</span>';
+  }
+
+  let frames = []; // { iframe, params, who }
+
+  const sendInit = (f) =>
+    f.iframe.contentWindow.postMessage({ kind: "init", params: f.params }, "*");
+
+  const render = () => {
+    const bust = Date.now(); // a same-URL src would serve the old bytes
+    const root = document.getElementById("scenarios");
+    root.innerHTML = "";
+    frames = [];
+    for (const s of SCENARIOS) {
+      const h = document.createElement("h2");
+      h.textContent = s.label;
+      const row = document.createElement("div");
+      row.className = "row";
+      for (const w of WIDTHS) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = `${w}px`;
+        const iframe = document.createElement("iframe");
+        iframe.setAttribute("sandbox", "allow-scripts");
+        iframe.style.width = `${w}px`;
+        iframe.src = `${WIDGET}?v=${bust}`;
+        cell.appendChild(iframe);
+        row.appendChild(cell);
+        frames.push({ iframe, params: s.params, who: `${s.label}@${w}` });
+      }
+      root.append(h, row);
+    }
+  };
+
+  window.addEventListener("message", (event) => {
+    const f = frames.find((x) => x.iframe.contentWindow === event.source);
+    const msg = event.data;
+    if (!f || !msg || typeof msg !== "object") return;
+    switch (msg.kind) {
+      case "ready":
+        sendInit(f);
+        break;
+      case "resize":
+        f.iframe.style.height = `${msg.height}px`;
+        break;
+      case "value":
+        log(f.who, `value ${JSON.stringify(msg.value)}`);
+        break;
+      case "action":
+        log(f.who, `action ${msg.name} ${JSON.stringify(msg.params ?? {})}`);
+        break;
+      case "image":
+        log(f.who, `image (${Math.round(msg.dataUrl.length / 1024)} KB data URL)`);
+        break;
+      case "fullscreen":
+        log(f.who, `fullscreen ${msg.on}`);
+        break;
+      default:
+        log(f.who, `unhandled ${JSON.stringify(msg).slice(0, 200)}`);
+    }
+  });
+
+  document.getElementById("reload").addEventListener("click", render);
+  // The app re-sends init whenever params change; the widget must update in
+  // place without losing state. This re-sends the same params to every frame.
+  document.getElementById("reinit").addEventListener("click", () => frames.forEach(sendInit));
+
+  render();
+</script>
+</body>
+</html>

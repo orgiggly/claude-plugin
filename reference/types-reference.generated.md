@@ -1122,6 +1122,36 @@ type FlowStepBaseOptions = CommonOptions & {
    * Worth setting on a step that can take a while on a slow connection — tell the user what is being saved while they wait.
    */
   runningDescription?: string;
+  /**
+   * Heading shown when the user must sign in before the step can run. Falls back to variant default when unset.
+   * Heading shown to a visitor who has to sign in before this step can run. Falls back to the variant's own default.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * This is the gateway moment for a new visitor, so say what signing in gets them. The Sign In button's label is fixed.
+   * Examples: Your first story is on us, @`Sign in to create your story`
+   */
+  authTitle?: string;
+  /**
+   * Body copy shown below the sign-in heading. Falls back to the platform default when unset.
+   * Body copy under the sign-in heading. Falls back to the platform default, which mentions free credits for new users.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Examples: New users get 200 free credits, enough for about 60 stories.
+   */
+  authDescription?: string;
+  /**
+   * Heading shown when a signed-in user has no credits left. Falls back to variant default when unset.
+   * Heading shown to a signed-in user with no credits left. Falls back to the variant's own default.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Examples: You're out of story credits
+   */
+  noCreditsTitle?: string;
+  /**
+   * Body copy shown below the no-credits heading. Falls back to the platform default when unset.
+   * Body copy under the no-credits heading. Falls back to the platform default.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * The Buy Credits button's label is fixed, so the purchase action always reads the same in every org.
+   * Examples: Top up to keep creating stories.
+   */
+  noCreditsDescription?: string;
 };
 
 /** AI query with structured output. */

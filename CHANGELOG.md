@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.7.0
+
+- Your apps can now have their own **widgets**: interactive pieces such as a map you can pan and zoom, a drawing canvas, a game or a quiz that remembers where you are. Claude writes the widget as a small web page, and `og widget deploy` puts it online in a space only you can change. `og widget delete` removes one.
+- Before deploying, Claude tests the widget on your machine in a preview page that shows it at phone and desktop widths. When you're fine-tuning a layout, it can add sliders to that page and build in the settings you like.
+- `og reference widgets` explains when a widget is worth it and how one talks to your app.
+
 ## 0.6.2
 
 - A live or multiplayer app's rules can now be tested before you publish. Claude writes short scenarios (players join, a move is made, ten minutes pass) and `og sim` runs them through the same rules engine the live app uses, on your machine. A rule that would never fire shows up as a failed check instead of a broken game.

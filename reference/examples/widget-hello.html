@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { margin: 0; padding: 12px; font-family: system-ui, sans-serif; }
+  .card { padding: 16px 20px; border: 1px solid #e0e0e0; border-radius: 10px; background: #fafafa; }
+  .count { font-size: 32px; font-weight: 700; margin: 8px 0; }
+  button { margin-right: 8px; padding: 8px 14px; border: 1px solid #c0c0c0; border-radius: 8px; background: #fff; font-size: 14px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div id="greeting">Hello!</div>
+  <div class="count" id="count">0</div>
+  <button id="tap">Tap</button>
+  <button id="save">Save count</button>
+  <button id="done">Done</button>
+</div>
+
+<!-- Loads the bridge while you test locally; `og widget deploy` inlines it. -->
+<script src="widget-bridge.js"></script>
+<script>
+  // Build and wire everything at module load: `init` may arrive at any time,
+  // and arrives AGAIN whenever the app's params change.
+  const greeting = document.getElementById("greeting");
+  const countEl = document.getElementById("count");
+  let count = 0; // widget state lives in memory: no localStorage in the sandbox
+
+  const show = () => { countEl.textContent = String(count); };
+
+  // Params arrive here, first after `ready` and then on every change.
+  // Re-render from them; don't reset state the user built up.
+  const channel = OrgigglyWidget.connectWidget((params) => {
+    greeting.textContent = `Hello, ${params.name ?? "world"}!`;
+    if (typeof params.start === "number" && count === 0) {
+      count = params.start;
+      show();
+    }
+  });
+
+  document.getElementById("tap").addEventListener("click", () => {
+    count += 1;
+    show();
+  });
+
+  // A value back: stored as this widget node's value, read in the app as
+  // `@<the widget node's name>`.
+  document.getElementById("save").addEventListener("click", () => {
+    channel.postValue({ count });
+  });
+
+  // An app action: runs the script the widget node declares under
+  // `actions.finished`, with the params that action lists.
+  document.getElementById("done").addEventListener("click", () => {
+    channel.runAction("finished", { count });
+  });
+
+  show();
+</script>
+</body>
+</html>

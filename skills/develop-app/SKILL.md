@@ -415,16 +415,71 @@ is the right tool for markup: cards, lists, tables, badges, simple charts, and
 light interactivity through `actions`. It is re-rendered from data, so keep it
 small.
 
-Pan-and-zoom maps, drawing canvases and games need a **sandboxed widget**: a
-self-contained page the app hosts in a locked-down frame. You can't deploy
-widgets from here yet. When a request needs one, say so plainly, build the rest
-of the app with templates, and offer a simpler visual meanwhile. For example, a
-"countries I've visited" map can be a list or a flag grid, with the interactive
-map to come.
+Reach for a **sandboxed widget** (a page you write and deploy, which the app
+shows in a locked-down frame) when the thing needs:
 
-**Don't fake a widget with a huge inline SVG or data blob in a template.** A
-template carrying tens of KB of SVG paths bloats the config, re-renders on every
-data change, and still can't zoom or pan.
+- **state across interactions**: a game in progress, a drawing, a half-done quiz;
+- **gestures**: pan, zoom, pinch, drag, as on a map;
+- **a canvas, WebGL or animation** driven by script;
+- **to update in place** when the data changes, without losing that state;
+- **to send something back**: a value the app stores, or an app action it runs.
+
+A widget costs a deploy and a sandbox, so don't use one for plain markup. And
+**don't fake one with a huge inline SVG or data blob in a template**: tens of KB
+of SVG paths bloat the config, re-render on every data change, and still can't
+zoom or pan.
+
+### Building a widget
+
+Read `og reference widgets` first: the bridge API, the plugin block, and the rules
+that bite (build the page at load, the params callback fires again on every
+change, no `localStorage`). Then:
+
+1. **Write the page** at `{appname}/widgets/{name}/index.html`. `{name}` is
+   lower-case letters and digits, starting with a letter (no `-`). Load the
+   bridge with exactly `<script src="widget-bridge.js"></script>`. Start from
+   the plugin's `reference/examples/widget-hello.html`; the plugin's
+   `reference/` folder is two levels up from this skill's base directory.
+2. **Set up the local loop.** Copy `reference/widget-bridge.js` and
+   `reference/examples/widget-harness.html` into the widget's folder, then serve
+   it (`npx --yes serve .` or `python3 -m http.server` from that folder; not
+   `file://`) and open `widget-harness.html`. It frames the page exactly as the
+   app does, at three widths, and logs everything the widget sends. **Review
+   here, not in the deployed app**, which shows one data state behind a cache.
+3. **Build the harness with the user.** The starter has three scenarios; grow it
+   for this widget, the way the Orgiggly team does for its own:
+   - **Curated scenarios** for the shapes that break layout (empty, one item,
+     very many, very long text), plus **one worst case with everything on at
+     once**. A deliberate all-at-once cell catches overlaps no real record shows.
+   - **A tuning panel** when the user is fine-tuning positions or sizes: sliders
+     for the layout knobs that re-send `init` with a `layout` param so the widget
+     redraws in place, drag-to-nudge where it helps, and a **Copy settings**
+     button. The user pastes that line back to you and you bake the values in as
+     the widget's defaults.
+   - **The reduced-motion trap:** the harness shows when the OS setting is on. A
+     correct widget then refuses to animate, which looks like a bug.
+4. **Deploy it:**
+
+   ```bash
+   og widget deploy {name} --file "$PWD/{appname}/widgets/{name}/index.html"
+   ```
+
+   It inlines the bridge, checks the page (name, under 2 MB, an `<html>` page),
+   uploads it to the user's own widget folder, and prints a plugin block with
+   their uid as `widgetOwner`. It needs an enrolled account (`og whoami`).
+5. **Wire it into the config:** paste the plugin block into `plugins`, add a
+   `parameters` entry for each param the page reads, put a node of that `type`
+   on a screen, declare any `actions` the page calls with `runAction`, and set
+   the top-level `"minClientVersion": 5`. Validation (Step 5) checks all of it.
+
+**A deploy is live at once; there is no draft.** Every app that names the widget
+picks it up on its next reload. For a widget a **live** app already uses, deploy
+the change under a new name (`{name}2`) and point the draft at it, so the app
+switches when the draft is promoted. To remove a widget, take it out of the
+config first, then `og widget delete {name}`.
+
+Commit the widget's folder with the rest of the app, and note its name in the
+app's `CLAUDE.md`.
 
 ---
 
