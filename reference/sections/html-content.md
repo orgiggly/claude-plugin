@@ -24,7 +24,7 @@ the closing gate warns about it.
 
 ### Reactive Templates
 
-Templates are re-rendered whenever values change. The rendering engine uses **DOM morphing** — only changed parts of the DOM are patched, preserving input focus, values, and cursor position. This means you can safely use `${value}` and other computed values in display elements alongside input elements.
+Templates are re-rendered whenever values change. The rendering engine uses **DOM morphing** — only changed parts of the DOM are patched, preserving input focus, values, and cursor position. This means you can safely interpolate input and computed values in display elements alongside input elements.
 
 **Reactive patterns:**
 
@@ -107,22 +107,24 @@ An action's `script` runs the same `;`-separated script language as a `flowStep:
 
 #### Holding state in a content node
 
-A content node can hold its own value — the org-author's `useState`. Give it a `compute` for the initial value and have an action write to it with the `setValue()` host function:
+A content node can hold its own value — the org-author's `useState`. Give it a `compute` for the initial value and have an action write to it with the `setValue()` host function. **Read the value back by the node's own name**, in its template and in its scripts alike. There is no `value` variable: a bare `value` is undefined, so `value.index` renders `NaN` and `setValue(value…)` writes garbage.
 
 ```json
 {
+  "type": "content",
+  "name": "tagFilter",
   "compute": "@[]",
-  "htmlTemplate": "@`<button data-action=\"toggle\" data-param-tag=\"${it}\" style=\"border: none; font: inherit; cursor: pointer;\">${it}</button>`",
+  "htmlTemplate": "@`<div>${join(map(uniq($data.Recipe, 'tag'), (t) => `<button data-action=\"toggle\" data-param-tag=\"${t}\" style=\"border: none; font: inherit; cursor: pointer; font-weight: ${tagFilter.includes(t) ? 700 : 400};\">${t}</button>`), '')}</div>`",
   "actions": {
     "toggle": {
       "params": ["tag"],
-      "script": "setValue(value.includes($params.tag) ? value.filter((x) => x != $params.tag) : [...value, $params.tag])"
+      "script": "setValue(tagFilter.includes($params.tag) ? tagFilter.filter((x) => x != $params.tag) : [...tagFilter, $params.tag])"
     }
   }
 }
 ```
 
-`.includes()` tests membership, `.filter()` removes, `[...arr, x]` adds. Combine with `$data` and `uniq()` for a filter UI: render a button per unique value, then reference this node's value from another node's `whereClause`.
+`.includes()` tests membership, `.filter()` removes, `[...arr, x]` adds. Another node's `whereClause` reads the same name (`length(tagFilter) == 0 || tagFilter.includes(this.tag)`). An object works the same way for a multi-step widget such as a quiz: `"compute": "@({index: 0, score: 0})"`, then `${quiz.index}` in the template and `setValue({index: quiz.index + 1, score: quiz.score})` in an action, where `quiz` is the node's name.
 
 #### Writing several sibling fields at once
 
@@ -145,9 +147,25 @@ One `setValues` call is one state update; N separate `setAppValue` calls would r
 
 Use `map()` + `join()` to render arrays inline. Higher-order functions use `it` for the current item and `i` for the index. Arrow function syntax is also supported — parameter names become aliases for `it`/`i`:
 
-`@` `` `<div>${options.split('|').map(`<label>${it}</label>`).join('')}</div>` ``
+`@` `` `<div>${tags.split(',').map(`<label>${it}</label>`).join('')}</div>` ``
 
-`@` `` `<div>${options.split('|').map((opt) => `<label>${opt}</label>`).join('')}</div>` ``
+`@` `` `<div>${tags.split(',').map((tag) => `<label>${tag}</label>`).join('')}</div>` ``
+
+### Boards and Grids
+
+When the subject is something people look at (a chessboard, a game grid, a seat map), draw it. Store the layout as one text field: rows separated by `/`, one character per cell, `.` for empty, e.g. `"rnbqkbnr/pppppppp/......../......../......../......../PPPPPPPP/RNBQKBNR"`. Render it with nested `map`s; the index arguments give the row and column:
+
+```json
+{
+  "type": "variable",
+  "name": "pieceGlyphs",
+  "compute": "@({k: '♚︎', q: '♛︎', r: '♜︎', b: '♝︎', n: '♞︎', p: '♟︎'})"
+}
+```
+
+`@` `` `<div style="display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); max-width: 320px; aspect-ratio: 1;">${join(map(split(board, '/'), (rank, r) => join(map(split(rank, ''), (sq, f) => `<div style="display: flex; align-items: center; justify-content: center; font-size: 28px; background: ${(r + f) % 2 == 0 ? '#f0d9b5' : '#b58863'};"><span style="color: ${sq == sq.toLowerCase() ? '#1a1a1a' : '#ffffff'}; text-shadow: 0 0 2px #000;">${pieceGlyphs[sq.toLowerCase()] ?? ''}</span></div>`), '')), '')}</div>` ``
+
+Use the solid chess symbols for both sides and colour them by the letter's case (upper case is white): fonts disagree about the outline "white" symbols. Give the grid `grid-template-rows` as well, or empty rows collapse. A lesson, puzzle or opening record then carries a `board` field, and its card or detail screen draws it. The same shape draws noughts and crosses, a sudoku or a seat map.
 
 ### Video Embeds
 

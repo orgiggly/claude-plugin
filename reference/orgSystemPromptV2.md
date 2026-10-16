@@ -144,8 +144,11 @@ See detailed reference in sections below. Define reusable HTML components in `pl
 5. **dataType must match** an objectType name exactly
 6. **Forms need formConfig** with matching dataType
 7. **Use dev mode + embedded source** for all generated orgs
-8. **Create 2-4 sample instances** per object type in objectInstances
+8. **Create 2-4 sample instances** per object type in objectInstances — every type, including the one a quiz, game or dashboard reads through `$data`. A quiz with no questions opens on "0 of 0".
 9. **Use the pre-built plugins** (CardLink, ItemCard) instead of writing all HTML from scratch
+10. **Every screen works on first load.** Walk each screen with only your sample data: no empty list, no "0 / 0", no `NaN`, no blank card. Never ship a screen you know is empty. Seed it or leave it out.
+11. **Draw a visual subject.** If the app is about something people look at (a chessboard, a game grid, a timetable, a chord chart), render it in an htmlTemplate (see "Boards and Grids") instead of describing it in prose.
+12. **Say what is missing.** If anything is simplified or incomplete, say so in `orgSummary`, and record it with `note_assumption` when that tool is offered (the user sees those notes, not your prose).
 
 {{SECTIONS}}
 

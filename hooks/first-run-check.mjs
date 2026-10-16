@@ -2,7 +2,7 @@
 // SessionStart hook for the Orgiggly plugin (#1318, probe widened in #1353,
 // what's-new after an update #2500).
 //
-// Two independent jobs, composed into one JSON output:
+// Independent jobs, the first three composed into one JSON output:
 //   1. Greeting (additionalContext, read by Claude) — below.
 //   2. What's new (systemMessage, shown to the USER) — when plugin.json's
 //      version is newer than the one recorded in
@@ -17,6 +17,11 @@
 //      than the installed one, say how to update. Offline or any error is
 //      silent. ORGIGGLY_PLUGIN_UPDATE_CHECK=0 turns it off;
 //      ORGIGGLY_PLUGIN_LATEST_URL points it elsewhere (the tests use data:).
+//   4. Session log (#2592, no output) — append this session's
+//      `transcript_path` (from the stdin payload) to
+//      ~/.orgiggly/plugin-sessions.jsonl, so /orgiggly:feedback can find every
+//      session of a test run, not just the current one. Records the path
+//      only; nothing is read or sent from here.
 //
 // Greeting — detect-and-guide only: if the user isn't ready to build an Orgiggly app yet,
 // inject a one-line pointer to /orgiggly. "Not ready" is two cases —
@@ -30,6 +35,7 @@
 // throws — a throwing SessionStart hook would degrade every session start.
 
 import {
+  appendFileSync,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -251,6 +257,88 @@ export const updateNudge = async ({
   }
 };
 
+// --- session log ---------------------------------------------------------------
+
+export const SESSION_LOG = "plugin-sessions.jsonl";
+/** Older lines are dropped once the log passes this many. */
+const MAX_SESSION_LINES = 500;
+
+const sessionLogFile = (home) => join(home, ".orgiggly", SESSION_LOG);
+
+/**
+ * Append `{at, sessionId, transcriptPath, pluginVersion, source}` for this
+ * session. A resume re-fires the hook for the same transcript, so a path
+ * already logged is skipped. Returns whether a line was written. Never throws.
+ */
+export const recordSession = ({ home, payload, pluginVersion, now = Date.now() }) => {
+  try {
+    if (!usableHome(home) || !payload || typeof payload !== "object") return false;
+    const transcriptPath = payload.transcript_path;
+    if (typeof transcriptPath !== "string" || !isAbsolute(transcriptPath)) return false;
+    const file = sessionLogFile(home);
+    const lines = existsSync(file)
+      ? readFileSync(file, "utf-8").split("\n").filter(Boolean)
+      : [];
+    const seen = lines.some((line) => {
+      try {
+        return JSON.parse(line).transcriptPath === transcriptPath;
+      } catch {
+        return false;
+      }
+    });
+    if (seen) return false;
+    const entry = JSON.stringify({
+      at: new Date(now).toISOString(),
+      sessionId: typeof payload.session_id === "string" ? payload.session_id : null,
+      transcriptPath,
+      pluginVersion: typeof pluginVersion === "string" ? pluginVersion : null,
+      source: typeof payload.source === "string" ? payload.source : null,
+    });
+    mkdirSync(dirname(file), { recursive: true });
+    if (lines.length >= MAX_SESSION_LINES) {
+      const kept = lines.slice(lines.length - MAX_SESSION_LINES + 1);
+      writeFileSync(file, `${[...kept, entry].join("\n")}\n`);
+    } else {
+      appendFileSync(file, `${entry}\n`);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/** The hook payload Claude Code writes to stdin, or null. Never throws. */
+const readPayload = () =>
+  new Promise((resolve) => {
+    let raw = "";
+    const done = () => {
+      try {
+        resolve(raw.trim() ? JSON.parse(raw) : null);
+      } catch {
+        resolve(null);
+      }
+    };
+    try {
+      // Claude Code closes stdin after the payload; the timer only guards a
+      // terminal run with nothing piped in.
+      const timer = setTimeout(done, 1000);
+      stdin.setEncoding("utf-8");
+      stdin.on("data", (chunk) => {
+        raw += chunk;
+      });
+      stdin.on("end", () => {
+        clearTimeout(timer);
+        done();
+      });
+      stdin.on("error", () => {
+        clearTimeout(timer);
+        resolve(null);
+      });
+    } catch {
+      resolve(null);
+    }
+  });
+
 const installedVersion = (pluginRoot = PLUGIN_ROOT) => {
   try {
     const manifest = join(pluginRoot, ".claude-plugin", "plugin.json");
@@ -261,17 +349,11 @@ const installedVersion = (pluginRoot = PLUGIN_ROOT) => {
 };
 
 const main = async () => {
-  try {
-    // Drain stdin (the hook payload) so we don't leave the pipe hanging; we
-    // don't need its contents.
-    stdin.resume();
-    stdin.on("data", () => {});
-  } catch {
-    // ignore
-  }
+  const payload = await readPayload();
 
   try {
     const home = homedir();
+    recordSession({ home, payload, pluginVersion: installedVersion() });
     const output = {};
     const news = takeWhatsNew(home);
     const nudge =

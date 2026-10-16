@@ -213,6 +213,9 @@ loop with the three things they'll want next — short, as a list, not a lecture
   it fetches.
 - **Share it** — the public URL `https://orgiggly.com/{name}/{appname}`.
   It's live for anyone with the link.
+- **Tell us how it went** — one line: anything they type starting `note:` is
+  flagged for the Orgiggly team, and `/orgiggly:feedback` sends their thoughts
+  (it shows what it would send and asks first).
 
 Then stop. They have a working app; let them enjoy it.
 

@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.8.0
+
+- New: `/orgiggly:feedback` tells us how your test run went. It asks three quick questions, shows you exactly what it would send (your answers, plus your Orgiggly sessions with home folders, email addresses and keys removed), and sends nothing until you say yes. You can send just your answers instead.
+
 ## 0.7.0
 
 - Your apps can now have their own **widgets**: interactive pieces such as a map you can pan and zoom, a drawing canvas, a game or a quiz that remembers where you are. Claude writes the widget as a small web page, and `og widget deploy` puts it online in a space only you can change. `og widget delete` removes one.

@@ -58,7 +58,9 @@ bin/og-public.mjs        # the self-contained CLI bundle
 reference/*.md           # node-model schema docs `og reference` serves
 commands/orgiggly.md     # /orgiggly → the getting-started skill
 commands/og-setup.md     # legacy /og-setup → same place
-hooks/                   # SessionStart: first-run check, what's new, update nudge
+commands/feedback.md     # /orgiggly:feedback → send test-run feedback (asks first)
+hooks/                   # SessionStart: first-run check, what's new, update nudge,
+                         #   and a log of session transcript paths for /orgiggly:feedback
 CHANGELOG.md             # what changed in each release
 skills/getting-started/  # the on-ramp
 skills/develop-app/      # the build-and-manage skill

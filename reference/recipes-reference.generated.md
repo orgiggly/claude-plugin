@@ -4,11 +4,107 @@
 
 Task-shaped, working config snippets. Each recipe is a complete minimal app that passes `og validate-org`. Copy the parts you need into your own config, renaming types and nodes to fit. `og reference recipes <name>` prints just one.
 
+- `board-diagram` — Draw a board or grid from a position string
 - `dates-and-rounding` — Dates and rounded numbers in templates
 - `edit-record` — Edit a record with inputs, then save it
 - `per-user-vs-shared` — Per-user vs shared data, and reading the current user
 - `sign-in-gate` — Hide controls from signed-out visitors
 - `template-buttons` — Buttons built inside a template formula
+
+<!-- recipe: board-diagram -->
+## `board-diagram` — Draw a board or grid from a position string
+
+When an app is about something people look at, such as a chessboard, a game grid or a
+seating plan, draw it rather than describing it in prose. Store the layout as one text
+field, one row per `/`-separated segment and one character per cell (`.` is empty), and
+build the grid in the template. `split(board, '/')` gives the rows, `split(rank, '')`
+gives the cells, and a nested `map` with an index argument (`(sq, f) => …`) knows which
+row and column it is drawing. That index is how the squares alternate colour:
+`(r + f) % 2`. Set `grid-template-rows` as well as the columns, or an empty row collapses
+and the board stops being square. A `variable` holding a lookup object turns each
+character into what to show (`pieceGlyphs[sq.toLowerCase()] ?? ''`). Every piece uses the
+solid chess symbol, coloured by the letter's case (upper case is white), because fonts
+disagree about how the outline "white" symbols look. The invisible U+FE0E after each
+symbol asks for the text glyph, since iPhones otherwise draw the black pawn as an emoji. The same shape
+draws a noughts-and-crosses board, a sudoku or a theatre's seat map: change the lookup
+and the cell style. The rows are embedded so the recipe renders on its own.
+
+```json
+{
+  "versionId": "v1",
+  "apiVersion": "0.1",
+  "users": {},
+  "appConfig": {
+    "type": "app",
+    "name": "positions",
+    "authMode": "public",
+    "_children": [
+      {
+        "type": "screen",
+        "name": "home",
+        "label": "Positions",
+        "_children": [
+          {
+            "type": "variable",
+            "name": "pieceGlyphs",
+            "compute": "@({k: '♚︎', q: '♛︎', r: '♜︎', b: '♝︎', n: '♞︎', p: '♟︎'})"
+          },
+          {
+            "type": "subsection",
+            "name": "positionList",
+            "isRepeating": true,
+            "data": { "dataType": "Position", "source": "embedded" },
+            "_children": [
+              {
+                "type": "content",
+                "name": "positionCard",
+                "htmlTemplate": "@`<div style=\"padding: 12px 0;\"><div style=\"font-weight: 700; margin-bottom: 8px;\">${title}</div><div style=\"display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; max-width: 320px; aspect-ratio: 1; border: 2px solid #3b2f2f;\">${join(map(split(board, '/'), (rank, r) => join(map(split(rank, ''), (sq, f) => `<div style=\"display: flex; align-items: center; justify-content: center; font-size: 28px; line-height: 1; background: ${(r + f) % 2 == 0 ? '#f0d9b5' : '#b58863'};\"><span style=\"color: ${sq == sq.toLowerCase() ? '#1a1a1a' : '#ffffff'}; text-shadow: 0 0 2px #000, 0 0 1px #000;\">${pieceGlyphs[sq.toLowerCase()] ?? ''}</span></div>`), '')), '')}</div><p style=\"margin: 8px 0 0; color: #555;\">${caption}</p></div>`"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "objectTypes": {
+    "type": "folder",
+    "name": "",
+    "_children": [
+      {
+        "type": "objectType",
+        "name": "Position",
+        "fields": [
+          { "name": "title", "type": "text" },
+          { "name": "board", "type": "text" },
+          { "name": "caption", "type": "text", "variant": "multiline" }
+        ]
+      }
+    ]
+  },
+  "objectInstances": {
+    "type": "folder",
+    "name": "",
+    "_children": [
+      {
+        "id": "Position-1",
+        "type": "Position",
+        "title": "The starting position",
+        "board": "rnbqkbnr/pppppppp/......../......../......../......../PPPPPPPP/RNBQKBNR",
+        "caption": "White moves first. Each side has eight pawns in front of its pieces."
+      },
+      {
+        "id": "Position-2",
+        "type": "Position",
+        "title": "A knight fork",
+        "board": "....k.../.r....../...N..../......../......../......../......../....K...",
+        "caption": "The white knight on d6 attacks the king on e8 and the rook on b7 at once."
+      }
+    ]
+  },
+  "plugins": {}
+}
+```
+<!-- /recipe: board-diagram -->
 
 <!-- recipe: dates-and-rounding -->
 ## `dates-and-rounding` — Dates and rounded numbers in templates
