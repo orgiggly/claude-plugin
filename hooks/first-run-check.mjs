@@ -56,6 +56,16 @@ const cliOnPath = (env) => {
   return dirs.some((dir) => names.some((n) => existsSync(join(dir, n))));
 };
 
+/**
+ * Can Claude run `og` this session? Claude Code puts an enabled plugin's
+ * `bin/` on the Bash tool's PATH (observed 2026-10-18, #2624), so the plugin's
+ * own `bin/og` counts even when the PATH this hook sees doesn't list it. A
+ * cloud session never runs getting-started's symlink step, and greeting it
+ * with "not on your PATH" sent Claude after a step that wasn't needed.
+ */
+export const cliAvailable = (env, pluginRoot = PLUGIN_ROOT) =>
+  cliOnPath(env) || existsSync(join(pluginRoot, "bin", "og"));
+
 // Mirrors `authDir()` in packages/cli/src/services/credentialStore.ts:
 // `<home>/.orgiggly/auth/<projectId>.json`. We look for a credential FILE, not
 // just the directory — `og logout` removes the file and leaves the dir behind,
@@ -66,16 +76,24 @@ const hasStoredCredential = (home) => {
   return readdirSync(dir).some((name) => name.endsWith(".json"));
 };
 
+// A headless machine signs in with `OG_TOKEN` instead of a credential file
+// (#2623). Only the shape is checked here; the CLI itself reports a token that
+// Firebase refuses, which a hook has no way to test.
+const hasEnvToken = (env) => {
+  const raw = env && typeof env === "object" ? env.OG_TOKEN : undefined;
+  return typeof raw === "string" && raw.trim().startsWith("og1.");
+};
+
 /**
  * Should we greet this user with a pointer to /orgiggly?
  *
- * Returns `true` (greet) if `og` is off PATH, or on PATH with no stored
- * credential, or if anything at all goes wrong while checking.
+ * Returns `true` (greet) if `og` isn't available, or is with no stored
+ * credential and no `OG_TOKEN`, or if anything at all goes wrong while checking.
  */
-export const probeShouldGreet = (home, env) => {
+export const probeShouldGreet = (home, env, pluginRoot = PLUGIN_ROOT) => {
   try {
-    if (!cliOnPath(env)) return true;
-    return !hasStoredCredential(home);
+    if (!cliAvailable(env, pluginRoot)) return true;
+    return !hasStoredCredential(home) && !hasEnvToken(env);
   } catch {
     return true; // fail open — greeting a ready user beats stranding a new one
   }
@@ -370,7 +388,7 @@ const main = async () => {
     if (probeShouldGreet(home, processEnv)) {
       output.hookSpecificOutput = {
         hookEventName: "SessionStart",
-        additionalContext: cliOnPath(processEnv)
+        additionalContext: cliAvailable(processEnv)
           ? GREETING.noCredential
           : GREETING.noCli,
       };

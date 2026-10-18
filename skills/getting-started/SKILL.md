@@ -47,41 +47,43 @@ Then go straight to Step 1. Don't wait for a reply.
 
 ---
 
-## Step 1 — Get the `og` CLI working
+## Step 1 — Check the `og` command
 
 ```bash
-node --version        # needs v22 or newer
-command -v og && og --version
+og --version
 ```
 
-- **`og` prints a version** → done, go to Step 2.
-- **Node is older than 22, or missing** → tell them to install Node 22+ and
-  **stop**. Nothing downstream works without it.
-- **`og` not found, *or* found but erroring** (a stale symlink from an older
-  install points at a path that's gone) → (re)link it. The CLI ships *inside this
-  plugin* at `$CLAUDE_PLUGIN_ROOT/bin/og`; there's nothing to download, and
-  `ln -sf` below overwrites a broken link safely.
-
-  Find a writable directory already on their PATH — prefer `~/.local/bin`:
+- **It prints a version** → go to Step 2. This is the normal case: Claude Code
+  puts this plugin's `bin/` on PATH, so `og` works with nothing to install.
+- **`og: command not found`** → Claude Code is older than that. Try the
+  plugin's own copy:
 
   ```bash
-  case ":$PATH:" in *":$HOME/.local/bin:"*) echo on-path;; *) echo not-on-path;; esac
+  "$CLAUDE_PLUGIN_ROOT/bin/og" --version
   ```
 
-  If one exists, symlink and verify:
+  - **It prints a version, in a cloud session** (`CLAUDE_CODE_REMOTE` is
+    `true`) → write every `og` command this session as
+    `"$CLAUDE_PLUGIN_ROOT/bin/og"`. Don't symlink or touch shell files there;
+    the machine is fresh every session.
+  - **It prints a version, on their own machine** → (re)link it, so `og` works
+    in their terminal too. Prefer `~/.local/bin`:
 
-  ```bash
-  ln -sf "$CLAUDE_PLUGIN_ROOT/bin/og" ~/.local/bin/og && og --version
-  ```
+    ```bash
+    case ":$PATH:" in *":$HOME/.local/bin:"*) echo on-path;; *) echo not-on-path;; esac
+    mkdir -p ~/.local/bin && ln -sf "$CLAUDE_PLUGIN_ROOT/bin/og" ~/.local/bin/og
+    ```
 
-  **Never edit their shell rc files yourself.** If no suitable directory is on
-  PATH, create the symlink into `~/.local/bin` anyway (`mkdir -p` first) so it
-  works the moment PATH picks it up, then hand them the one line to add and
-  **stop**:
+    If `~/.local/bin` is on PATH, `og --version` now works; go on. If it isn't,
+    **never edit their shell rc files yourself**. Hand them the one line and
+    carry on with the full path for now:
 
-  > Add this to your shell profile, open a new terminal, and type `/orgiggly`
-  > again:
-  > `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`
+    > Add this to your shell profile so `og` works in new terminals:
+    > `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`
+
+  - **It fails with a Node error** (Node missing or older than 22) → tell them
+    to install Node 22 or newer and **stop**. Nothing downstream works without
+    it.
 
 ---
 
@@ -93,6 +95,19 @@ og whoami
 
 This one command answers all three of the questions below — read its output
 before doing anything else.
+
+- **"Not signed in", in a cloud session** (`CLAUDE_CODE_REMOTE` is `true`) →
+  there's no browser to sign in with, so it's a token instead. Say:
+
+  > Open **orgiggly.com/connect/cli**, sign in with Google, and copy the token.
+  > Add it to this cloud environment's environment variables as
+  > `OG_TOKEN=<the token>`, so every future session starts signed in. Treat it
+  > like a password.
+
+  Environment variables only reach *new* sessions, so for this one offer to
+  store it now: if they paste the token, run `og login --token <token>`. Then
+  carry on. If they'd rather start a new session, **stop** and tell them to type
+  `/orgiggly` there.
 
 - **"Not signed in"** (exit 1) → say in one line that Orgiggly runs entirely as
   *them* — their own Google account, their own apps — then **run it yourself**:

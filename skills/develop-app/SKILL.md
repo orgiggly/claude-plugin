@@ -85,6 +85,7 @@ how the Orgiggly team develops its own apps. **Advise it; don't force it.**
     spec.md         # what the app is for: its screens, data types (optional)
     scripts/        # anything that GENERATES config.json or its data (gen.mjs, fetch.py)
     data/           # fetched or hand-kept inputs those scripts read
+    tests/          # checks Claude writes and runs with `og test` — the user never reads them
   ```
 
 - **`{appname}/CLAUDE.md` is the app's memory, and this skill keeps it.** Claude
@@ -233,6 +234,7 @@ together. Pull the one that matches the task in hand:
 | debug a node that validates but misbehaves | `og reference pitfalls` |
 | build a multi-step flow (wizard, scripted steps) | `og reference flows` |
 | build a live / multiplayer app | `og reference realtime` |
+| write or run the app's checks (`tests/`) | `og reference testing` |
 | read `og outline` output | `og reference outline` |
 | meet an Orgiggly term you don't know | `og reference glossary` |
 
@@ -519,6 +521,38 @@ pass"); they never need to read the files.
 It doesn't cover bot moves, push/SMS or security rules, so mention any of those
 the change touches as something to try on the preview.
 
+### Step 5c — Test the app's logic
+
+The draft preview shows the app; it can't tell you whether a button saves the
+right record or a total adds up. The app's **test pack** can: small checks in
+`{appname}/tests/*.test.mjs` that drive the real `config.json` through the real
+app engine on your machine — set an input, run a button's script against stub
+writers, assert what it would have saved. Nothing to install; Node's own runner.
+
+```bash
+og test {appname}
+```
+
+Read `og reference testing` once before writing the first check; it has the
+harness, the fixture rules and a complete example. Write the pack as you build:
+
+- **a check per screen that writes** (saves, updates, deletes): run its real
+  script and assert the exact record shape;
+- **a check per computed value the user named** (a total, a count, a winner);
+- **a check per sign-in or phase gate** (`isVisible` signed out and signed in);
+- **for a change to logic that already works**, write the check first, watch it
+  fail against the current config, then change the config until it passes.
+
+Run `og test` before every draft publish and again before `promote-draft`. Exit
+1 means a check failed: fix the config (or the check, if it encoded the wrong
+expectation — say so). Tell the user the result in one line ("12 checks pass");
+they never need to read the files. Keep the pack in the app folder with the
+config — it's how the next change proves it broke nothing.
+
+Don't write checks for looks (that's the preview), for server rules (that's
+`og sim`), or for the platform's own saving — a pack proves the app *asked*
+for the right write.
+
 ---
 
 ## Step 6 — Publish (as a draft first)
@@ -551,8 +585,9 @@ the user, and say plainly what it does and doesn't cover:
 - **Checked:** the draft renders signed-out, and the config works with the saved
   data.
 - **Not checked:** anything that needs someone signed in — saving, per-user
-  data, buttons only signed-in people see. Ask the user to try those once, by
-  name ("sign in on the preview and mark a country").
+  data, buttons only signed-in people see. The test pack (Step 5c) covers what
+  those would save; ask the user to try them once on the preview, by name
+  ("sign in on the preview and mark a country").
 
 If it says the browser check was skipped (no Playwright), the render wasn't
 checked — say so. If your Claude Code has the Playwright MCP tools, you can open
@@ -568,7 +603,8 @@ not thread `?preview=draft` and would silently show the published version.
 Identity-gated content ("your data" panels) needs the user signed in on that page
 too — the preview param controls which config loads; sign-in controls identity.
 
-When the user is happy with the draft, promote it to live:
+When the user is happy with the draft, run `og test {appname}` once more (Step
+5c), then promote it to live:
 
 ```bash
 og promote-draft {username}/{appname}
@@ -595,6 +631,10 @@ git add {appname}/config.json && git commit -m "chore({appname}): sync config af
 
 If the working directory isn't a git repo, skip this — the updated
 `{appname}/config.json` is still on disk in the app folder.
+
+**In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`), `git push` once these
+commits and the memory update below are in: the machine is thrown away when the
+session ends, and only what's pushed survives.
 
 ### Update the app's memory
 

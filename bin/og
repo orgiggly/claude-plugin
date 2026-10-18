@@ -16,12 +16,21 @@ const bundle = join(dirname(fileURLToPath(import.meta.url)), "og-public.mjs");
 // by faye-websocket (the Firebase SDK's Node RTDB transport) the moment a
 // command opens the database — not our code. Targeted, so every other warning
 // still shows; not NODE_OPTIONS, which would leak into child processes. (#2450)
+// Behind an egress proxy (a sandbox, a cloud session) Node's fetch, which the
+// Firebase Auth, Storage and Functions SDKs use, ignores HTTPS_PROXY unless
+// NODE_USE_ENV_PROXY is set (Node 22.21+/24.5+; older Node ignores the flag).
+// The database's websocket reads HTTPS_PROXY itself. (#2624)
+const proxied = Boolean(process.env.HTTPS_PROXY || process.env.https_proxy);
 const res = spawnSync(
   process.execPath,
   ["--disable-warning=DEP0169", bundle, ...process.argv.slice(2)],
   {
     stdio: "inherit",
-    env: { ...process.env, OG_CLI_NAME: "og" },
+    env: {
+      ...(proxied && { NODE_USE_ENV_PROXY: "1" }),
+      ...process.env,
+      OG_CLI_NAME: "og",
+    },
   },
 );
 process.exit(res.status ?? 1);

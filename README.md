@@ -14,10 +14,10 @@ Inside Claude Code:
 /orgiggly
 ```
 
-`/orgiggly` runs the on-ramp: it checks Node (≥ 22), puts the `og` command on
-your PATH, signs you in, picks your name on Orgiggly, and hands off to building your
-first app — stopping at whichever step you've already done. Safe to re-run at
-any point; it picks up where you left off.
+`/orgiggly` runs the on-ramp: it checks the `og` command works (it ships inside
+the plugin and needs Node 22 or newer), signs you in, picks your name on
+Orgiggly, and hands off to building your first app — stopping at whichever step
+you've already done. Safe to re-run at any point; it picks up where you left off.
 
 To update later: `/plugin marketplace update orgiggly`, then
 `/plugin update orgiggly@orgiggly`, and restart Claude Code. The plugin checks
@@ -27,6 +27,54 @@ shows what's new ([full history](CHANGELOG.md)).
 **No invite code?** Email dave@orgiggly.com with a line about what you want to
 build. You don't need one to get started — the code records how you found us,
 it doesn't unlock anything.
+
+## Claude Code cloud environment
+
+You can also use the plugin in a [Claude Code cloud
+environment](https://code.claude.com/docs/en/cloud-environments), with nothing
+installed on your own computer. Each session starts from a GitHub repo, and that
+repo is where your app's folder lives between sessions.
+
+1. **Get a sign-in token.** Open
+   [orgiggly.com/connect/cli](https://www.orgiggly.com/connect/cli), sign in
+   with Google and copy the token. (Already signed in on a computer? `og token`
+   prints the same thing.) Treat it like a password: anyone holding it can act
+   as you on Orgiggly.
+2. **Create the environment** in Claude Code on the web, and set:
+   - **Setup script:**
+
+     ```bash
+     claude plugin marketplace add orgiggly/claude-plugin
+     claude plugin install orgiggly@orgiggly
+     ```
+
+   - **Environment variables:** `OG_TOKEN=<your token>`. Anyone who can use the
+     environment can read its variables, so keep it to yourself.
+   - **Network access:** Custom, allowing at least these domains:
+
+     | Domain | Used for |
+     |---|---|
+     | `github.com` | installing the plugin (setup script) |
+     | `orgiggly.com`, `www.orgiggly.com` | the site and your apps |
+     | `orgiggly-dev-default-rtdb.europe-west1.firebasedatabase.app` | the database |
+     | `firebasestorage.googleapis.com` | app configs, data, widgets |
+     | `identitytoolkit.googleapis.com`, `securetoken.googleapis.com` | signing in with your token |
+     | `us-central1-orgiggly-dev.cloudfunctions.net`, `europe-west1-orgiggly-dev.cloudfunctions.net` | creating apps, invite codes, saving data |
+
+     Optional: `raw.githubusercontent.com` (the plugin's "update available"
+     check), and `generativelanguage.googleapis.com` or `api.replicate.com` if
+     you generate logos with your own Gemini or Replicate key.
+
+3. **Start a session on your repo and type `/orgiggly`.** It's the same on-ramp
+   as on your own machine, minus the install steps.
+
+**Keep each app's folder in the repo.** The cloud machine is thrown away when the
+session ends; only what's pushed to the branch survives. In a cloud session
+Claude commits and pushes after each publish, so `config.json`, the app's
+`CLAUDE.md`, its widgets and its `tests/` are there next time.
+
+**If a domain is missing**, `og` stops with one line naming it ("Can't reach …")
+rather than hanging: add that domain to the environment and try again.
 
 ## How it works
 

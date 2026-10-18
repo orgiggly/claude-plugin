@@ -13,6 +13,9 @@ Change it with the `develop-app` skill (`og` CLI, signed in as {username}).
 {if scripts/ builds config.json or its data: the exact command, run from this
 folder, and what it reads. Otherwise: "Hand-edited — edit config.json."}
 
+## Tests
+`og test {appname}` — {N} checks: {one line on what they cover}. Run before every publish.
+
 ## Gotchas
 - {anything the next session must know before changing it}
 

@@ -3,6 +3,20 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.11.0
+
+- **Use Orgiggly from a Claude Code cloud environment**, with nothing installed on your own computer. The README walks through it: a two-line setup script, your sign-in token from orgiggly.com/connect/cli as `OG_TOKEN`, and the list of domains to allow. In a cloud session Claude pushes your app's folder after each publish, so your work is still there next session.
+- If `og` can't reach one of the hosts it needs (a sandbox or company network blocking it), it now stops within seconds and names the domain to allow, instead of hanging or printing an error dump.
+- `/orgiggly` no longer asks you to set up the `og` command: Claude Code makes it available as soon as the plugin is installed.
+
+## 0.10.0
+
+- You can now use Orgiggly where no browser can open, such as a Claude Code cloud environment or a server over SSH. Get a token from orgiggly.com/connect/cli (or run `og token` where you're already signed in) and set it as the `OG_TOKEN` environment variable: every session there starts signed in. `og login --token` stores one instead. Treat the token like a password.
+
+## 0.9.0
+
+- Claude can now **test your app's logic** before publishing. It writes small checks next to your app (does the Add button save the right record? does the total add up? is the edit button hidden when you're signed out?) and runs them with `og test` on your machine, in about a second, with nothing to install. You get one line — "12 checks pass" — and the checks stay with the app, so the next change proves it broke nothing.
+
 ## 0.8.0
 
 - New: `/orgiggly:feedback` tells us how your test run went. It asks three quick questions, shows you exactly what it would send (your answers, plus your Orgiggly sessions with home folders, email addresses and keys removed), and sends nothing until you say yes. You can send just your answers instead.
