@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.11.1
+
+- The README's cloud environment section now links to a step-by-step guide with copy buttons, and warns that on a Team or Enterprise Claude plan an Owner must turn on the GitHub connector before cloud sessions work.
+
 ## 0.11.0
 
 - **Use Orgiggly from a Claude Code cloud environment**, with nothing installed on your own computer. The README walks through it: a two-line setup script, your sign-in token from orgiggly.com/connect/cli as `OG_TOKEN`, and the list of domains to allow. In a cloud session Claude pushes your app's folder after each publish, so your work is still there next session.

@@ -33,7 +33,14 @@ it doesn't unlock anything.
 You can also use the plugin in a [Claude Code cloud
 environment](https://code.claude.com/docs/en/cloud-environments), with nothing
 installed on your own computer. Each session starts from a GitHub repo, and that
-repo is where your app's folder lives between sessions.
+repo is where your app's folder lives between sessions. A step-by-step version
+with copy buttons is at
+[orgiggly.com/guides/plugin-cloud-environment.html](https://www.orgiggly.com/guides/plugin-cloud-environment.html).
+
+On a Team or Enterprise Claude plan, an Owner of your Claude organization must
+first turn on the GitHub connector (Organization settings → Connectors). Until
+then claude.ai/code stops at "GitHub access is required for Claude Code cloud
+sessions". A personal Pro or Max plan doesn't need this.
 
 1. **Get a sign-in token.** Open
    [orgiggly.com/connect/cli](https://www.orgiggly.com/connect/cli), sign in
