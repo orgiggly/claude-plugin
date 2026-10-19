@@ -20,10 +20,17 @@ const bundle = join(dirname(fileURLToPath(import.meta.url)), "og-public.mjs");
 // Firebase Auth, Storage and Functions SDKs use, ignores HTTPS_PROXY unless
 // NODE_USE_ENV_PROXY is set (Node 22.21+/24.5+; older Node ignores the flag).
 // The database's websocket reads HTTPS_PROXY itself. (#2624)
+// The flag makes Node warn "EnvHttpProxyAgent is experimental" (UNDICI-EHPA)
+// at the top of every command's output, so that warning is silenced with it.
 const proxied = Boolean(process.env.HTTPS_PROXY || process.env.https_proxy);
 const res = spawnSync(
   process.execPath,
-  ["--disable-warning=DEP0169", bundle, ...process.argv.slice(2)],
+  [
+    "--disable-warning=DEP0169",
+    ...(proxied ? ["--disable-warning=UNDICI-EHPA"] : []),
+    bundle,
+    ...process.argv.slice(2),
+  ],
   {
     stdio: "inherit",
     env: {

@@ -4,7 +4,7 @@ This is our shared vocabulary — the small set of words that have specific mean
 
 The idea comes from Eric Evans' *Domain-Driven Design* — a **ubiquitous language** is the deliberate practice of having the team and the code agree on what things are called. It's a small habit with outsized payoff: code, conversation, documentation, and AI assistants all stay in sync.
 
-Thirty-nine terms, grouped into eight sections, plus a meta entry up front and a disambiguation block at the end.
+Forty terms, grouped into nine sections, plus a meta entry up front and a disambiguation block at the end.
 
 ---
 
@@ -454,9 +454,26 @@ The `transitionRulesMirror` CF triggers on a config publish (`latestVersion`), e
 
 ---
 
+## 9. Issue reports
+
+### Issue report / Target org / Watcher / `issues` org
+
+> An **issue report** (short: *report*) is one record a signed-in user files from the Site app's "Report an issue…" menu, about one **target org**. The **watcher** is the Claude Code session that picks reports up, and the **`issues` org** is where people see their status.
+
+- **Issue report** — stored at `orgiggly/orgs/{owner}/{slug}/issueReports/{id}` with a screenshot and client context, addressed by its ref `{owner}/{slug}/{reportId}`. Its status runs `new → claimed → fixed-draft → published`, or `→ closed` from any state. It is deliberately *not* called an "issue" (see the disambiguation below).
+- **Target org** — the org a report is about. Its creator and `adminUids` are the report's owners: they can read it and move its status.
+- **Watcher** — `og report watch` (it blocks until a `new` report exists, then exits), and by extension the session running `/watch-reports` around it. The watcher is the only thing that writes status.
+- **`issues` org** — the read-only system org `mock/issues`, aliased to `orgiggly.com/issues` (`/issues/{owner}~{slug}` for one org).
+
+*How we say it:* "Dave filed a report on webberoonies from his phone; the watcher claimed it." • "Track it on the issues org."
+
+*Anchor:* `packages/shared/src/types/issueReport.ts`, `packages/cli/src/commands/report.ts`, `.claude/skills/watch-reports/SKILL.md`
+
+---
+
 ## Disambiguation — words to qualify
 
-Three words in our space are overloaded enough that bare usage is ambiguous. Always qualify them.
+Four words in our space are overloaded enough that bare usage is ambiguous. Always qualify them.
 
 ### "the agent"
 
@@ -475,6 +492,14 @@ Three different things:
 - **Mock org** — a curated org under the `mock/` namespace (e.g. `mock/orgiggly`, `mock/wang`, `mock/blog`).
 
 Always say which.
+
+### "issue"
+
+Two different things:
+- **GitHub issue** — the engineering backlog (`gh issue`, `og issues`, epics and sub-tasks).
+- **Issue report** — an in-app report about one org (`og report`, `orgiggly.com/issues`). It may be promoted to a GitHub issue later (phase 2), but it isn't one.
+
+Say "report" for the in-app one.
 
 ### "demo"
 

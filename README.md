@@ -63,22 +63,32 @@ sessions". A personal Pro or Max plan doesn't need this.
      |---|---|
      | `github.com` | installing the plugin (setup script) |
      | `orgiggly.com`, `www.orgiggly.com` | the site and your apps |
-     | `orgiggly-dev-default-rtdb.europe-west1.firebasedatabase.app` | the database |
+     | `*.firebasedatabase.app` | the database |
      | `firebasestorage.googleapis.com` | app configs, data, widgets |
      | `identitytoolkit.googleapis.com`, `securetoken.googleapis.com` | signing in with your token |
-     | `us-central1-orgiggly-dev.cloudfunctions.net`, `europe-west1-orgiggly-dev.cloudfunctions.net` | creating apps, invite codes, saving data |
+     | `*.cloudfunctions.net` | creating apps, invite codes, saving data |
 
      Optional: `raw.githubusercontent.com` (the plugin's "update available"
      check), and `generativelanguage.googleapis.com` or `api.replicate.com` if
      you generate logos with your own Gemini or Replicate key.
 
 3. **Start a session on your repo and type `/orgiggly`.** It's the same on-ramp
-   as on your own machine, minus the install steps.
+   as on your own machine, minus the install steps. Nothing makes you pick a
+   repo, so check the repo button next to the environment name before you start.
+   A private repo only appears there once the Claude GitHub App can see it: follow
+   the picker's "Install the Claude GitHub App" link, choose **Only select
+   repositories**, add the repo, then refresh the list.
 
-**Keep each app's folder in the repo.** The cloud machine is thrown away when the
-session ends; only what's pushed to the branch survives. In a cloud session
-Claude commits and pushes after each publish, so `config.json`, the app's
-`CLAUDE.md`, its widgets and its `tests/` are there next time.
+**Your apps live on the repo's `main` branch.** The cloud machine is thrown away
+when the session ends, and each new session starts from `main`. So after each
+publish Claude commits the app's folder (`config.json`, the app's `CLAUDE.md`,
+its widgets and its `tests/`), pushes the session's own `claude/…` branch, and
+then saves the same work to `main`. If `main` is protected, it opens a pull
+request instead and gives you the link to merge it.
+
+**Check new versions on your own device.** Claude's browser check can't load
+orgiggly.com from inside a cloud session yet, so it asks you to open the preview
+link once.
 
 **If a domain is missing**, `og` stops with one line naming it ("Can't reach …")
 rather than hanging: add that domain to the environment and try again.

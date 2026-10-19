@@ -3,6 +3,14 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.12.0
+
+- **In a Claude Code cloud environment, Claude now saves each published change to your repo's `main` branch**, not just to the session's own branch. Every new session starts from `main`, so your apps are always there next time. If `main` is protected, Claude opens a pull request and gives you the link.
+- In a cloud session, Claude tells you its own browser check couldn't load the page and asks you to open the preview once, instead of reporting blocked trackers as errors.
+- Behind a proxy, `og` no longer prints Node's "EnvHttpProxyAgent is experimental" warning before every command.
+- The README's cloud section now explains how to pick your repo and give the Claude GitHub App access to a private one.
+- When you already have an app, `/orgiggly` asks whether to change it or start a new one, without bringing up plan limits first.
+
 ## 0.11.1
 
 - The README's cloud environment section now links to a step-by-step guide with copy buttons, and warns that on a Team or Enterprise Claude plan an Owner must turn on the GitHub connector before cloud sessions work.

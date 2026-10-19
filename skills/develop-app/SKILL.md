@@ -593,6 +593,12 @@ If it says the browser check was skipped (no Playwright), the render wasn't
 checked — say so. If your Claude Code has the Playwright MCP tools, you can open
 the preview link with them instead.
 
+In a cloud session, the browser check can't load the site yet: the page stops
+at "Still connecting…" and blocked requests to Sentry, Google Analytics and
+reCAPTCHA show up as errors. That says nothing about the app. Say the render
+wasn't checked, and ask the user to open the preview link once on their own
+device.
+
 Then give the user a tappable, phone-friendly preview link on its own line so it
 renders as a link:
 
@@ -632,9 +638,36 @@ git add {appname}/config.json && git commit -m "chore({appname}): sync config af
 If the working directory isn't a git repo, skip this — the updated
 `{appname}/config.json` is still on disk in the app folder.
 
-**In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`), `git push` once these
-commits and the memory update below are in: the machine is thrown away when the
-session ends, and only what's pushed survives.
+**In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`), save the work to the
+repo's `main` once these commits and the memory update below are in. The machine
+is thrown away when the session ends, and the next session starts from `main`,
+so work left on the session's own `claude/…` branch is missing next time even
+though the live app has it.
+
+```bash
+git push origin HEAD                 # the session's branch, as a backup
+git fetch origin main
+git merge origin/main                # take anything another session saved
+git push origin HEAD:main
+```
+
+- Judge `main` by `origin/main` after the fetch. The local `main` is often a
+  stale copy from when the session started and can look empty.
+- If the merge conflicts (inside the app folder, almost always `config.json` or
+  `CLAUDE.md`), resolve it keeping both sessions' changes, re-run `og test` if
+  `config.json` changed, commit, and push again. Don't push `main` with conflict
+  markers in it.
+- If GitHub refuses the push to `main` (branch protection), open a pull request
+  instead and give the user its link to merge:
+
+  ```bash
+  gh api -X POST repos/{owner}/{repo}/pulls -f head="$(git branch --show-current)" -f base=main -f title="{appname}: {short description}"
+  ```
+
+  `gh pr` doesn't work in a cloud session; `gh api` does.
+
+Tell the user in one line: "Saved to `main` in your repo, so your next session
+starts with it."
 
 ### Update the app's memory
 
