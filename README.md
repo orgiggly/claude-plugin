@@ -22,7 +22,8 @@ you've already done. Safe to re-run at any point; it picks up where you left off
 To update later: `/plugin marketplace update orgiggly`, then
 `/plugin update orgiggly@orgiggly`, and restart Claude Code. The plugin checks
 once a day and tells you when a new version is out, and after an update it
-shows what's new ([full history](CHANGELOG.md)).
+shows what's new ([full history](CHANGELOG.md)). In a cloud environment it
+works differently; see [Getting a new version](#getting-a-new-version) below.
 
 **No invite code?** Email dave@orgiggly.com with a line about what you want to
 build. You don't need one to get started — the code records how you found us,
@@ -51,6 +52,7 @@ sessions". A personal Pro or Max plan doesn't need this.
    - **Setup script:**
 
      ```bash
+     # orgiggly plugin: change this line to pick up a new version (1)
      claude plugin marketplace add orgiggly/claude-plugin
      claude plugin install orgiggly@orgiggly
      ```
@@ -85,6 +87,21 @@ publish Claude commits the app's folder (`config.json`, the app's `CLAUDE.md`,
 its widgets and its `tests/`), pushes the session's own `claude/…` branch, and
 then saves the same work to `main`. If `main` is protected, it opens a pull
 request instead and gives you the link to merge it.
+
+Every cloud session works on a new `claude/…` branch of its own; that's how
+Claude Code cloud sessions work, not something Orgiggly sets up. So the old
+branches pile up in your repo. They're harmless, and once their work is on
+`main` you can delete them on the repo's Branches page on GitHub. (Claude can't
+delete them for you: cloud sessions aren't allowed to delete branches.)
+
+<a id="getting-a-new-version"></a>**Getting a new version.** The environment
+runs its setup script once, then starts later sessions from a saved copy of
+the result, so new sessions keep the plugin version they first installed. It
+only runs the script again when you change the script or the allowed domains,
+or after about seven days. To update now, change the setup script's comment
+line (for example, bump the number), save the environment, and start a new
+session. With `raw.githubusercontent.com` allowed, Claude tells you when a new
+version is out.
 
 **Check new versions on your own device.** Claude's browser check can't load
 orgiggly.com from inside a cloud session yet, so it asks you to open the preview

@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.12.2
+
+- In a cloud environment, the "new version is out" message now tells you how to update there: change the setup script's comment line and start a new session. The README explains why (the environment reuses its first setup) and what the `claude/…` branches in your repo are.
+
 ## 0.12.1
 
 - In a cloud session, a change that only updates an app's widget (a custom page such as a game board) is now saved to `main` as well, like any other published change.

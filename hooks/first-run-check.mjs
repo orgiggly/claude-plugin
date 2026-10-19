@@ -243,13 +243,16 @@ const updateCheckFile = (home) =>
  * The "a newer plugin is out" line, or null. Fetches at most once a day
  * (`checkedAt` in ~/.orgiggly/plugin-update-check.json) and only nudges on the
  * session that did the check, so a user who stays behind hears it daily, not
- * every session. Never throws.
+ * every session. Never throws. A cloud session (`remote`) starts from the
+ * environment's cached setup, which keeps the old plugin until the setup script
+ * changes, so there the line says to edit the script instead.
  */
 export const updateNudge = async ({
   home,
   installed,
   fetchLatest = fetchLatestVersion,
   now = Date.now(),
+  remote = false,
 }) => {
   try {
     if (typeof installed !== "string" || !usableHome(home)) return null;
@@ -265,6 +268,13 @@ export const updateNudge = async ({
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, `${JSON.stringify({ checkedAt: now, latest })}\n`);
     if (!latest || compareVersions(latest, installed) <= 0) return null;
+    if (remote) {
+      return (
+        `Orgiggly plugin ${latest} is out (you have ${installed}). To update, ` +
+        "edit this cloud environment's setup script (changing its comment line " +
+        "is enough), save it, and start a new session."
+      );
+    }
     return (
       `Orgiggly plugin ${latest} is out (you have ${installed}). To update, ` +
       "run /plugin marketplace update orgiggly, then " +
@@ -380,6 +390,7 @@ const main = async () => {
         : await updateNudge({
             home,
             installed: installedVersion(),
+            remote: processEnv.CLAUDE_CODE_REMOTE === "true",
             fetchLatest: () =>
               fetchLatestVersion(processEnv.ORGIGGLY_PLUGIN_LATEST_URL || LATEST_URL),
           });
