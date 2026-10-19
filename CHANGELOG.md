@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.12.1
+
+- In a cloud session, a change that only updates an app's widget (a custom page such as a game board) is now saved to `main` as well, like any other published change.
+
 ## 0.12.0
 
 - **In a Claude Code cloud environment, Claude now saves each published change to your repo's `main` branch**, not just to the session's own branch. Every new session starts from `main`, so your apps are always there next time. If `main` is protected, Claude opens a pull request and gives you the link.

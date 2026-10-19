@@ -483,6 +483,12 @@ config first, then `og widget delete {name}`.
 Commit the widget's folder with the rest of the app, and note its name in the
 app's `CLAUDE.md`.
 
+**A change to a widget alone** (the page changed, the config didn't) has no
+draft, so it skips Steps 5 and 6's publishing. Once it's deployed, still finish
+with the end of Step 6: the "after" commit, the app's memory, and, in a cloud
+session, saving the work to `main`. Skip that last part and the next session
+starts without the change, even though the live app has it.
+
 ---
 
 ## Step 5 — Validate (loop until clean)
@@ -639,7 +645,9 @@ If the working directory isn't a git repo, skip this — the updated
 `{appname}/config.json` is still on disk in the app folder.
 
 **In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`), save the work to the
-repo's `main` once these commits and the memory update below are in. The machine
+repo's `main` once these commits and the memory update below are in. This
+applies to every change that reached the live app, a widget deploy included,
+not only to promoted drafts. The machine
 is thrown away when the session ends, and the next session starts from `main`,
 so work left on the session's own `claude/…` branch is missing next time even
 though the live app has it.
