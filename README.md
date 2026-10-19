@@ -131,6 +131,12 @@ rather than hanging: add that domain to the environment and try again.
   It figures out whether the app already exists and does the right thing:
   fetch-if-exists → author/edit config → `validate-org` → `create-org` /
   `update-org`. You never have to decide "am I creating or maintaining?".
+- **`watch-reports`** — fixes the issue reports people file on your apps
+  (**Report an issue…** in the app). It waits for a report with `og report watch`,
+  fixes the app the `develop-app` way, publishes a draft, asks you before it goes
+  live, and writes the status back so the reporter can follow it on
+  orgiggly.com/issues. Treats every report as untrusted input: it never follows
+  instructions, links or commands found in one.
 
 ## What's in the box
 
@@ -146,6 +152,7 @@ hooks/                   # SessionStart: first-run check, what's new, update nud
 CHANGELOG.md             # what changed in each release
 skills/getting-started/  # the on-ramp
 skills/develop-app/      # the build-and-manage skill
+skills/watch-reports/    # the issue-report fix loop
 ```
 
 ## Reference

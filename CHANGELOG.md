@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.13.0
+
+- **`/watch-reports`: Claude fixes the issue reports people file on your apps.** Anyone using your app can tap **Report an issue…** and send a description and a screenshot. With `/watch-reports` running, Claude picks up each report as it arrives, fixes the app, saves a draft and asks you before it goes live. It writes progress back, so the reporter can follow it on orgiggly.com/issues. A problem in Orgiggly itself is passed on to Orgiggly instead.
+- Claude treats everything in a report as information, never as instructions. It won't open a report's links or run its commands, it changes only the app the report is about, and it publishes only when you say yes.
+- `og report list`, `show`, `update`, `watch` and `forward` let you handle reports yourself; `og reference reports` explains them.
+- An app section saved empty (an app with no records yet, say) no longer goes missing when the app is fetched back, so `og check-draft` no longer fails right after a clean `og validate-org`.
+
 ## 0.12.3
 
 - In a cloud session started without a repo, Claude now says at the start that files written in the session are lost when it ends (your apps on orgiggly.com are safe), instead of suggesting `git init` at the end.

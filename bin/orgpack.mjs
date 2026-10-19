@@ -3010,21 +3010,22 @@ I={type:v,...x},D=I.authMode;return D&&hy[D]&&(I={...I,authMode:hy[D]}),I}return
 name:""},...d};try{return R(n(f))}catch(h){return Ne(OE(h))}},eN=e=>e!==void 0&&!(typeof e=="object"&&e!==null&&!Array.isArray(
 e)&&Object.keys(e).length===0),Fo=e=>{var t;if(!e||!e.data||e.data.length===0)return;let r=(t=e.data.find(o=>o.pointer===
 "value"))==null?void 0:t.value,n=eN(r),i={def:mv({t:gv({rootType:"app",nodeTypes:{}})}),instance:e};if(n){let o=H(i,"t");
-return Cd(i,o)}else{let o=H(i,"t"),s=lc(i,o.key);if(s.length===0)return;let l=[];for(let c of s){let u=Cd(i,c);u&&l.push(
-u)}return{type:"folder",_children:l}}},D0=e=>({versionId:e.versionId,apiVersion:e.apiVersion,minClientVersion:e.minClientVersion,
-appConfig:Fo(e.appConfig),users:Fo(e.users),objectTypes:Fo(e.objectTypes),objectInstances:Fo(e.objectInstances),plugins:Fo(
-e.plugins)}),j0=(e,t,r,n)=>{let{_children:a,...i}=e;if(r.push({pointer:`${t}.value`,value:i}),a&&a.length>0){r.push({pointer:`${t}\
-.expanded`,value:!0});let o=`${t}.t`;n.push({pointer:o,length:a.length}),a.forEach((s,l)=>{let c=`${o}[${l}]`;j0(s,c,r,n)})}},
-Bo=(e,t,r)=>{if(!e)return{};let n=[],a=[],{_children:i,...o}=e;o.type==="folder"&&Object.keys(o).length===1||n.push({pointer:"\
-value",value:o}),i&&i.length>0&&(n.push({pointer:"expanded",value:!0}),a.push({pointer:"t",length:i.length}),i.forEach((c,u)=>{
-j0(c,`t[${u}]`,n,a)}));let l={data:n,lengths:a};return t&&(l.cursor=t),r&&(l.navStack=r),l},tN=e=>({versionId:e.versionId,
-apiVersion:e.apiVersion,minClientVersion:e.minClientVersion,appConfig:Bo(e.appConfig,e.appConfig?"t[0]":void 0),users:Bo(
-e.users,e.users?"t[0]":void 0),objectTypes:Bo(e.objectTypes,e.objectTypes?"t[0]":void 0),objectInstances:Bo(e.objectInstances,
-e.objectInstances?"t[0].t[0]":void 0),plugins:Bo(e.plugins,e.plugins?"t[0]":void 0)}),rN="\0ORGIGGLY_SANDBOXED_WIDGET\0",
-hU=Rt.intersection([Rt.type({kind:Rt.literal("sandboxed-widget"),pluginName:Rt.string,params:Rt.UnknownRecord}),Rt.partial(
-{embedsThirdPartyMedia:Rt.boolean,connections:Rt.array(fv),widgetOwner:Rt.string})]),nN=(e,t,{embedsThirdPartyMedia:r,connections:n,
-widgetOwner:a}={})=>{let i={kind:"sandboxed-widget",pluginName:e,params:t,...r?{embedsThirdPartyMedia:!0}:{},...n?.length?
-{connections:n}:{},...a!==void 0?{widgetOwner:a}:{}};return rN+JSON.stringify(i)};var aN=({name:e,htmlTemplate:t,parameters:r,runtime:n,embedsThirdPartyMedia:a,connections:i,widgetOwner:o})=>(...s)=>{let l=r.
+return Cd(i,o)}else{let o=H(i,"t"),s=lc(i,o.key);if(s.length===0)return{type:"folder",name:""};let l=[];for(let c of s){
+let u=Cd(i,c);u&&l.push(u)}return{type:"folder",_children:l}}},D0=e=>({versionId:e.versionId,apiVersion:e.apiVersion,minClientVersion:e.
+minClientVersion,appConfig:Fo(e.appConfig),users:Fo(e.users),objectTypes:Fo(e.objectTypes),objectInstances:Fo(e.objectInstances),
+plugins:Fo(e.plugins)}),j0=(e,t,r,n)=>{let{_children:a,...i}=e;if(r.push({pointer:`${t}.value`,value:i}),a&&a.length>0){
+r.push({pointer:`${t}.expanded`,value:!0});let o=`${t}.t`;n.push({pointer:o,length:a.length}),a.forEach((s,l)=>{let c=`${o}\
+[${l}]`;j0(s,c,r,n)})}},Bo=(e,t,r)=>{if(!e)return{};let n=[],a=[],{_children:i,...o}=e;o.type==="folder"&&Object.keys(o).
+length===1||n.push({pointer:"value",value:o}),i&&i.length>0&&(n.push({pointer:"expanded",value:!0}),a.push({pointer:"t",
+length:i.length}),i.forEach((c,u)=>{j0(c,`t[${u}]`,n,a)}));let l={data:n,lengths:a};return t&&(l.cursor=t),r&&(l.navStack=
+r),l},tN=e=>({versionId:e.versionId,apiVersion:e.apiVersion,minClientVersion:e.minClientVersion,appConfig:Bo(e.appConfig,
+e.appConfig?"t[0]":void 0),users:Bo(e.users,e.users?"t[0]":void 0),objectTypes:Bo(e.objectTypes,e.objectTypes?"t[0]":void 0),
+objectInstances:Bo(e.objectInstances,e.objectInstances?"t[0].t[0]":void 0),plugins:Bo(e.plugins,e.plugins?"t[0]":void 0)}),
+rN="\0ORGIGGLY_SANDBOXED_WIDGET\0",hU=Rt.intersection([Rt.type({kind:Rt.literal("sandboxed-widget"),pluginName:Rt.string,
+params:Rt.UnknownRecord}),Rt.partial({embedsThirdPartyMedia:Rt.boolean,connections:Rt.array(fv),widgetOwner:Rt.string})]),
+nN=(e,t,{embedsThirdPartyMedia:r,connections:n,widgetOwner:a}={})=>{let i={kind:"sandboxed-widget",pluginName:e,params:t,
+...r?{embedsThirdPartyMedia:!0}:{},...n?.length?{connections:n}:{},...a!==void 0?{widgetOwner:a}:{}};return rN+JSON.stringify(
+i)};var aN=({name:e,htmlTemplate:t,parameters:r,runtime:n,embedsThirdPartyMedia:a,connections:i,widgetOwner:o})=>(...s)=>{let l=r.
 reduce((c,u,d)=>(c[u.name||`param${d}`]=s[d],c),{});return n==="sandboxed"?nN(e,l,{embedsThirdPartyMedia:a,connections:i,
 widgetOwner:o}):String(FA(ep(t),l))},iN=e=>e.reduce((t,r)=>(t[r.name]=aN(r),t),{});var oN=Q.intersection([Q.type({name:Q.string}),Ul]),sN=Q.intersection([Ul,In]),lN=Q.union([Q.literal("text"),Q.literal("\
 number"),Q.literal("boolean"),Q.literal("temporal")]),mU=lN.types.map(e=>e.value);var cN=Q.type({pointer:Q.string,value:Q.unknown}),uN=Q.type({pointer:Q.string,length:Q.number}),Ho=Q.partial({cursor:Q.string,
