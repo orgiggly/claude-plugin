@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.12.3
+
+- In a cloud session started without a repo, Claude now says at the start that files written in the session are lost when it ends (your apps on orgiggly.com are safe), instead of suggesting `git init` at the end.
+- Claude now knows an app can read one extra URL segment as `$variant`, so one app can serve a page per team or event, and how a team can keep its own private list at its own URL.
+- Claude no longer builds widgets around a `<form>`, which can't submit in the widget sandbox, and tests a widget's controls in the preview page rather than on its own.
+- The cloud setup guide follows the New environment dialog's order and allows `*.orgiggly.com`. On orgiggly.com/connect/cli, **Copy my token** copies your token without showing it.
+
 ## 0.12.2
 
 - In a cloud environment, the "new version is out" message now tells you how to update there: change the setup script's comment line and start a new session. The README explains why (the environment reuses its first setup) and what the `claude/…` branches in your repo are.

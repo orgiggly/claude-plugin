@@ -64,6 +64,9 @@ The frame resizes to the page's height on its own; keep `body` auto-height.
   depend on them. Paint a default, then let params refresh it.
 - **The callback runs again on every param change.** Re-render from the params; don't
   reset state the user built up, and don't restart work that's already running.
+- **No `<form>` submits.** The sandbox has no `allow-forms`, so pressing a submit
+  button does nothing and its `submit` handler never runs. Use plain inputs with a
+  button `click` handler, and a `keydown` handler for Enter.
 - **No `localStorage`, `sessionStorage`, cookies or IndexedDB.** The frame has no
   origin of its own, so they throw. Keep state in memory, and send anything that must
   survive a reload back with `postValue`, then read it back as a param.
@@ -135,6 +138,9 @@ widget locally first:
 3. Open `widget-harness.html`. It frames the page as the app does, sends each
    scenario's params at 330, 414 and 900 px wide, logs every value, action and image
    the widget sends, and has **Reload widget** and **Re-send init** buttons.
+4. Try every control **inside the harness's frames**, not on `index.html` opened on
+   its own. Outside the sandbox a `<form>` submits and storage works, so a widget
+   that breaks in the app looks fine there.
 
 Edit the harness's `SCENARIOS` to match the widget: the shapes that break layout
 (empty, one item, very many, very long text) plus one worst case with everything on

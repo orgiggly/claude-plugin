@@ -64,7 +64,7 @@ sessions". A personal Pro or Max plan doesn't need this.
      | Domain | Used for |
      |---|---|
      | `github.com` | installing the plugin (setup script) |
-     | `orgiggly.com`, `www.orgiggly.com` | the site and your apps |
+     | `orgiggly.com`, `*.orgiggly.com` | the site and your apps (`*.` doesn't cover the bare domain, so list both) |
      | `*.firebasedatabase.app` | the database |
      | `firebasestorage.googleapis.com` | app configs, data, widgets |
      | `identitytoolkit.googleapis.com`, `securetoken.googleapis.com` | signing in with your token |

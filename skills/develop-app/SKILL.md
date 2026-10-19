@@ -121,8 +121,9 @@ The skill checks once whether the working directory is a git repo. **If it is**,
 commits a snapshot of the app **before** it changes anything and again **after** it
 publishes — so the history reads "here's what the app was → here's what I changed".
 **If it isn't**, it suggests `git init` once, then proceeds without git and just
-leaves the files in the folder. Either way the app itself lives on orgiggly.com;
-the folder is your local working copy and record.
+leaves the files in the folder. In a cloud session it says instead, before
+building, that the folder vanishes when the session ends. Either way the app
+itself lives on orgiggly.com; the folder is your local working copy and record.
 
 ---
 
@@ -188,6 +189,17 @@ git rev-parse --is-inside-work-tree 2>/dev/null
   ```
   (On **CREATE** there's nothing to snapshot yet — the "after" commit in Step 6
   captures the first version.)
+- **It is not a repo, in a cloud session** (`CLAUDE_CODE_REMOTE` is `true`) →
+  the session started with no repo picked, and this machine is thrown away when
+  it ends. Never suggest `git init`: it saves nothing here. Say this **once,
+  before you build** (skip it if getting-started already did this session),
+  then carry on without git:
+
+  > This session has no GitHub repo, so the files I write here (widget pages,
+  > checks, the app's notes) are lost when the session ends. The app itself is
+  > saved on orgiggly.com either way. To keep the files, start a new session
+  > with your apps repo picked next to the environment.
+
 - **It is not a repo** → suggest it **once** — "`git init` here so you can track
   your app's history and see diffs" — then carry on without git. Don't nag again
   this session.
@@ -448,6 +460,9 @@ change, no `localStorage`). Then:
    `file://`) and open `widget-harness.html`. It frames the page exactly as the
    app does, at three widths, and logs everything the widget sends. **Review
    here, not in the deployed app**, which shows one data state behind a cache.
+   When you check it headless, click and type inside the harness's iframes,
+   never on `index.html` loaded by itself: only the frame has the app's
+   sandbox, so a `<form>` that does nothing in the app submits fine outside it.
 3. **Build the harness with the user.** The starter has three scenarios; grow it
    for this widget, the way the Orgiggly team does for its own:
    - **Curated scenarios** for the shapes that break layout (empty, one item,
@@ -644,8 +659,8 @@ git add {appname}/config.json && git commit -m "chore({appname}): sync config af
 If the working directory isn't a git repo, skip this — the updated
 `{appname}/config.json` is still on disk in the app folder.
 
-**In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`), save the work to the
-repo's `main` once these commits and the memory update below are in. This
+**In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`) with a repo, save the
+work to the repo's `main` once these commits and the memory update below are in. This
 applies to every change that reached the live app, a widget deploy included,
 not only to promoted drafts. The machine
 is thrown away when the session ends, and the next session starts from `main`,

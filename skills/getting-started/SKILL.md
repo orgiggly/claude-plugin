@@ -45,6 +45,19 @@ Two lines, no more:
 
 Then go straight to Step 1. Don't wait for a reply.
 
+**In a cloud session** (`CLAUDE_CODE_REMOTE` is `true`), check for a repo first:
+
+```bash
+git rev-parse --is-inside-work-tree 2>/dev/null
+```
+
+If it prints nothing, the session started with no repo picked. Say once, and
+carry on (develop-app then doesn't repeat it):
+
+> This session has no GitHub repo, so the files I write here are lost when it
+> ends. Your apps are saved on orgiggly.com either way. To keep the files too,
+> start a new session with your apps repo picked next to the environment.
+
 ---
 
 ## Step 1 — Check the `og` command

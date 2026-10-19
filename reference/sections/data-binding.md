@@ -104,6 +104,14 @@ For orgs with login (per-user state — profiles, predictions, anything "saved t
 
 `$email`/`$username`/`$userKey`/`$authKind` are `undefined`/`"anon"` for anonymous visitors; all seven are absent in headless/validation evaluation, so guard like `$now`. They are read-only context — they are never written to app state.
 
+### One app, many URLs: `$variant`
+
+An app can read one extra path segment: `orgiggly.com/{user}/{app}/{key}` evaluates with `$variant` = `{key}`, and the plain two-segment URL has no `$variant` at all (`!$variant` is the picker or landing page). This is how one config serves many keyed editions, a page per team, year or event, with no new app per key. It is the only custom URL input an app has; query parameters other than `?preview=draft` are not readable.
+
+Pick the data scope by who writes each edition's records:
+- **The app's owner curates them** → `scope: "variant"`. Each key gets its own partition, read automatically on that key's URL and empty on the bare URL. Visitors can't write it (forms refuse it); load it with `og data upload --variant <key>`.
+- **Each team writes its own, privately** → `scope: "group"`, keyed by `$variant`. A signed-in visitor starts a team with `createGroup({groupKey: $variant, inviteCode: code})` and shares the URL plus the code; teammates `joinGroup({inviteCode: code})`. Only members can read the group's records. Writes name the key (`publishData({…, scope: "group", groupKey: $variant})`, or a form's `groupKey: "@$variant"`), and reads return every group the visitor is in, so stamp the key on each record (`team: $variant`) and filter on it: `@filter($data.Name, it.team == $variant)`. The showcase `dave/whipround` keeps one expense tab per group this way.
+
 ### Bulk-editing repeating rows: `$rows('subsectionName')`
 
 When a repeating subsection lets the user edit one input per row (a score per match, a quantity per item, an answer per question), `$rows('subsectionName')` reads **every row's current state back as one array** — one element per rendered row — so a single script can save them all at once.
