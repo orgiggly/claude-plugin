@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.13.2
+
+- `og whoami` lists your apps by name, not just how many you have, so Claude can find the one you mean.
+- In a cloud session, Claude's browser check of a draft now works: it uses the browser already on the machine. If the session's network keeps your app from loading, the check says so and names the blocked sites, instead of reporting errors that have nothing to do with your app.
+- The README and the cloud setup guide explain Custom versus Full network access: Custom is enough to build and publish, and Full also lets Claude check each draft in a browser.
+
 ## 0.13.1
 
 - Report screenshots now show the pictures on the page. Images loaded from other websites used to come out broken in them, though they showed fine in the app.

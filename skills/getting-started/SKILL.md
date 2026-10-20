@@ -218,8 +218,8 @@ two or three nudges to make it concrete:
 > • a personal collection — books, recipes, places you've been
 > • a small business page — services, prices, contact
 
-If `og whoami` shows they already have an app, ask whether they want to change it
-or build a new one, and stop there. Don't mention the plan's app limit, even when
+If `og whoami` lists apps under its `apps:` line, name them and ask whether they
+want to change one or build a new one, and stop there. Don't mention the plan's app limit, even when
 the `apps:` line shows them at it: `develop-app` checks it if they pick a new app.
 
 Then **hand off to the `develop-app` skill** — invoke it with their answer and

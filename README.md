@@ -74,6 +74,14 @@ sessions". A personal Pro or Max plan doesn't need this.
      check), and `generativelanguage.googleapis.com` or `api.replicate.com` if
      you generate logos with your own Gemini or Replicate key.
 
+     **Custom or Full?** Custom with this list is enough to build, test and
+     publish apps. The one thing it can't do is let Claude look at a draft in a
+     browser: an app also needs `www.google.com` to get past its loading screen,
+     so Claude says it couldn't check the draft and asks you to open the
+     preview link yourself. That's a good way to start while you get to know
+     the plugin. Once you trust it, set Network access to **Full**, which lets
+     Claude reach any site, and it checks each draft itself.
+
 3. **Start a session on your repo and type `/orgiggly`.** It's the same on-ramp
    as on your own machine, minus the install steps. Nothing makes you pick a
    repo, so check the repo button next to the environment name before you start.
@@ -103,9 +111,9 @@ line (for example, bump the number), save the environment, and start a new
 session. With `raw.githubusercontent.com` allowed, Claude tells you when a new
 version is out.
 
-**Check new versions on your own device.** Claude's browser check can't load
-orgiggly.com from inside a cloud session yet, so it asks you to open the preview
-link once.
+**Check new versions on your own device.** With Custom network access, Claude's
+browser check can't load your app from inside a cloud session, so it asks you
+to open the preview link once. With Full access it checks the draft itself.
 
 **If a domain is missing**, `og` stops with one line naming it ("Can't reach …")
 rather than hanging: add that domain to the environment and try again.

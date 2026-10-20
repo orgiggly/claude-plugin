@@ -47,7 +47,9 @@ their name on Orgiggly (the `<name>` in `orgiggly.com/<name>/…`); it hands bac
 here for the actual build.
 
 Otherwise note the namespace it prints — that's the `{username}` in every app id
-below — and the **`apps:`** line, then carry on.
+below — and the **`apps:`** line, then carry on. Under `apps:` it lists each app
+the user owns as `{username}/{appname}`: when they say "my app" or name one
+loosely, pick it from that list rather than asking.
 
 ### The app limit — check it before building a NEW app
 
@@ -614,11 +616,21 @@ If it says the browser check was skipped (no Playwright), the render wasn't
 checked — say so. If your Claude Code has the Playwright MCP tools, you can open
 the preview link with them instead.
 
-In a cloud session, the browser check can't load the site yet: the page stops
-at "Still connecting…" and blocked requests to Sentry, Google Analytics and
-reCAPTCHA show up as errors. That says nothing about the app. Say the render
-wasn't checked, and ask the user to open the preview link once on their own
-device.
+In a cloud session (`CLAUDE_CODE_REMOTE` is `true`) Playwright isn't
+installed, but the machine has a Chromium the check can use. `check-draft`
+needs nothing from the repo, so run it from a scratch folder that has
+Playwright, once per session:
+
+```bash
+mkdir -p /tmp/og-browser && cd /tmp/og-browser && npm i playwright >/dev/null && og check-draft {username}/{appname}
+```
+
+If it then says `browser: not checked — the app couldn't load here because
+this network refuses …`, the environment's network is Custom and the app
+can't get past its loading screen there. That says nothing about the app. Say
+the render wasn't checked, ask the user to open the preview link once, and
+mention that switching the environment's Network access to **Full** lets you
+check drafts yourself.
 
 Then give the user a tappable, phone-friendly preview link on its own line so it
 renders as a link:
