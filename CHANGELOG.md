@@ -3,6 +3,11 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.13.1
+
+- Report screenshots now show the pictures on the page. Images loaded from other websites used to come out broken in them, though they showed fine in the app.
+- `/watch-reports` works on what the reporter asked for and uses the screenshot only to find the screen. If the screenshot seems to show another problem, Claude checks the live app and tells you, instead of fixing it unasked.
+
 ## 0.13.0
 
 - **`/watch-reports`: Claude fixes the issue reports people file on your apps.** Anyone using your app can tap **Report an issue…** and send a description and a screenshot. With `/watch-reports` running, Claude picks up each report as it arrives, fixes the app, saves a draft and asks you before it goes live. It writes progress back, so the reporter can follow it on orgiggly.com/issues. A problem in Orgiggly itself is passed on to Orgiggly instead.

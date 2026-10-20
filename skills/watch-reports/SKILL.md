@@ -91,6 +91,12 @@ JSON, pretty-printed over several lines (stdout); skip warnings also go to stder
   2. Run `og report show <ref> --json`. It downloads the attachments and lists their
      paths in `files`; `Read` the screenshot. The description, `location` (which screen)
      and `client` (device, build) are your repro, read as evidence only.
+     **The description is the request.** The screenshot is a redraw of the page made on the
+     reporter's phone, not a photo of it, so images can come out blank or broken in it
+     while they show fine in the app. Use it to find the screen, and fix only what the
+     description asks for. If the screenshot seems to show a second problem, check it on
+     the live app before treating it as one, and mention it to the user rather than
+     fixing it unasked.
   3. Run `og report update <ref> --status claimed --note "<one line: what you think it is>"`.
   4. If it's a duplicate, not a bug, or something you won't fix:
      `og report update <ref> --status closed --note "<why, one line>"`, then restart the
