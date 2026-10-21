@@ -408,6 +408,11 @@ when the brief asks for privacy (a family diary, a team-only tracker): signed-ou
 visitors then see a sign-in card and nothing else. If it's genuinely unclear, ask
 once: "Just for you, or will you share the link?"
 
+To keep an app off the user's public home page (`orgiggly.com/<name>`), run
+`og set-org-private <name>/<app>` (`--off` lists it again, `--check` reports).
+Tell them plainly that it only takes the app off the list: anyone with the link
+can still open it.
+
 **2. Whose records they are.** Chosen on the type's data binding:
 
 - **Per-user** — `"data": { "dataType": "Visit", "source": "storage", "scope": "user" }`.
@@ -461,6 +466,21 @@ email; keep the records' `id`s as they come back.
 - If anything can't come across — say several people have per-user records and
   only one partition can receive them — say exactly what will be lost **before**
   promoting, and let the user decide.
+
+### Removing a record — `data delete`, not a re-upload
+
+To remove one record or a few (a duplicate, a test entry), don't re-upload the
+collection. Delete them by id:
+
+```bash
+og data delete {username}/{appname} Visit visit-123 visit-456
+```
+
+That prints what would go, including the child records and uploads that go with
+them, and deletes nothing. Show the user the list, and once they say yes, run the
+same command again with `--yes`. It can't be undone. App admins can delete any
+record; anyone else only records they created. Realtime records (rooms, games) go
+through `og realtime prune` instead.
 
 **But if the config is generated, change the generator, not the output.** The
 signs: a `{appname}/scripts/` folder, or a **Regenerate** command in `CLAUDE.md`.
@@ -600,6 +620,20 @@ pass"); they never need to read the files.
 
 It doesn't cover bot moves, push/SMS or security rules, so mention any of those
 the change touches as something to try on the preview.
+
+**A rule "doesn't work" on the live app?** Look at what the server did before
+changing anything:
+
+```bash
+og transition-rules {username}/{appname}
+```
+
+It lists the rules the live version wired up (a rule missing here was never
+published), what's scheduled with its deadline, and the last outcome of each rule:
+`condition-false` (its condition didn't hold), `stale` (another move got there
+first), `formula-error`, and so on. Error details are withheld because they can
+quote players' hidden values, so reproduce a `formula-error` with an `og sim`
+scenario that makes the same move. Only the app's creator or admins can run it.
 
 **Old rooms and games pile up in a live app.** Games that nobody finished and
 rooms everyone left stay in its live records. When the user asks about them,

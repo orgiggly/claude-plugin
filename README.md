@@ -47,7 +47,9 @@ sessions". A personal Pro or Max plan doesn't need this.
    [orgiggly.com/connect/cli](https://www.orgiggly.com/connect/cli), sign in
    with Google and copy the token. (Already signed in on a computer? `og token`
    prints the same thing.) Treat it like a password: anyone holding it can act
-   as you on Orgiggly.
+   as you on Orgiggly. If it leaks, run `og logout --everywhere` on any machine
+   where you're signed in: every token and login for your account stops
+   working, and you sign in again to get a new one.
 2. **Create the environment** in Claude Code on the web, and set:
    - **Setup script:**
 

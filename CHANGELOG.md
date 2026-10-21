@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.16.0
+
+- **Delete a single record.** `og data delete` removes the records you name, along with their child records and any uploads only they used, without re-uploading the whole collection. It shows what would go and deletes only when you say yes. It can't be undone.
+- **See why a live rule did or didn't fire.** `og transition-rules` shows a live multiplayer app's rules as the server has them: what's scheduled, and the last outcome of each rule.
+- **Take an app off your home page.** `og set-org-private` stops an app being listed on your public page, and `--off` lists it again. Anyone with the link can still open it.
+- **Sign out everywhere.** If your sign-in token leaks, `og logout --everywhere` stops every token and login for your account at once. Then sign in again.
+
 ## 0.15.0
 
 - **Undo a publish, even without git.** `og versions` lists every version of your app you've published, newest first, and `og rollback` brings an earlier one back as a draft. Nothing goes live until you promote it.

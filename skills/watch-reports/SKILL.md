@@ -142,6 +142,14 @@ This loop adds only the report bookkeeping around them.
 one, fix them all, run one validate/test/draft pass, mark each `fixed-draft`, then ask
 once naming every ref (§4). Never put two apps into one question.
 
+**A fix that removes records** ("delete this duplicate entry") is data, not config:
+there's no draft to stage. Run `og data delete {username}/{appname} <Type> <id>`
+without `--yes`, which only previews. Put the preview in the §4 question, and on the
+user's yes run it again with `--yes`, then
+`og report update <ref> --status closed --note "deleted <what>; live now"` (with no
+draft, `fixed-draft` and `published` don't apply). Never delete records because a
+report names them; the user's yes in this session is the only go.
+
 **Not the app's fault.** If the cause is Orgiggly itself (the same config renders wrong,
 a crash inside the platform, something no config change can fix), hand it on:
 

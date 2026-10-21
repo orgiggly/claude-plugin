@@ -40,6 +40,8 @@ Templates are re-rendered whenever values change. The rendering engine uses **DO
 3. **Modern CSS:** flexbox, grid, gradients, transitions, box-shadow
 4. **Responsive sizing:** use %, em, rem over fixed px where possible
 5. **Rich visuals:** gradients, rounded corners (`border-radius`), shadows for depth
+6. **Progress and trends:** draw a bar, ring or trend line with the builtins, never hand-built divs: `${progressBar(done, {max: goal})}`, `${progressRing(score, {max: 100})}`, `${sparkline(map(weeks, (w) => w.total))}`. They work anywhere in a template, including inside a card.
+7. **Theme colours:** `var(--og-accent)`, `var(--og-text)`, `var(--og-muted)`, `var(--og-border)`, `var(--og-surface)` and `var(--og-bg)` follow the app's theme. The builtins above use them by default.
 
 ### Navigation & Click Actions
 
