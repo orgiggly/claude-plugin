@@ -3,6 +3,19 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.15.0
+
+- **Undo a publish, even without git.** `og versions` lists every version of your app you've published, newest first, and `og rollback` brings an earlier one back as a draft. Nothing goes live until you promote it.
+- **Clear out old games and rooms.** `og realtime list` shows how many live records a multiplayer app holds, and `og realtime prune` deletes the stale ones, such as games older than a week. It shows what it would delete and asks before deleting anything.
+- **See your credit balance.** `og whoami` now shows how many Orgiggly credits you have, so Claude can tell you whether a logo or other paid step is affordable before you start.
+
+## 0.14.0
+
+- **Real pictures and videos in your apps.** Claude now searches for stock photos (`og search-images`, free from Unsplash, or web-wide for 1 credit) and videos (`og search-videos`, 1 credit), and uses the links it finds instead of placeholder images. Unsplash photos come with the photographer's credit line.
+- **Your own photos, audio and video.** `og upload` puts a file from your computer into your app (images and audio up to 10 MB, video up to 30 MB) and gives Claude the link to use.
+- **Throw away a draft you don't want.** `og discard-draft` deletes an app's unpublished changes, so a fix you turned down doesn't go live with the next one. Your live app isn't touched.
+- **Delete an app you no longer need.** `og delete-org` deletes an app you created, with its data and files, and frees its place on your plan. It only runs once you've confirmed which app.
+
 ## 0.13.2
 
 - `og whoami` lists your apps by name, not just how many you have, so Claude can find the one you mean.

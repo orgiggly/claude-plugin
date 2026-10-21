@@ -172,6 +172,17 @@ Ask with **one** `AskUserQuestion`: "Publish the fix for <ref> (<one line>)? Pre
 - **No / later:** leave the report at `fixed-draft`. The draft and the folder stay as
   they are; the next session's crash recovery won't list it (it isn't `claimed`), but
   `og report list` will.
+- **No, drop it:** the draft would otherwise ship with the next promote, whatever that
+  promote was for. Discard it and say what happened to the report:
+
+  ```bash
+  og discard-draft {username}/{appname}
+  og report update <ref> --status closed --note "fix declined by the owner"
+  ```
+
+  The live app is untouched. Restore `{appname}/config.json` from the live version
+  (`og fetch-org {username}/{appname} --tree --pretty --output {appname}/config.json`) so
+  the folder matches what's published.
 
 ## 5. Always restart
 

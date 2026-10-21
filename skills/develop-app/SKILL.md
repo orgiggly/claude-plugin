@@ -65,11 +65,24 @@ config**, in the same message where you'd start the build:
 > You're on the free plan, which includes 1 app, and you already have one. A
 > few options:
 > • change your existing app, or add this as a new screen in it
+> • delete an app you no longer need, which frees its slot
 > • upgrade — the Upgrade button on orgiggly.com/admin (£10/month, up to 5 apps)
 
 Let them choose. For a paid plan or a raised limit, drop the upgrade option and
 offer "email dave@orgiggly.com to raise it" instead. Never build a whole app the
 platform is going to refuse.
+
+If they choose to delete one, name the app and say that its data and files go
+with it and can't be brought back. Delete it only after they say yes to **that
+app by name**:
+
+```bash
+og delete-org {username}/{oldapp}          # prints what goes; deletes nothing
+og delete-org {username}/{oldapp} --yes    # deletes it
+```
+
+Only the app's creator can delete it. Then check `og whoami` shows the freed slot
+before you create the new app.
 
 ---
 
@@ -162,6 +175,17 @@ og fetch-org {username}/{appname} --draft --tree --pretty --output {appname}/con
 - **Both fail (not found / exit 1)** → **CREATE**: you'll author a new config —
   but first apply **The app limit** check above.
 
+When the draft fetch succeeds, the draft is what you'll build on, and the next
+`promote-draft` ships everything in it. If `{appname}/CLAUDE.md` or the user says
+the draft holds a change they didn't approve (a declined fix, an abandoned
+experiment), ask whether to keep it. If not, discard it and fetch the published
+version instead:
+
+```bash
+og discard-draft {username}/{appname}
+og fetch-org {username}/{appname} --tree --pretty --output {appname}/config.json
+```
+
 Do not ask the user which mode — the fetch result decides.
 
 ### The app's memory — `{appname}/CLAUDE.md`
@@ -205,6 +229,9 @@ git rev-parse --is-inside-work-tree 2>/dev/null
 - **It is not a repo** → suggest it **once** — "`git init` here so you can track
   your app's history and see diffs" — then carry on without git. Don't nag again
   this session.
+
+Either way, every publish is kept, so a change can still be undone without git
+(see **Undo a publish** in Step 6).
 
 ---
 
@@ -255,6 +282,36 @@ together. Pull the one that matches the task in hand:
 `og reference` with no topic lists them all. `flows` and `realtime` were
 written for Orgiggly's own developers: the authoring rules apply to your app,
 but the repo paths they mention aren't files you have.
+
+### Pictures, audio and video
+
+Never put a placeholder or a guessed URL in an app. To find stock pictures or
+a video, search, and use the URLs the search prints:
+
+```bash
+og search-images red fox in snow                  # Unsplash: free
+og search-images "Brompton folding bike" --source brave   # web-wide: 1 credit
+og search-videos how to tie a bowline             # 1 credit; use its embedUrl
+```
+
+Run one search per picture you need. An Unsplash result prints the
+photographer's credit line, so show it in the app near the photo (a caption or
+the footer). It also prints an `og search-images --track '…'` line: run it for
+each photo you keep, because Unsplash's terms require it. Tell the user before a
+paid search.
+
+When the user has their own files (photos of the team, a club gallery, a
+recording), upload each one and put the printed URL in the config:
+
+```bash
+og upload {username}/{appname} ./photos/team.jpg
+og upload {username}/{appname} ./photos/team.jpg --name team-2026.jpg   # a name already taken
+```
+
+PNG, JPEG, GIF, WebP and AVIF images and MP3/M4A/WAV/OGG audio go up to
+10 MB, MP4/WebM/MOV video up to 30 MB. An uploaded file can't be replaced, so a
+new version needs a new `--name`. SVG is refused, so convert it to PNG first. The
+app's logo is the exception: use `update-org-logo` for that (**Logo**, in Step 6).
 
 ---
 
@@ -544,6 +601,21 @@ pass"); they never need to read the files.
 It doesn't cover bot moves, push/SMS or security rules, so mention any of those
 the change touches as something to try on the preview.
 
+**Old rooms and games pile up in a live app.** Games that nobody finished and
+rooms everyone left stay in its live records. When the user asks about them,
+or a live list looks cluttered, see what's there:
+
+```bash
+og realtime list {username}/{appname}                 # count per type
+og realtime prune {username}/{appname} --type Game --older-than 7d
+```
+
+`prune` matches by `--type`, `--where 'phase=lobby'` and/or `--older-than 7d`
+(it needs at least one) and only shows what it would delete. Tell the user the
+count, ask, and on a yes run the same command again with `--yes`. A record with
+no `createdAt` (or `--ts-field`) is never aged out. Only the app's creator or
+admins can prune.
+
 ### Step 5c — Test the app's logic
 
 The draft preview shows the app; it can't tell you whether a button saves the
@@ -649,6 +721,21 @@ When the user is happy with the draft, run `og test {appname}` once more (Step
 og promote-draft {username}/{appname}
 ```
 
+### Undo a publish
+
+Every publish is kept, so a change the user regrets can be put back, with or
+without git:
+
+```bash
+og versions {username}/{appname}                  # newest first; "← live" marks the live one
+og rollback {username}/{appname} {version}        # that version becomes the draft
+```
+
+`rollback` changes only the draft: preview it, run `og check-draft`, and
+`og promote-draft` makes it live. It won't overwrite a draft that hasn't been
+published yet: promote that draft or `og discard-draft` it first. In git, the
+"before" commit is the other way back.
+
 ### Check the new version into git (the "after" commit)
 
 Once the change is published (draft is fine — the folder is your working copy),
@@ -733,7 +820,9 @@ there's nothing else to upload.
 
 **Offer to generate one first:** "Describe the logo you'd like and I'll generate
 it — that uses about 11 of your Orgiggly credits." The cost comes out of the
-signed-in user's own credits, and the command prints it before generating:
+signed-in user's own credits. Before offering, run `og whoami` and read its
+`credits:` line, so you can say whether they have enough. The command also
+prints the cost before generating:
 
 ```bash
 og update-org-logo {username}/{appname} --prompt "a red fox head, flat icon, bold simple shapes, solid teal background, icon only, no text, no lettering"
