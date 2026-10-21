@@ -159,6 +159,8 @@ og widget delete <name>
 
 Names are lower-case letters and digits, starting with a letter, at most 40
 characters: no `-`, because the app calls the plugin by name like a function. A redeploy
-shows up on the app's next plain reload. You need to be signed in (`og login`) on an
+shows up on the app's next plain reload. Opening the deployed URL in a browser downloads
+the page instead of running it; only an app runs a widget, inside its sandbox, so test
+in the harness. You need to be signed in (`og login`) on an
 enrolled account (`og redeem`). Deleting a widget leaves any plugin that names it
 showing an empty frame, so remove the plugin too.

@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.16.1
+
+- **Widgets can't be opened outside your app.** `og widget deploy` now stores a widget so that opening its web address in a browser downloads the file instead of running it. A widget only ever runs inside your app, in its sandbox. Widgets you've already deployed are converted for you. Update before your next deploy, because uploads from older versions will soon be refused.
+
 ## 0.16.0
 
 - **Delete a single record.** `og data delete` removes the records you name, along with their child records and any uploads only they used, without re-uploading the whole collection. It shows what would go and deletes only when you say yes. It can't be undone.
