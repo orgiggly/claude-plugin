@@ -78,31 +78,6 @@ interface CallableSource {
   args?: string;
 }
 
-interface FormConfigOptions {
-  /**
-   * The object type this form submits records of.
-   * Examples: Recipe, Post, Todo
-   */
-  dataType?: string;
-  /**
-   * Data scope: global (shared), user (per-user partition), variant (per-URL-variant partition, admin-curated so not form-writable), or group (per-membership-group partition, written through a membership-checked callable)
-   * `global`: One shared collection every visitor reads and writes.
-   * `user`: A per-user partition.
-   * `variant`: A per-URL-variant partition, admin-curated and so not form-writable.
-   * `group`: A group partition, which needs `groupKey` to say which one.
-   * `all`: Reads across every partition.
-   * `inbox`: Realtime only: each visitor's own write-only inbox, which org admins can read.
-   */
-  scope?: "global" | "user" | "variant" | "group" | "all" | "inbox";
-  /**
-   * Which group partition a submit writes into. Required when scope is "group" — a member can belong to several groups at once, so the key cannot be inferred from the session. Accepts an @-formula so the org can derive it from flow state.
-   * Which group partition a submit writes into. Required when `scope` is group.
-   * A member can belong to several groups at once, so the key cannot be inferred from the person.
-   * Examples: A, B, C
-   */
-  groupKey?: string;
-}
-
 /** Layout configuration for container nodes */
 interface Layout {
   /**
@@ -603,12 +578,6 @@ interface ContainerOptions {
    * Examples: { "marginBottom": 2 }, { "marginBottom": 2, "justifySelf": "center" }, { "overlay": "topRight", "overlayWidth": 96 }
    */
   containerStyle?: ContainerStyle;
-  /**
-   * Object type to submit data as
-   * If specified, any descendent nodes which trigger submit will bubble up to this node, and an object of this type will be submitted to the server
-   * Set this on a container that wraps a set of inputs forming one record — e.g. a screen whose fields together make up a single object to persist.
-   */
-  submitObjectType?: string;
 }
 
 /** Common input field properties */
@@ -803,17 +772,6 @@ type SubsectionOptions = CommonOptions & ContainerOptions & IterationOptions & D
    * Examples: sortIndex, position
    */
   orderField?: string;
-};
-
-/** A data entry container bound to an object type. Auto-generates input fields. */
-type FormOptions = CommonOptions & DataOptions & {
-  type: "form";
-  /**
-   * Which object type the form writes to, and which partition it writes into.
-   * `dataType` names the collection a submit publishes to; `scope` picks the partition, defaulting to `global`. Without a `dataType` the form has nowhere to save.
-   * Examples: { "dataType": "Recipe" }, { "dataType": "Post", "scope": "user" }
-   */
-  formConfig: FormConfigOptions;
 };
 
 /** A reusable workflow/process that can be embedded in screens. */
@@ -1577,7 +1535,6 @@ type NodeOptions =
   | FolderOptions
   | ScreenOptions
   | SubsectionOptions
-  | FormOptions
   | FlowOptions
   | RepeatOptions
   | TreeOptions
@@ -1673,18 +1630,6 @@ interface ObjectTypeField {
    */
   type?: string;
   /**
-   * Deprecated — write `type: "list<T>"` instead. Still accepted as an alias so shipped configs keep working.
-   * `true`: Deprecated alias for `type: "list<T>"`; still honoured so shipped configs keep working.
-   * `false`: The field holds a single value (default).
-   */
-  isList?: boolean;
-  /**
-   * Deprecated — use `variant: "multiline"` on a text field instead.
-   * `true`: Deprecated; write `variant: "multiline"` on the text field instead.
-   * `false`: Single-line input (default).
-   */
-  multiline?: boolean;
-  /**
    * Input variant for the field's editor: `basic` or `multiline` for text fields.
    * Picks the input widget for a `text` field: `basic` (default), `multiline` or `stringArray`. Ignored on every other field type.
    * Only the text editor reads it; `variant: "integer"` on a number field has no effect.
@@ -1773,3 +1718,12 @@ interface PluginParameter {
   description?: string;
 }
 ```
+
+## Legacy — recognise, never write
+
+These still decode and render in existing orgs, so you may meet them when reading or editing one. They are left out of the types above on purpose: never write them in new output, and when you touch a node that uses one, write the replacement.
+
+- `form` (node type), legacy since 2026-10. Write instead: inputs on a screen or flow screen, saved by `publishData` / `updateData` in a script.
+- `submitObjectType` (on any container node), legacy since 2026-10. Write instead: a declared action or a flow `script` step that calls `publishData({type, data: {...}})` with the inputs named explicitly.
+- `isList` (on `ObjectTypeField`), legacy since 2026-10. Write instead: `type: "list<T>"`.
+- `multiline` (on `ObjectTypeField`), legacy since 2026-10. Write instead: `variant: "multiline"` on a text field.

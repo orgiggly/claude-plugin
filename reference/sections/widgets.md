@@ -26,8 +26,8 @@ change, and still can't zoom or pan.
 ## How it fits together
 
 1. The page lives at `widgets/<name>/index.html` in your project.
-2. `og widget deploy <name>` uploads it to your own widget folder (only you can
-   write there) and prints a **plugin block**.
+2. `og widget deploy <name>` sends it to Orgiggly, which stores it in your own
+   widget folder (only you can write there), and prints a **plugin block**.
 3. That plugin goes in the app's `plugins`; a node whose `type` is the plugin's name
    shows the widget, and its `parameters` are what the widget receives.
 4. In the app, the page runs in an `<iframe sandbox="allow-scripts">` and talks to

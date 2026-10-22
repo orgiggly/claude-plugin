@@ -74,6 +74,16 @@ Read-only consumption of `appConfig`. User-scoped form submissions and data are 
 
 *Anchor:* `apps/web/src/apps/site/`
 
+### Legacy
+
+> A node type or property that is frozen: it still renders, decodes and round-trips, but nothing new writes it.
+
+Marked with a `legacy: { since, use }` block in `nodeModel.json`, where `use` names the replacement. The org-gen agent recognises a legacy node in an org it is editing but never writes one, and the closing gate reports it as a warning, never an error (the `legacy-node` / `legacy-prop` kinds, #2741). Removing it is a separate, later decision; the status carries no removal date. "Deprecated" means the same thing; mirror it back as "legacy". First marked: the `form` node, `submitObjectType`, and the `isList` / `multiline` field props (#2737).
+
+*How we say it:* "`form` is legacy, so write the inputs on a screen and save them with `publishData`." • "That org still has a legacy `submitObjectType`, which is fine; it still works."
+
+*Anchor:* `packages/shared/src/scripts/codegen/nodeModel.json` (the `legacy` key), `LEGACY_NODES` in `packages/shared/src/validation/generated/nodeRegistry.generated.ts`
+
 ---
 
 ## 2. Tree & addressing

@@ -481,20 +481,6 @@ setValues({myLanguage: otherLanguage, otherLanguage: myLanguage})
 setValues({minPrice: 0, maxPrice: 1000, sortBy: "newest"})
 ```
 
-### `submit` _(async)_
-
-```
-submit(): {id: string, ...}
-```
-
-Publishes the content node's enclosing submit context object (the legacy `@submit` href behaviour): resolves the surrounding form-like object, publishes it as a record, then writes the server-stamped `id`/`createdAt`/`createdBy` back into the source fields and shows a success snackbar. Returns the published record. Throws when there is no submit context or the publish fails — so a failing `submit()` aborts the action's `navigate` step.
-
-**Examples:**
-
-```
-submit()
-```
-
 <!-- BEGIN PROMPT-STRIP: host-context-content:data-script -->
 ## In `content:data-script`
 
@@ -1256,3 +1242,9 @@ The tracks of one of the viewer's playlists, in playlist order and in the same s
 ```
 tracks = spotifyPlaylistTracks(playlistId); picks = shuffle(tracks, now()).slice(0, 10)
 ```
+
+## Legacy — recognise, never write
+
+These still run in existing orgs, so you may meet them in a script you are reading or editing. Never call them in new scripts; write the replacement instead.
+
+- `submit(): {id: string, ...}` (in `content:action`). Write instead: a declared action or a flow `script` step that calls `publishData({type, data: {...}})` with the inputs named explicitly.

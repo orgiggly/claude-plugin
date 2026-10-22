@@ -64,8 +64,22 @@ Traps per node type: things a config can say that validate but don't behave the 
 - `min` gates Done (a pass only counts once every `required` input on its screens is filled and every `validation` rule passes); `max` hides "Add another". Both take a number or a formula.
 - Next refuses to leave a screen (any flow screen, including a pass's) while a `required` input is empty, marking it red, so mark the fields a pass genuinely needs as `required`.
 
+## Flow node pitfalls
+
+- A flow's `_children` are its steps, in order: `screen` nodes (a page of inputs), step nodes written by their own type (`{"type": "script"}`, `{"type": "aiQuery"}`, `{"type": "transcribe"}`, …) and `repeat`. Never write `"type": "flowStep"` or a builder name like `scriptStep`: the step's type IS its kind, and `scriptStep` fails as an undeclared plugin.
+- Give a flow at least one `screen` step. A flow whose every step is a `script` gives the user nothing to fill in: they tap in, then tap its one button. Run that script from the button itself instead, as a declared content action (`<button data-action="start">` + `actions: {start: {script: "…"}}`, with `confirm` for a destructive one). The gate warns `flow-script-only`.
+- Next and Finish refuse to leave a flow screen while a visible `required` input is empty or a `validation` rule fails; the fields turn red. Mark what the step genuinely needs as `required` instead of checking it in the script. Hidden inputs never block.
+- A step whose `hidden` formula is true drops out of the flow entirely: it leaves the stepper and never runs. Use it to gate an action (`hidden: "@!roomExists"` on a `script` step means finishing writes nothing until the room exists) or to give one flow two paths (an AI step and a pick-from-list step, each hidden when the other applies).
+- A `script` step runs as soon as it is entered, and its value is readable later as `<stepName>.result` (the value of its last expression), so a script can load data a following screen shows: `{"type": "script", "name": "loadPlaylists", "script": "spotifyListPlaylists()"}`, then `"pickerValues": "@loadPlaylists.result"` on that screen's `selectInput`.
+- To pass a value INTO a flow, open it from a declared action whose script calls `navigate` with an args object (`<button data-action="add" data-param-day="${day}">` + `actions: {add: {script: "navigate('newEvent', {Start: $params.day})"}}`), then read `$args` inside the flow: `"compute": "@($args.Start ? $args.Start : '')"` on an input, or `$args.Start` in a `script` step. Never use `param=`, which a flow cannot see.
+- `autoAdvance` on a step is a plain `true`/`false`, never a formula: `"autoAdvance": "@true"` passes validation and then fails to publish. `hideTopBar` and `hideNav` on the flow DO accept a formula.
+- With `hideNav: true` the flow has no Next button, so a step advances only when your own content calls `advanceFlow()` (a declared action's script). Pair it with `hideTopBar: true` for a one-screen form that should look like a plain screen.
+- A flow's inputs reset every time the flow is navigated to; a plain screen's inputs keep whatever was typed last. So an edit form opened per record (`navigate('editRole', {id: $params.id})`) belongs in a one-step flow with `hideNav` and `hideTopBar`, or record B opens showing record A's typing.
+- To ask the same screens once per item ("Add another guest?"), use a `repeat` step; call `get_node_schema("repeat")` for its shape and rules rather than numbering screens.
+
 ## Form node pitfalls
 
+- `form` is LEGACY: never add one to a new org. Put the inputs straight on a `screen` (or a flow screen) and save them with `publishData({type, data: {…}})` / `updateData` in a script, naming each input in `data`. The bullets below are for reading or editing an org that already has a form.
 - A form must have a `formConfig` whose `dataType` matches an entry in `objectTypes`. The form fields are derived from that type's fields.
 - `formConfig.scope` controls where submissions are written: `"global"`, `"user"`, `"variant"`, or `"all"`. Variant-scoped publishing is admin-only — the form publish path rejects it.
 - Public auth mode (`authMode: "public"`) disables the publish button for `scope: "user"` forms when no user is signed in. Show inline helper text rather than auto-creating an anon user.
@@ -78,9 +92,10 @@ Traps per node type: things a config can say that validate but don't behave the 
 
 ## Select input node pitfalls
 
-- `options` is an array of `{ value, label }` objects, never a flat string array.
-- `dataType` (when set) sources options from objectInstances of that type — `options` becomes auto-populated and should be omitted.
-- Multi-select is not a separate variant; it is configured via `multi: true` on the same node.
+- The choices go in `pickerValues`, never `options`. Each is a plain string (`["Small", "Medium", "Large"]`), or an object `{id, label}` when the stored value differs from the text shown; add `group` to divide a long list. The input's value is the string, or the picked option's `id`.
+- A select input has no `dataType`. To offer records, map them in a formula: `"pickerValues": "@filter($data.Team, true).map((t) => ({id: t.id, label: t.name}))"`, which stores the picked record's `id`.
+- It picks ONE value. There is no `multi` field, and `variant: "multiple"` passes validation but still renders a pick-one dropdown, so for "pick any of these" write one `booleanInput` per choice.
+- `idiom` sets the look: `"select"` (the default dropdown), `"radio"` for two to four choices, `"combobox"` (type to filter) for a long list.
 
 ## Content node pitfalls
 

@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.17.0
+
+- **Widgets deploy through Orgiggly's server.** `og widget deploy` now sends your widget to Orgiggly, which stores it for you, instead of uploading it straight to storage. Nothing changes in how you use it. Update before your next widget deploy: older versions' uploads will soon be refused.
+
 ## 0.16.1
 
 - **Widgets can't be opened outside your app.** `og widget deploy` now stores a widget so that opening its web address in a browser downloads the file instead of running it. A widget only ever runs inside your app, in its sandbox. Widgets you've already deployed are converted for you. Update before your next deploy, because uploads from older versions will soon be refused.
