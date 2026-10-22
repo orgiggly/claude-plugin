@@ -13,15 +13,14 @@ const back = parseOutline(orgOutline(tree, { level: 3 })); // Either<RawOrgDataT
 
 Pure and deterministic: the same tree always renders the same bytes, so outlines diff cleanly.
 
-From the shell, `og outline` reads a local config with no network or admin key, or fetches one;
-`og fetch-org --outline` is the same view on the fetch path:
+From the shell, `og outline` reads a local config with no network or admin key, or fetches one
+by its org id:
 
 ```bash
 og outline orgs/mock/webberoonies/config.json            # L1 structure of the committed config
 og outline orgs/mock/webberoonies/config.json --level 3  # the lossless form
 og outline orgs/mock/webberoonies/config.json --at appConfig.recipeBook --level 3   # one screen, in full
 og outline mock/webberoonies --draft                     # fetched, like fetch-org
-og fetch-org mock/webberoonies --outline --level 0
 ```
 
 The intended reading order is L1 for the whole org, then `--at` for the part you are about to

@@ -5,6 +5,7 @@
 Task-shaped, working config snippets. Each recipe is a complete minimal app that passes `og validate-org`. Copy the parts you need into your own config, renaming types and nodes to fit. `og reference recipes <name>` prints just one.
 
 - `board-diagram` — Draw a board or grid from a position string
+- `daily-push-reminder` — A daily push reminder at a set time
 - `dates-and-rounding` — Dates and rounded numbers in templates
 - `edit-record` — Edit a record with inputs, then save it
 - `per-user-vs-shared` — Per-user vs shared data, and reading the current user
@@ -105,6 +106,144 @@ and the cell style. The rows are embedded so the recipe renders on its own.
 }
 ```
 <!-- /recipe: board-diagram -->
+
+<!-- recipe: daily-push-reminder -->
+## `daily-push-reminder` — A daily push reminder at a set time
+
+A timer only arms on a record that exists, and no script writes the schedule, so the
+8am rule is `perpetual`: one `Reminder/daily` record that publishing creates from
+`seed`, and that `next` moves on to the next 8am each time it fires. `notifyTo` lists
+who gets the push; an `onWrite` rule on `Subscribe` (the visitor's own `inbox` record)
+adds or removes them. The "Remind me" button calls `enablePush()`, which asks for
+permission and registers the device. Store what it returns and word a hint from it,
+because on iPhone a push only works once the app is on the Home Screen.
+
+Pushes and timers run only on a published app. Test the rules first with `og sim`:
+advance the clock past `nextAt` and check that `Reminder/daily` moved on. A perpetual
+rule's type takes no other timer rules, so it has no end-of-life rule either.
+
+```json
+{
+  "versionId": "v1",
+  "apiVersion": "0.1",
+  "users": {},
+  "appConfig": {
+    "type": "app",
+    "name": "dailyword",
+    "authMode": "public",
+    "transitions": [
+      {
+        "label": "Sign up for the daily reminder",
+        "trigger": "onWrite",
+        "watchType": "Subscribe",
+        "targetType": "Reminder",
+        "targetId": "@'daily'",
+        "condition": "@$record.ownerUid != null",
+        "next": "@let subs = filter($target.subs ?? [], (u) => u != $record.ownerUid); ({ ...$target, subs: $record.on == true ? concat(subs, [$record.ownerUid]) : subs })"
+      },
+      {
+        "label": "Send the 8am reminder",
+        "trigger": "onTimer",
+        "targetType": "Reminder",
+        "perpetual": true,
+        "targetId": "daily",
+        "seed": "@{ nextAt: nextOccurrence($now, '08:00', 'Europe/London'), subs: [] }",
+        "dueAt": "@$target.nextAt",
+        "condition": "@$now >= $target.nextAt",
+        "next": "@({ ...$target, nextAt: nextOccurrence($now, '08:00', 'Europe/London'), sentAt: $now })",
+        "notifyTo": "@$target.subs ?? []",
+        "notifyTitle": "@'Today’s word is up'",
+        "notifyBody": "@'Open the app to see it.'",
+        "notifyClickPath": "today"
+      }
+    ],
+    "_children": [
+      {
+        "type": "screen",
+        "name": "today",
+        "label": "Today",
+        "_children": [
+          {
+            "type": "subsection",
+            "name": "mySubscription",
+            "isRepeating": true,
+            "hidden": "@true",
+            "data": { "dataType": "Subscribe", "source": "realtime", "scope": "inbox" },
+            "_children": [
+              { "type": "content", "name": "mySubscriptionRow", "htmlTemplate": "@``" }
+            ]
+          },
+          {
+            "type": "subsection",
+            "name": "schedule",
+            "isRepeating": true,
+            "hidden": "@true",
+            "data": { "dataType": "Reminder", "source": "realtime" },
+            "_children": [
+              { "type": "content", "name": "scheduleRow", "htmlTemplate": "@``" }
+            ]
+          },
+          {
+            "type": "variable",
+            "name": "remindOn",
+            "compute": "@some($data.Subscribe, (s) => s.ownerUid == $authUid && s.on == true)"
+          },
+          { "type": "variable", "name": "pushState" },
+          {
+            "type": "function",
+            "name": "pushNote",
+            "parameters": "state",
+            "returns": "text",
+            "compute": "@match state { 'denied' -> 'Notifications are blocked for this site. Turn them on in your browser or phone settings.', 'ios-not-installed' -> 'On iPhone, add this app to your Home Screen, open it from there and tap again.', 'unavailable' -> 'This browser can’t show notifications.', _ -> '' }"
+          },
+          {
+            "type": "content",
+            "name": "remindBar",
+            "hidden": "@$authKind == 'anon'",
+            "htmlTemplate": "@`<div style=\"padding: 12px; text-align: center;\">${remindOn ? `You’ll get a reminder at 8am. <a data-action=\"stop\" style=\"cursor: pointer; text-decoration: underline;\">Turn off</a>` : `<button data-action=\"remind\" style=\"padding: 10px 16px; border-radius: 999px; font: inherit; cursor: pointer;\">Remind me at 8am</button>`}<div>${pushNote(pushState)}</div></div>`",
+            "actions": {
+              "remind": {
+                "script": "r = enablePush(); setAppValue('pushState', r); setRealtime('Subscribe/' + $authUid, {on: true, nonce: generateId(10)})"
+              },
+              "stop": {
+                "script": "setRealtime('Subscribe/' + $authUid, {on: false, nonce: generateId(10)})"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "objectTypes": {
+    "type": "folder",
+    "name": "",
+    "_children": [
+      {
+        "type": "objectType",
+        "name": "Subscribe",
+        "icon": "notifications",
+        "fields": [
+          { "name": "on", "type": "boolean" },
+          { "name": "nonce", "type": "text" }
+        ]
+      },
+      {
+        "type": "objectType",
+        "name": "Reminder",
+        "icon": "alarm",
+        "fields": [
+          { "name": "subs", "type": "list<text>" },
+          { "name": "nextAt", "type": "number" },
+          { "name": "sentAt", "type": "number" }
+        ]
+      }
+    ]
+  },
+  "objectInstances": {},
+  "plugins": {}
+}
+```
+<!-- /recipe: daily-push-reminder -->
 
 <!-- recipe: dates-and-rounding -->
 ## `dates-and-rounding` — Dates and rounded numbers in templates

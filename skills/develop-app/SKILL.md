@@ -460,12 +460,29 @@ email; keep the records' `id`s as they come back.
 
 - **Confirm the count**: the check file must hold as many records as the backup.
   Tell the user the number ("copied your 23 visits across").
-- **An upload replaces the target's whole collection.** If the target scope
-  already has records, fetch those too and combine both into one file first.
+- **A plain upload replaces the target's whole collection.** If the target scope
+  already has records, add `--individual` to the upload: each record is saved on
+  its own, by `id`, next to the ones already there.
 - **Then** switch the binding, validate, and publish the draft.
 - If anything can't come across — say several people have per-user records and
   only one partition can receive them — say exactly what will be lost **before**
   promoting, and let the user decide.
+
+### Adding or changing a few records — `--individual`
+
+A plain `og data upload` replaces the whole collection, so use it only to seed
+an empty one or to deliberately replace everything. To add a record or correct a
+few, put just those in a file and upload them with `--individual`:
+
+```bash
+og data upload {username}/{appname} Visit --data {appname}/data/new-visits.json --individual
+```
+
+Each record is saved on its own. One whose `id` already exists is updated in
+place, and one with a new `id` is added; everything else stays as it was. Don't
+fetch the collection, merge and re-upload it: that loses whatever someone else
+saved in the meantime. Each record is checked against who may save that type,
+exactly as a save in the app is.
 
 ### Removing a record — `data delete`, not a re-upload
 

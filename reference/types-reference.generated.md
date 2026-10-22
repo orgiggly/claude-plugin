@@ -1700,6 +1700,253 @@ interface ParentRelation {
 }
 ```
 
+<!-- BEGIN PROMPT-STRIP: transitions -->
+## Transition rules (app.transitions)
+
+Realtime rules the server runs after publish: `appConfig.transitions` is an
+array of these. A rule fires `onWrite` (a realtime write of `watchType`) or
+`onTimer` (when the deadline `dueAt` computes for a `targetType` record
+passes), then writes the next state of the target record and can send a push
+(`notifyTo` + `notifyTitle`). A timer only arms on a record that exists: for
+one schedule record (a daily reminder) use `perpetual: true` with a `targetId`
+and a `seed`, which publishing creates. For a working example run
+`og reference recipes daily-push-reminder`; `og reference realtime` has the
+authoring rules, and `og sim` tests rules without publishing.
+
+```typescript
+/** Designer-authored realtime state-machine rule for the generic transition engine. When a record of `watchType` is written, the engine evaluates `condition` and, if it holds, transactionally writes the next state (from the `next` @-formula) to the `targetType` record identified by `targetId`. Rules are pure state→state; the engine owns reads, transactions, and the single authoritative write. A rule fires either `onWrite` (a realtime write of `watchType`) or `onTimer` (a per-record deadline computed by `dueAt`). */
+interface TransitionRule {
+  /**
+   * Display name for this rule in the editor list.
+   * What this rule is called in the editor's rule list. Never read at runtime, so name it for the effect — a realtime config often carries a dozen rules.
+   * Examples: Prune abandoned presence, Reap abandoned video seats, Retire an abandoned game
+   */
+  label?: string;
+  /**
+   * Whether this rule is active. Defaults to on.
+   * `true`: The rule fires normally. This is the default when unset.
+   * `false`: The rule is kept in the config but never fires — the way to park a rule without deleting it.
+   */
+  enabled?: boolean;
+  /**
+   * What fires the rule. `onWrite` (the default when unset) fires on a realtime write of `watchType`, and needs `watchType` + `targetId`. `onTimer` fires when a deadline passes: the engine arms a timer against an individual `targetType` record from that record's own `dueAt` expression, so a timer rule needs `dueAt` and must leave `watchType`/`targetId`/`onDelete` unset (a `perpetual` timer is the exception: it names its one record with a literal `targetId`). An `onTimer` rule has NO input record, so `$record`/`$recordId` are absent from every formula it evaluates.
+   * `onWrite`: Fires on a realtime write of `watchType`. Needs `watchType` and `targetId`, and is the default when unset.
+   * `onTimer`: Fires when a deadline passes. The engine arms a timer on each `targetType` record from that record's own `dueAt`, so the rule needs `dueAt` and must leave `watchType`, `targetId` and `onDelete` unset. A `perpetual` timer is the exception: it names its one record with a literal `targetId`.
+   * An `onTimer` rule has no input record, so `$record` and `$recordId` are absent from every formula it evaluates.
+   */
+  trigger?: "onWrite" | "onTimer";
+  /**
+   * Realtime object type name whose writes fire the rule. `onWrite` only — an `onTimer` rule is fired by a deadline rather than by a write, and must leave this unset.
+   * The realtime object type whose writes fire this rule. `onWrite` only — an `onTimer` rule is fired by a deadline rather than a write, and must leave this unset.
+   * Examples: Move, Submission
+   */
+  watchType?: string;
+  /**
+   * Also fire the rule when a watched record is removed. Defaults to off. `onWrite` only — an `onTimer` rule watches nothing.
+   * `true`: Also fires when a watched record is removed, not just created or updated.
+   * `false`: Only creates and updates fire the rule. This is the default.
+   * `onWrite` only — an `onTimer` rule watches nothing.
+   */
+  onDelete?: boolean;
+  /**
+   * Realtime object type name the engine writes. For `onWrite` it must differ from `watchType` (no self-chains in v1). For `onTimer` it is ALSO the type whose records carry the timers — each record of this type gets its own deadline from `dueAt` — and `$records` means this type's records (target siblings), not the watched type's.
+   * The realtime object type this rule writes.
+   * For `onWrite` it must differ from `watchType` — v1 allows no self-chains. For `onTimer` it is also the type carrying the timers: every record of this type gets its own deadline from `dueAt`, and `$records` means this type's records (the target's siblings), not the watched type's.
+   * Examples: Game, Player, VideoSeat
+   */
+  targetType?: string;
+  /**
+   * @-formula over $record producing the target record id to write. `onWrite` only — an `onTimer` rule's timer is already armed against one specific record, so there is nothing to compute and it must leave this unset. The one exception is a `perpetual` timer rule, which REQUIRES a literal id: the single schedule record it keeps alive.
+   * Formula over `$record` producing the id of the record to write. `onWrite` only — an `onTimer` rule's timer is already armed against one specific record, so there is nothing to compute and it must leave this unset. A `perpetual` rule is the exception: it needs a plain id naming its one schedule record.
+   * Examples: @$record.gameId, daily
+   */
+  targetId?: string;
+  /**
+   * @-formula guard. Evaluated cheaply before the transaction and again inside the transaction against the live $target; falsy inside aborts the write. Optional on an `onTimer` rule, where it answers WHETHER the rule should still fire once its `dueAt` deadline arrives — the in-transaction re-check is what makes a stale or duplicated firing a harmless no-op.
+   * Formula guard deciding whether the write happens. Falsy aborts it.
+   * Evaluated cheaply before the transaction and again inside it against the live `$target` — only the inner result can abort the write. On an `onTimer` rule it is optional and answers whether the rule should still fire now its `dueAt` deadline has arrived; that in-transaction re-check is what makes a stale or duplicated firing a harmless no-op.
+   * Examples: @$target.online == false, @$record.kind == 'deal' && $target.phase == 'playing' && handsEmptyFn($target, $private) && stockLeftFn($private) > 0
+   */
+  condition?: string;
+  /**
+   * @-formula (or ;-separated script) returning the FULL next target state. The engine prunes undefined values and commits the result in a single transaction. On an `onTimer` rule it is also what MOVES the deadline — see `dueAt`.
+   * Formula (or `;`-separated script) returning the FULL next state of the target record.
+   * The engine prunes undefined values and commits the result in a single transaction, so this is a whole-record replacement rather than a patch. Returning `@null` deletes the record. On an `onTimer` rule this is also what moves the deadline — see `dueAt`.
+   * Examples: @null, @dealGameFn($target, shuffle(deckIdsFn(), $seed), $now), @redealGameFn($target, $private, $now)
+   */
+  next?: string;
+  /**
+   * @-formula evaluated in the same context as `condition` (same $record/$target/$records/$params/$now/$seed scope), producing a player-facing message when the move is rejected. A rule with no reason still gets a generic rejection message. Never evaluated for operator-only outcomes (formula-error, bad-target-id, stale, missing-target) — those stay Cloud-Logging-only, unchanged. MUST be DETERMINISTIC for a given game state — do NOT reference $now or $seed. The engine stops the ack write from re-triggering itself by comparing the newly computed reason against the stored one and skipping an identical write; a reason that changes every firing (e.g. '@`Rejected at ${$now}`') never compares equal, so the write re-fires the trigger forever.
+   * Formula producing a player-facing message when the move is rejected. A rule with no reason still gets a generic one.
+   * Evaluated in the same scope as `condition`. Never evaluated for operator-only outcomes — formula errors, bad target ids, stale and missing targets stay in Cloud Logging. It must be deterministic for a given state: the engine suppresses a repeat ack write by comparing the newly computed reason against the stored one, so a reason embedding `$now` or `$seed` never compares equal and re-fires the trigger forever.
+   * Examples: @moveRejectFn($record, $target), @moveRejectFn($record, $target, $private)
+   */
+  rejectionReason?: string;
+  /**
+   * Field name in this rule's committed `next` value whose string value is the FIREBASE AUTH uid of the player whose turn it now is. Setting this opts the rule into a web push ("it's your turn") sent to that player whenever the value changes from the last commit. It must be the auth uid, NOT a game-level player id — push tokens are registered against the auth uid, so pointing this at a `generateId()`-style playerId matches no device and sends nothing, silently. Every realtime record carries `ownerUid` (the auth uid of whoever wrote it), so a rule's `next` can carry that through. Leave unset for rules with no turn-notification concept.
+   * Field in this rule's committed `next` whose value is the Firebase Auth uid of the player whose turn it now is. Setting it opts the rule into a turn push whenever that value changes from the last commit.
+   * It must be the auth uid, not a game-level player id — push tokens are registered against the auth uid, so pointing this at a `generateId()`-style playerId matches no device and sends nothing, silently. Every realtime record carries `ownerUid`, the auth uid of whoever wrote it, so a rule's `next` can carry that through. Leave unset for rules with no turn-notification concept.
+   */
+  notifyTurnUidField?: string;
+  /**
+   * Push title. Supports ${field} interpolation against the committed next value (mirrors pushRule.titleTemplate). Defaults to "It's your turn!" when unset. Only used when notifyTurnUidField is set.
+   * Title of the turn push. Supports `${field}` interpolation against the committed next value, and defaults to a stock it-is-your-turn title when unset.
+   * Only used when `notifyTurnUidField` is set. Mirrors `pushRule.titleTemplate`.
+   */
+  notifyTitleTemplate?: string;
+  /**
+   * Push body. Supports ${field} interpolation against the committed next value. Blank by default. Only used when notifyTurnUidField is set.
+   * Body of the turn push, blank by default. Supports `${field}` interpolation against the committed next value.
+   * Only used when `notifyTurnUidField` is set.
+   */
+  notifyBodyTemplate?: string;
+  /**
+   * In-org screen to open when the push is tapped (mirrors pushRule.clickPath exactly — same in-app nav target, same rejection of absolute/cross-org paths). Used by both push kinds: the turn push (`notifyTurnUidField`) and the list push (`notifyTo`).
+   * In-org screen to open when the turn push is tapped.
+   * Mirrors `pushRule.clickPath` exactly — the same in-app nav target, and absolute or cross-org paths are rejected the same way. Used by both the turn push (`notifyTurnUidField`) and the list push (`notifyTo`).
+   */
+  notifyClickPath?: string;
+  /**
+   * @-formula returning the RECIPIENTS of a push sent after this rule commits (#2325) — on an `onWrite` AND an `onTimer` rule. An array whose items are Firebase auth uid strings, or `{ uid, title?, body? }` objects that override the rule's title/body for that one person (a reminder naming their own slot). `[]`, null or empty sends nothing. Evaluated against the COMMITTED target: `$target` is the value the rule just wrote, `$now` the same instant the commit used, plus `$record`/`$recordId` on an onWrite rule; `$private` is not available. A rejected, raced or failed commit sends nothing. Delivery is AT MOST ONCE per commit: the push goes out after the commit, so a crash between the two loses it, while a redelivered event or re-fired timer re-checks `condition` against the already-moved target and sends nothing. Tokens are matched on the uid each device registered with, so it must be the AUTH uid (every realtime record's `ownerUid`), never a game-level id. The reminder idiom: a timer rule whose `next` stamps `remindedAt: $now` on the people it covers and whose `notifyTo` picks exactly those (`it.remindedAt == $now`) — the stamp is what re-arms the timer for the next one. Requires `notifyTitle`; can't be combined with `notifyTurnUidField`.
+   * @-formula returning who gets a push after this rule commits — auth uids, or `{ uid, title, body }` objects for per-person text.
+   * Evaluated against the committed target, so `$target` is what the rule just wrote. Works on timer rules too. Pair with `notifyTitle`; a reminder rule stamps `remindedAt: $now` in `next` and sends to `filter($target.takers, it.remindedAt == $now)`.
+   * Examples: @map(filter($target.takers, it.remindedAt == $now), it.uid), @[$target.ownerUid]
+   */
+  notifyTo?: string;
+  /**
+   * @-formula for the push title every `notifyTo` recipient gets unless their entry carries its own (#2325). Same committed-target scope as `notifyTo`. Required when `notifyTo` is set.
+   * @-formula for the push title sent to the `notifyTo` recipients.
+   * Evaluated against the committed target, like `notifyTo`. A recipient object's own `title` wins.
+   * Examples: @'Reminder: ' + $target.title
+   */
+  notifyTitle?: string;
+  /**
+   * @-formula for the push body every `notifyTo` recipient gets unless their entry carries its own (#2325). Same committed-target scope as `notifyTo`. Blank when unset.
+   * @-formula for the push body sent to the `notifyTo` recipients.
+   * Evaluated against the committed target, like `notifyTo`. A recipient object's own `body` wins.
+   * Examples: @'You are helping today'
+   */
+  notifyBody?: string;
+  /**
+   * @-formula naming this send for DEDUPE (#2325): a uid that has already been delivered a push from this rule, for this target record, under the same key is skipped. Same committed-target scope as `notifyTo`. Unset means no key dedupe — each applied commit sends once, which the commit itself already guarantees. Set it when the rule can apply more than once for the same news (a commit that doesn't move what `condition` reads), e.g. `@'remind-' + $target.date`. The marker is written only after a delivery to that uid, so a rate-limited or failed send stays retryable.
+   * @-formula naming a send for dedupe — a uid already sent this key by this rule for this record is skipped.
+   * Only needed when the rule can apply twice for the same news. Unset, each applied commit sends once.
+   * Examples: @'remind-' + $target.date
+   */
+  notifyKey?: string;
+  /**
+   * @-formula naming the VARIANT the list push opens (#2385): a tap lands on `/{user}/{org}/{variant}?r=<notifyClickPath>` instead of the bare org path. Same committed-target scope as `notifyTo`. The value must be one path segment of letters, digits, `-` or `_`; anything else (or blank) falls back to the bare org path, like an unsafe `notifyClickPath`. List push only (`notifyTo`); the turn push ignores it.
+   * @-formula naming the variant a tapped list push opens, e.g. the event's own page.
+   * One path segment of letters, digits, `-` or `_`. Anything else, or blank, opens the bare org path. Combine with `notifyClickPath` to also pick the screen.
+   * Examples: @$target.id
+   */
+  notifyClickVariant?: string;
+  /**
+   * @-formula returning the RECIPIENTS of an SMS sent after this rule commits (#2254) — on an `onWrite` AND an `onTimer` rule, the text channel beside `notifyTo`. An array whose items are phone strings, or `{ phone, body? }` objects whose `body` overrides `smsBody` for that one person. UK numbers are accepted as typed (`07700 900123`), as digits (`447700900123`) or in E.164 (`+447700900123`); an entry that is not a valid number is dropped and counted, never fatal. Duplicates collapse to one text. `[]`, null or empty sends nothing. Same committed-target scope as `notifyTo` (`$target` is the value the rule just wrote, `$now` the commit's own instant, plus `$record`/`$recordId` on an onWrite rule), PLUS `$private` when `smsReadUids` is set — the phone numbers normally come from there, because a number must never sit on the public rail. A rejected, raced or failed commit texts nobody, and delivery is AT MOST ONCE per commit (same contract as `notifyTo`). The sender name is NOT authored here: it is the org's platform-assigned sender ID, so a config cannot text as someone else. A number that has opted out is skipped, and per-org hourly and monthly caps apply. Requires `smsBody`.
+   * @-formula returning who gets a text after this rule commits — phone numbers, or `{ phone, body }` objects for per-person text.
+   * Evaluated against the committed target like `notifyTo`, and works on timer rules too. Numbers usually come from `$private` (see `smsReadUids`), never from the public record. The sender name is set per org by the platform, not by the config.
+   * Examples: @map(filter($target.takers, it.remindedAt == $now), (t) => ({ phone: $private[$target.ownerUid].byTaker[t.id], body: 'Reminder: ' + t.name + ', you are on at ' + t.time }))
+   */
+  smsTo?: string;
+  /**
+   * @-formula for the text every `smsTo` recipient gets unless their entry carries its own `body` (#2254). Same scope as `smsTo`, including `$private` when `smsReadUids` is set. Required when `smsTo` is set. Name the event or organisation in the text: the sender ID is shared by every event the org runs. A text longer than two SMS segments (306 plain characters, or 134 once it contains an emoji or other non-GSM character) is cut to fit with an ellipsis.
+   * @-formula for the text sent to the `smsTo` recipients.
+   * A recipient object's own `body` wins. Keep it under two segments — about 300 plain characters, far fewer with an emoji — or it is cut short. Say which event it is about: the sender name is shared across the org.
+   * Examples: @'Thanks for helping at ' + $target.title + '! See you there.'
+   */
+  smsBody?: string;
+  /**
+   * Private realtime type the SMS side effect READS after the commit (#2254) — the `{Type}` segment of `realtimePrivate/{key}/{Type}/{targetId}`, the same id as this rule's target. Requires `smsReadUids`, and vice versa. Independent of `privateType`: the read happens after the commit, outside the transaction, so it is allowed on an `onTimer` rule, which cannot read the private rail through `privateReadUids`. It sees the COMMITTED private state, so a rule that just stored a number via `nextPrivate` texts that number.
+   * The private type whose records the SMS step reads to find phone numbers.
+   * Read after the commit, so it works on timer rules too and sees what `nextPrivate` just wrote. Pair it with `smsReadUids`.
+   */
+  smsPrivateType?: string;
+  /**
+   * @-formula returning the KEYS whose `smsPrivateType` records the SMS side effect loads after the commit (#2254); they arrive as `$private` in `smsTo`/`smsBody` and nowhere else. Same containment as `privateReadUids`: the formula names keys and the engine builds the paths, so a rule can only read its own target's private records; capped at 64 keys; `[]` reads nothing; a non-array is a formula error that sends nothing. Same committed-target scope as `notifyTo`. Requires `smsPrivateType`.
+   * Keys whose private records the SMS step reads, arriving as `$private` in `smsTo` and `smsBody`.
+   * Usually the organiser's uid, under which the phone book is kept. Read after the commit, so timer rules can use it.
+   * Examples: @[$target.ownerUid]
+   */
+  smsReadUids?: string;
+  /**
+   * `onTimer` only — required there, and rejected by the closing gate on an `onWrite` rule. @-formula over $target/$records/$now/$seed/$params (NO $record) returning WHEN this rule should next fire for this record, as an epoch-milliseconds timestamp, e.g. '@$target.turnStartedAt + 600000'. CONTRACT: a finite number arms the timer for that instant; `null`, `undefined` or `false` means "no timer for this record right now", which is how a rule arms conditionally (e.g. '@$target.online == false ? $target.awayAt + 3600000 : null'); any other value is a formula-error and fails closed, arming nothing. The result must be a PURE function of the record's own state — the closing gate REJECTS $now, $seed, rand() and generateId() in this formula (transition-timer-impure-due): an impure deadline recomputes differently on every write, so the timer re-arms an unchanged record forever. AUTHORING RULE: `dueAt` is a deadline your `next` should move — an unmoved deadline fires once and stops. Use `condition` for WHETHER the rule should still fire when the deadline arrives; it is re-checked inside the transaction.
+   * `onTimer` only: formula over the target's own state returning when this rule should next fire, as epoch milliseconds. Required there, and rejected by the closing gate on an `onWrite` rule.
+   * A finite number arms the timer for that instant; `null`, `undefined` or `false` means no timer for this record right now, which is how a rule arms conditionally. Any other value is a formula error and fails closed, arming nothing. The result must be a pure function of the record's own state — the closing gate rejects `$now`, `$seed`, `rand()` and `generateId()` here, because an impure deadline recomputes on every write and re-arms an unchanged record forever. Treat it as a deadline your `next` should move: an unmoved deadline fires once and stops, and `condition` is what decides whether it should still fire when it arrives.
+   * Examples: @$target.online == false ? $target.awayAt + 300000 : null, @$target.phase == 'playing' && $target.turnStartedAt ? $target.turnStartedAt + 600000 : null
+   */
+  dueAt?: string;
+  /**
+   * @-formula returning a UID-KEYED MAP of private per-player records to write alongside the public target — `{ "<authUid>": <recordValue>, ... }`. Each entry is written to `realtimePrivate/{uid}/{privateType}/{targetId}`, reusing this rule's own `targetId`, so a card game's public `Game/g1` and each player's private `Hand/g1` share an id. Requires `privateType`. The keys must be FIREBASE AUTH uids — the RTDB rules grant read only where `auth.uid` matches the path segment, so a game-level playerId writes a subtree its owner cannot read, silently. Every realtime record carries `ownerUid` (the auth uid of whoever wrote it), so a rule can carry that through. Evaluated in the same scope as `next`, against the same live `$target`, inside the same guarded transaction — so the public and private values can never be computed from different states. The private records are then written in ONE atomic multi-path update, so they land all-or-nothing; that update follows the public commit, so a reader can briefly see the new public state before the private records exist (see deepHelp).
+   * Private per-player records to write alongside the public target — a hand of cards each player alone can read.
+   * Returns a map keyed by auth uid; the engine writes each value under that uid's private realtime subtree. Use it for hidden information: a hand, a shuffled deck order, a secret role. RTDB can compare-and-set only ONE location, so the engine commits the public target in its guarded transaction and then fans the private records out in a single atomic update. The private fan-out is indivisible, but it lands one round-trip AFTER the public commit — so design the public state so the gap is harmless (deal the cards in the same transition that moves the phase OUT of the one the UI reads hands in, or have the UI show a dealing state until its own private record arrives). If the transaction aborts, no private record is written at all.
+   * Examples: @{ $target.playerA: { cards: $deck.slice(0, 13) }, $target.playerB: { cards: $deck.slice(13, 26) } }
+   */
+  nextPrivate?: string;
+  /**
+   * Realtime object type the `nextPrivate` records are written as — the `{Type}` segment of `realtimePrivate/{uid}/{Type}/{targetId}`. Required whenever `nextPrivate` is set, and rejected without it. Must be a realtime object type declared with `scope: "user"` (a data node binding it with `source: "realtime"`, `scope: "user"`) — the closing gate rejects a `privateType` the config exposes on the PUBLIC realtime rail, which would write records the engine believes are private into a collection every client subscribes to. Must also differ from `watchType`, like `targetType`.
+   * The object type the private per-player records are written as.
+   * Must be bound somewhere in the config by a data node with `source: "realtime"` and `scope: "user"`, which is what puts the reading client on the private rail. Declaring the same type publicly elsewhere is rejected — a type cannot be both hidden and shared.
+   */
+  privateType?: string;
+  /**
+   * @-formula returning an ARRAY OF KEYS whose private records this rule needs to READ — the symmetric half of `nextPrivate`. Each key `k` loads `realtimePrivate/{k}/{privateType}/{targetId}` and the results arrive as `$private`, a key-keyed map (a key with no record is absent from the map, so a truthiness check distinguishes "no hand yet"). Requires `privateType`. RTDB cannot wildcard a path segment, which is why the key list must be SUPPLIED rather than discovered — carry it on the target record (e.g. a seat→uid map written when the game started). As with `nextPrivate` the formula names the keys and the ENGINE builds the paths, so a rule can never address anything outside its own private records. READ BEFORE THE TRANSACTION, so `$private` is a snapshot that does not re-resolve on a retry: guard anything that must be serialised with a `condition` on the public target, whose compare-and-set is what actually orders concurrent moves. onWrite-only in v1 — the closing gate rejects it on an `onTimer` rule, whose context carries an empty `$private`. Capped at 64 keys; a longer list is an authoring error and is rejected, not truncated.
+   * Keys whose private records this rule reads, arriving as `$private`.
+   * The read counterpart of `nextPrivate`. A card game's turn rule reads the drawing player's hand and the hidden stock, moves a card between them, and writes both back via `nextPrivate` in the same rule — one atomic fan-out. Evaluated once before the transaction against the pre-read `$target`, so it may reference `$target` and `$record` but sees no in-transaction state.
+   * Examples: @[$target.seatUids[$record.playerId], '__stock'], @$target.seats.map((s) => $target.seatUids[s])
+   */
+  privateReadUids?: string;
+  /**
+   * `onTimer` only — declares that this rule's `next` is this object's end-of-life: once it fires, the record is expected to be gone. An intent marker only (the gate cannot prove a `next` actually deletes) — every `targetType` that carries any `onTimer` rule must carry at least one `endOfLife: true` rule too, or the closing gate rejects the config, since EOL is what bounds a re-arming timer's loop. Convention: an EOL rule's `next` returns `@null` (verified to delete the record via the transaction; `@{}` also deletes but reads like an accident).
+   * `true`: This rule's `next` is the record's end of life — once it fires, the record is expected to be gone. The convention is a `next` of `@null`, which deletes it.
+   * `false`: An ordinary timer rule. This is the default.
+   * An intent marker only — the gate cannot prove a `next` actually deletes. Every `targetType` carrying any `onTimer` rule must also carry at least one end-of-life rule, or the closing gate rejects the config: end-of-life is what bounds a re-arming timer's loop.
+   */
+  endOfLife?: boolean;
+  /**
+   * `onTimer` + `endOfLife` only — just before the end-of-life delete commits, copy the record into the org's Storage collection for its type (same id, global scope), so a `source:"storage"` read of that type keeps showing it after it leaves the realtime database. `archiveData`, `archiveType` and `archiveId` change what is copied, as which type, and under which id. A failed copy blocks the delete and the timer retries, so nothing is lost. The closing gate rejects it on an `onWrite` rule or a rule without `endOfLife: true`. An archive write counts as a publish, so a push rule on that type fires for it.
+   * `true`: Copy the record to Storage before it is deleted, so finished records stay browsable through a storage read of this type.
+   * `false`: The record is simply deleted. This is the default.
+   * Only valid with `endOfLife: true` on a timer rule. The copy keeps the record's id, so a retried firing overwrites rather than duplicating, and a failed copy stops the delete.
+   */
+  archive?: boolean;
+  /**
+   * Only with `archive: true` — the objectType the archive copy is published as, instead of `targetType` (#2324). Must be a declared objectType; read it back with a subsection declaring `source: "storage"` for that type. A separate type keeps finished records apart from live ones, e.g. an `EventArchive` beside the realtime `Event`.
+   * Publish the archive copy as this objectType instead of the record's own type — keeps finished records apart from live ones.
+   * Examples: EventArchive
+   */
+  archiveType?: string;
+  /**
+   * Only with `archive: true` — @-formula returning the OBJECT to archive instead of the whole record (#2324), evaluated against the final `$target` in the same scope as `next` ($target/$records/$params/$now/$seed, no $record). Storage records are world-readable, so this is where a projection keeps private fields (phone numbers, uids) out of the copy. Must evaluate to a plain object; any other value is a formula-error and the record is NOT deleted. The closing gate warns on a bare `@$target`, which is the same as leaving it unset.
+   * @-formula returning what to archive instead of the whole record. Storage is world-readable, so pick only the fields that may be public.
+   * Evaluated against the final `$target`, like `next`. It must return an object; anything else stops the delete and reports a formula error, so nothing is lost.
+   * Examples: @{ title: $target.title, date: $target.date, helpers: map($target.takers, (t) => t.name) }
+   */
+  archiveData?: string;
+  /**
+   * Only with `archive: true` — @-formula returning the id the archive copy is published under, instead of the record's own id (#2324). Same scope as `archiveData`. Must be DETERMINISTIC for a given record — never $now, $seed or generateId() — because a retried firing must overwrite its own earlier copy rather than add a second one. Use it when a record's id is reused, e.g. a yearly event on the same slug: `@$target.id + '-' + $target.date`. Must evaluate to a non-empty string with no '/'; anything else is a formula-error and the record is NOT deleted.
+   * @-formula returning the id to archive under, instead of the record's own — for ids that get reused, like a yearly event's slug.
+   * Must be deterministic: a retried firing overwrites its own earlier copy only if it computes the same id. Never use `$now`, `$seed` or `generateId()` here.
+   * Examples: @$target.id + '-' + $target.date
+   */
+  archiveId?: string;
+  /**
+   * `onTimer` only — marks a recurring wall-clock rule (#1521): ONE schedule record, named by a literal `targetId`, that lives forever and re-arms itself. Its `dueAt` must be a plain field read (`@$target.nextAt`) and its `next` moves that field to the next occurrence, usually with `nextOccurrence($now, 'HH:MM', 'Europe/London')`. Requires `targetId` and `seed`; publishing creates the record from `seed` when it is absent. Exempt from the end-of-life requirement, so the gate allows exactly one perpetual rule per `targetType` and no other timer rules on that type.
+   * `true`: A recurring schedule: one record that never ends and fires at a wall-clock time, then sets its own next time. Needs `targetId` and `seed`.
+   * `false`: An ordinary timer rule. This is the default.
+   * Give the schedule its own object type, with one perpetual rule and no other timer rules on it. `dueAt` must read a single field such as `@$target.nextAt`, and `next` must move that field forward, typically with `nextOccurrence`. A re-arm to a past time waits at least 60 seconds, so a rule that forgets to move it fires at most once a minute rather than in a tight loop.
+   */
+  perpetual?: boolean;
+  /**
+   * `perpetual` rules only — @-formula for the schedule record's initial state, evaluated at publish (scope: $now, $params) when the `targetId` record does not exist yet. It must set the field `dueAt` reads, e.g. `@{ nextAt: nextOccurrence($now, '05:17', 'Europe/London'), round: 0 }`. A record that already exists is left alone, so a re-publish never resets a running schedule.
+   * The schedule record's starting state, written when the rule is published and the record does not exist yet. It must set the field `dueAt` reads.
+   * Examples: @{ nextAt: nextOccurrence($now, '05:17', 'Europe/London'), round: 0 }
+   */
+  seed?: string;
+}
+```
+
+<!-- END PROMPT-STRIP: transitions -->
+
 ## Plugins (plugins section)
 
 Plugins are reusable HTML components with parameters.

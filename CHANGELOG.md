@@ -3,6 +3,19 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.18.1
+
+- **`og data list` works on your own apps.** It used to stop with "Permission denied". Collections stored per person show as "scoped".
+- **`og check-draft` can check your app in a Claude Code cloud session.** It no longer depends on reaching error-reporting and analytics sites, and checking a draft doesn't count as a visit. (Apps themselves no longer hang when Google is blocked; that fix is on orgiggly.com.)
+
+## 0.18.0
+
+- **Daily reminders are easier to build.** `og reference types` now lists every field of a realtime rule, including the push ones, and `og reference recipes daily-push-reminder` is a working "remind me at 8am" app to copy from.
+- **A timed rule that can never fire now stops validation.** If nothing creates the record a timer waits on, `og validate-org` reports it as critical rather than as a warning, and says how to fix it.
+- **Adding or fixing a few records no longer means re-uploading them all.** Claude now uses `og data upload --individual`, which saves just those records and leaves the rest alone.
+- **A typed answer no longer sticks around for days.** Claude now knows that what someone types into a box is kept until it's cleared, and clears it after saving.
+- **The reference is more accurate.** It no longer suggests commands your `og` doesn't have.
+
 ## 0.17.0
 
 - **Widgets deploy through Orgiggly's server.** `og widget deploy` now sends your widget to Orgiggly, which stores it for you, instead of uploading it straight to storage. Nothing changes in how you use it. Update before your next widget deploy: older versions' uploads will soon be refused.

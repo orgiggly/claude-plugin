@@ -1,10 +1,12 @@
+> **Some commands named here are the Orgiggly team's own tools and aren't in your `og`:** `og library sync` (and the rest of `og library`), `og feature` and `og issues`. They explain where things come from; `og --help` lists what you can run.
+
 # Orgiggly Ubiquitous Language
 
 This is our shared vocabulary — the small set of words that have specific meanings inside Orgiggly. If a word is in this glossary, it means we've agreed on what it refers to and we use it that way consistently. If you find yourself reaching for a synonym ("the agent", "the engine", "the wizard"), check here first — odds are we already have a canonical term, and using it makes everyone's life easier.
 
 The idea comes from Eric Evans' *Domain-Driven Design* — a **ubiquitous language** is the deliberate practice of having the team and the code agree on what things are called. It's a small habit with outsized payoff: code, conversation, documentation, and AI assistants all stay in sync.
 
-Forty terms, grouped into nine sections, plus a meta entry up front and a disambiguation block at the end.
+Forty-four terms, grouped into nine sections, plus a meta entry up front and a disambiguation block at the end.
 
 ---
 
@@ -285,6 +287,36 @@ Owned by the CLI: never edit inside it. The closing gate re-hashes its children 
 *How we say it:* "Don't touch `lib-pokerengine` — it's a library folder." • "Define it locally and re-sync — it'll land in `omitted`."
 
 *Anchor:* `packages/shared/src/validation/libraries.ts` (`libraryChildrenHash`)
+
+### Feature
+
+> A slice of an org (its types, screens, functions, plugins and seed records) cut into a bundle at `features/<owner>/<slug>/` and installed into other orgs. It has no root, users or home of its own.
+
+Like a function library it is **vendored**: `og feature install` grafts a copy into one `feature-<slug>` folder per config section, renaming only what collides, and the host owns that copy. A manifest says what the feature `requires` from a host, what it `provides`, and its `params` and `seams`. Change one by cutting a new version (`og feature extract --bump`), not by editing a host's folder. Not an app, and not a plugin.
+
+*How we say it:* "Install the calendar feature rather than generating one." • "Recipes is a feature; the home menu is shell."
+
+*Anchor:* `docs/FEATURES.md`, `packages/shared/src/features/`, `og feature`
+
+### Pin
+
+> The stamp on a vendored folder that records which bundle and version it holds: `feature: { id, version, hash }` on a feature folder, `library: { id, version, hash }` on a library folder.
+
+The `hash` is the content hash at install or sync time, so a later edit reads as **drift**: `og feature status` and the validator report it, and the admin designer shows a caution inside the folder. Hosts are found from their pins, never declared, which is how a feature pack knows where to run. A pin with no children, as `og feature extract --remove` leaves, marks where the feature goes back.
+
+*How we say it:* "webberoonies pins calendar v3." • "Re-pin and re-sync."
+
+*Anchor:* `featureRef` / `libraryRef` in `nodeModel.json`, `packages/shared/src/validation/features.ts`
+
+### Slot / seam
+
+> How two installed features cooperate. A **slot** is a zero-parameter `function` a feature provides for others to fill; a **seam** is another feature's function that fills it.
+
+A list slot concatenates every contribution (calendar's `feed`); a value slot takes the first one or keeps its default (calendar's `pastEventScreen`). Install rewrites each slot's body from the pins (`weaveSeams`), so install order never matters, and a woven body is not drift. It is config-time wiring through formulas, not a runtime API.
+
+*How we say it:* "Recipes fills calendar's `feed` slot through its `mealPlan` seam." • "Make that link a slot so calendar installs on its own."
+
+*Anchor:* `packages/shared/src/features/seams.ts`, `docs/FEATURES.md` (Slots and seams)
 
 ### Flow
 
