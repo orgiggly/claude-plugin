@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.20.1
+
+- **Some invite codes now come with more apps.** If a code includes extra apps, `og redeem` says how many you can have, and `og whoami` shows the new limit.
+
 ## 0.20.0
 
 - **Add a second admin.** `og admins <app> add <username>` lets another organiser edit and publish your app with their own `og`; `og admins <app>` shows who can, and `remove` takes it away. Only the app's creator can add or remove admins.
