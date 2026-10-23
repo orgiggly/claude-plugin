@@ -28,7 +28,7 @@ To display a list of items, set `isRepeating: true` on a subsection and bind it 
 
 ### Automatic Metadata
 
-When data is published to storage (via forms or programmatically), each record automatically receives metadata fields:
+When data is published to storage (by `publishData` in a script), each record automatically receives metadata fields:
 
 - `id` — auto-generated unique ID (e.g., `"Story-0001"`) if not already set
 - `createdAt` — ISO 8601 timestamp, set on first publish only

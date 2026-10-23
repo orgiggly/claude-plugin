@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.18.2
+
+- **`og check-draft --signed-in` checks your app as you.** It opens the draft a second time signed in, so screens that show your own records, and buttons only signed-in people see, get checked too. It doesn't press anything, so nothing is saved.
+
 ## 0.18.1
 
 - **`og data list` works on your own apps.** It used to stop with "Permission denied". Collections stored per person show as "scoped".

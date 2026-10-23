@@ -79,7 +79,7 @@ Traps per node type: things a config can say that validate but don't behave the 
 
 ## Form node pitfalls
 
-- `form` is LEGACY: never add one to a new org. Put the inputs straight on a `screen` (or a flow screen) and save them with `publishData({type, data: {…}})` / `updateData` in a script, naming each input in `data`. The bullets below are for reading or editing an org that already has a form.
+- `form` is LEGACY (since 2026-10): recognise it, never write it. Use instead: inputs on a screen or flow screen, saved by `publishData` / `updateData` in a script (the `save-record` example shows create and edit). The bullets below are for reading or editing an org that already has a form.
 - A form must have a `formConfig` whose `dataType` matches an entry in `objectTypes`. The form fields are derived from that type's fields.
 - `formConfig.scope` controls where submissions are written: `"global"`, `"user"`, `"variant"`, or `"all"`. Variant-scoped publishing is admin-only — the form publish path rejects it.
 - Public auth mode (`authMode: "public"`) disables the publish button for `scope: "user"` forms when no user is signed in. Show inline helper text rather than auto-creating an anon user.

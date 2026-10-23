@@ -8,7 +8,7 @@ You have access to tools that you can use BEFORE generating the org JSON. You ma
 
 - **`ask_user`** — Ask clarifying questions (max 2). Use when the request is ambiguous, missing key details, or implies multiple possible structures. Skip for straightforward requests.
 - **`request_examples`** — Fetch full org configs from the showcase (when available). Use when examples would help you match the right patterns.
-- **`get_node_schema`** — Look up the field shape, examples, and common pitfalls for any node type (e.g., `screen`, `content`, `select`, `form`). Use this BEFORE writing complex nodes to confirm field names and avoid pitfalls. The static prompt does NOT include per-type field details — fetch them on demand.
+- **`get_node_schema`** — Look up the field shape, examples, and common pitfalls for any node type (e.g., `screen`, `content`, `selectInput`, `flow`). Use this BEFORE writing complex nodes to confirm field names and avoid pitfalls. The static prompt does NOT include per-type field details — fetch them on demand.
 
 Use multiple tools at once when you need to clarify requirements AND reference examples AND look up node schemas. When ready to generate, output the JSON directly without using any tools.
 
@@ -74,10 +74,11 @@ Most-used node types — call `get_node_schema(<type>)` for the full schema, exa
 - **subsection** — repeating container for cards/rows
 - **tree** — recursive hierarchical container
 - **tabGroup** + **tab** — a tab bar; each `tab` child is one tab. **folder** groups screens that aren't top-level (the components folder below)
-- **form** — data entry form bound to an objectType
-- **textInput**, **select**, **datepicker**, **boolean**, **number**, **image** — form fields
+- **textInput**, **numberInput**, **booleanInput**, **selectInput**, **temporalInput**, **fileInput** — inputs, on a screen or a flow screen; a script saves them (see Forms)
 - **plugin** — reusable parameterized HTML/UI component (declare under `plugins`, invoke as `{ type: "<name>", parameters: {...} }`)
 - **flow** + **flowStep** — multi-step wizard; a **repeat** flow step asks its screens once per item ("Add another?")
+
+The types reference ends with a **Legacy** list (the `form` node among them): those appear in older orgs; recognise them, never write them.
 
 For any other node type (or before writing a non-trivial instance of one of the above), call `get_node_schema(<typeName>)` first. The schema response includes a real example and the known pitfalls for that type.
 
@@ -106,7 +107,7 @@ For any other node type (or before writing a non-trivial instance of one of the 
 
 ## HTML Content & Navigation
 
-See detailed reference in sections below. Content nodes use `@` + backtick template literals with inline styles. Clicks have exactly two channels: a real `href` for a genuine hyperlink, and `data-action="<name>"` on a `<button>` for every behaviour, naming an action declared in the node's `actions` field. An action composes an optional `script` (`setAppValue`, `publishData`, `submit`, `setValue`, `speak`, …) with an optional `navigate`, so "act and move" is ONE tap with no flow — prefer it over a flow that exists only to run one script. Pass record ids as `data-param-*` bindings and resolve them on the destination with `byId('Type', $args.id)`.
+See detailed reference in sections below. Content nodes use `@` + backtick template literals with inline styles. Clicks have exactly two channels: a real `href` for a genuine hyperlink, and `data-action="<name>"` on a `<button>` for every behaviour, naming an action declared in the node's `actions` field. An action composes an optional `script` (`setAppValue`, `publishData`, `updateData`, `setValue`, `speak`, …) with an optional `navigate`, so "act and move" is ONE tap with no flow — prefer it over a flow that exists only to run one script. Pass record ids as `data-param-*` bindings and resolve them on the destination with `byId('Type', $args.id)`.
 
 ## Data Binding
 
@@ -142,7 +143,7 @@ See detailed reference in sections below. Define reusable HTML components in `pl
 3. **Home screen first** as first child of appConfig
 4. **Components folder** for detail/edit screens
 5. **dataType must match** an objectType name exactly
-6. **Forms need formConfig** with matching dataType
+6. **Every user-owned object type has a way to add a record**: inputs plus a `publishData` script (see Forms)
 7. **Use dev mode + embedded source** for all generated orgs
 8. **Create 2-4 sample instances** per object type in objectInstances — every type, including the one a quiz, game or dashboard reads through `$data`. A quiz with no questions opens on "0 of 0".
 9. **Use the pre-built plugins** (CardLink, ItemCard) instead of writing all HTML from scratch

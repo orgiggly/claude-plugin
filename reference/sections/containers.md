@@ -3,7 +3,7 @@
 Container nodes structure the app's UI hierarchy.
 
 - **app** — Root node. Contains all screens. Always the top-level node of `appConfig`.
-- **screen** — A navigable page/view. Can contain subsections, content, inputs, and forms.
+- **screen** — A navigable page/view. Can contain subsections, content, inputs and flows.
 - **folder** — Groups screens or other nodes. Use for component/detail screens. Write `type: "folder"` — not `type: "appNode"` with a `variant`.
 - **tabGroup** / **tab** — A tab bar and its tabs: `type: "tabGroup"` whose `_children` are `type: "tab"` nodes.
 - **subsection** — Groups content within a screen. Set `isRepeating: true` to display a list of items.

@@ -62,7 +62,7 @@ Put `data-action` on a `<button>`, not an `<a>` — a button has a real button r
 - `setValue="expr"` → an action whose `script` calls `setValue(expr)`
 - `data-script='…'` → an action's `script` (same script language, same host functions)
 - `data-speak=…` → an action whose `script` calls `speak(text, lang?, rate?)`; `data-speak-action="stop"` → `stopSpeech()`
-- `href="@submit"` → an action whose `script` calls `submit()`
+- `href="@submit"` → an action whose `script` calls `publishData({type, data: {…}})`, naming each input
 - `href="@pop"` → an action whose script is `back()`
 - `param="expr"` → pass the value as a `data-param-*` binding and read it as `$params.<name>`
 
@@ -85,7 +85,7 @@ An action has two optional members:
 
 Navigation is a host call **inside the script**, normally its last statement: `navigate('screen', args?)` pushes (adds a back step, the ordinary drill-down), `replaceScreen('screen', args?)` swaps the current screen without a back step, and `back()` goes back one entry. Anything the `args` object holds is exposed as `$args.<key>` on the destination.
 
-A failure earlier in the script **aborts** the rest of it, navigation included, and surfaces as an error — which is why "save then close" is one action (`submit(); back()`), not two. `$params` is not `$args`: `$params` is what this click bound, `$args` is the *current screen's* nav args.
+A failure earlier in the script **aborts** the rest of it, navigation included, and surfaces as an error — which is why "save then close" is one action (`updateData({…}); back()`), not two. `$params` is not `$args`: `$params` is what this click bound, `$args` is the *current screen's* nav args.
 
 ```json
 {

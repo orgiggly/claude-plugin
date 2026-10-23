@@ -1,0 +1,226 @@
+{
+  "_comment": "Pattern: add and edit a record with inputs and a save script. Inputs sit on a flow's screen step; the flow's `script` step names each input in `publishData` (create) or `updateData` (edit). Each form is a one-step flow with `hideNav` + `hideTopBar`, so it looks like a plain screen but starts empty on every visit, and its button calls `advanceFlow()`, which refuses to move on while a `required` input is empty. The edit screen resolves the record once into a variable with `byId('Recipe', $args.id) || ({})` and prefills each input with `compute`.",
+  "appConfig_excerpt": {
+    "screens": [
+      {
+        "id": "screen-1",
+        "type": "screen",
+        "label": "Recipes",
+        "name": "recipeBook",
+        "data": { "source": "embedded" },
+        "_children": [
+          {
+            "id": "content-1",
+            "type": "content",
+            "name": "newRecipeLink",
+            "htmlTemplate": "@`<a href=\"newRecipe\" style=\"display: inline-block; padding: 12px 24px; background: #16a34a; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 16px;\">+ New recipe</a>`"
+          },
+          {
+            "id": "subsection-1",
+            "type": "subsection",
+            "name": "recipeList",
+            "isRepeating": true,
+            "data": {
+              "dataType": "Recipe",
+              "source": "embedded",
+              "sort": { "field": "name", "direction": "asc" }
+            },
+            "_children": [
+              {
+                "id": "content-2",
+                "type": "content",
+                "name": "recipeRow",
+                "htmlTemplate": "@`<div style=\"display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 8px;\">\n  ${pic ? `<img src=\"${pic}\" alt=\"\" style=\"width: 56px; height: 56px; object-fit: cover; border-radius: 8px;\">` : ``}\n  <div style=\"flex: 1; font-weight: 600;\">${name}</div>\n  <button data-action=\"edit\" data-param-id=\"${id}\" style=\"padding: 8px 16px; border: 0; border-radius: 8px; background: #e2e8f0; font: inherit; cursor: pointer;\">Edit</button>\n</div>`",
+                "actions": {
+                  "edit": {
+                    "params": ["id"],
+                    "script": "navigate('editRecipe', {id: $params.id})"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "folder-1",
+        "type": "folder",
+        "name": "components",
+        "label": "Components",
+        "_children": [
+          {
+            "id": "screen-2",
+            "type": "screen",
+            "label": "New Recipe",
+            "name": "newRecipe",
+            "_children": [
+              {
+                "id": "flow-1",
+                "type": "flow",
+                "name": "newRecipeFlow",
+                "hideNav": true,
+                "hideTopBar": true,
+                "_children": [
+                  {
+                    "id": "screen-3",
+                    "type": "screen",
+                    "name": "newRecipeStep",
+                    "_children": [
+                      {
+                        "id": "textInput-1",
+                        "type": "textInput",
+                        "name": "newName",
+                        "label": "Name",
+                        "required": true
+                      },
+                      {
+                        "id": "textInput-2",
+                        "type": "textInput",
+                        "name": "newMethod",
+                        "label": "Method",
+                        "variant": "multiline"
+                      },
+                      {
+                        "id": "fileInput-1",
+                        "type": "fileInput",
+                        "name": "newPic",
+                        "label": "Photo (optional)",
+                        "variant": "image",
+                        "showCamera": true,
+                        "showFilePicker": true,
+                        "showCommit": false,
+                        "compute": "@({ name: 'recipe-' + generateId(6) })"
+                      },
+                      {
+                        "id": "content-3",
+                        "type": "content",
+                        "name": "newRecipeButtons",
+                        "htmlTemplate": "@`<div style=\"display: flex; gap: 12px; margin-top: 16px;\">\n  <button data-action=\"create\" style=\"flex: 1; padding: 12px 24px; border: 0; border-radius: 8px; background: #16a34a; color: white; font: inherit; font-weight: 600; cursor: pointer;\">Save</button>\n  <button data-action=\"cancel\" style=\"flex: 1; padding: 12px 24px; border: 0; border-radius: 8px; background: #e2e8f0; font: inherit; cursor: pointer;\">Cancel</button>\n</div>`",
+                        "actions": {
+                          "create": { "script": "advanceFlow()" },
+                          "cancel": { "script": "back()" }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "script-1",
+                    "type": "script",
+                    "name": "createRecipe",
+                    "label": "Save",
+                    "idleTitle": "Saving your recipe",
+                    "script": "publishData({type: \"Recipe\", data: {name: newName, method: newMethod || \"\", pic: newPic.url || \"\"}});\nnavigate(\"recipeBook\")"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "screen-4",
+            "type": "screen",
+            "label": "Edit Recipe",
+            "name": "editRecipe",
+            "_children": [
+              {
+                "id": "variable-1",
+                "type": "variable",
+                "name": "rec",
+                "compute": "@byId('Recipe', $args.id) || ({})"
+              },
+              {
+                "id": "flow-2",
+                "type": "flow",
+                "name": "editRecipeFlow",
+                "hideNav": true,
+                "hideTopBar": true,
+                "_children": [
+                  {
+                    "id": "screen-5",
+                    "type": "screen",
+                    "name": "editRecipeStep",
+                    "_children": [
+                      {
+                        "id": "textInput-3",
+                        "type": "textInput",
+                        "name": "editName",
+                        "label": "Name",
+                        "required": true,
+                        "compute": "@rec.name"
+                      },
+                      {
+                        "id": "textInput-4",
+                        "type": "textInput",
+                        "name": "editMethod",
+                        "label": "Method",
+                        "variant": "multiline",
+                        "compute": "@rec.method"
+                      },
+                      {
+                        "id": "fileInput-2",
+                        "type": "fileInput",
+                        "name": "editPic",
+                        "label": "Photo (optional)",
+                        "variant": "image",
+                        "showCamera": true,
+                        "showFilePicker": true,
+                        "showCommit": false,
+                        "compute": "@(rec.pic ? { name: 'recipe-' + generateId(6), url: rec.pic } : { name: 'recipe-' + generateId(6) })"
+                      },
+                      {
+                        "id": "content-4",
+                        "type": "content",
+                        "name": "editRecipeButtons",
+                        "htmlTemplate": "@`<div style=\"display: flex; gap: 12px; margin-top: 16px;\">\n  <button data-action=\"save\" style=\"flex: 1; padding: 12px 24px; border: 0; border-radius: 8px; background: #16a34a; color: white; font: inherit; font-weight: 600; cursor: pointer;\">Save</button>\n  <button data-action=\"cancel\" style=\"flex: 1; padding: 12px 24px; border: 0; border-radius: 8px; background: #e2e8f0; font: inherit; cursor: pointer;\">Cancel</button>\n</div>`",
+                        "actions": {
+                          "save": { "script": "advanceFlow()" },
+                          "cancel": { "script": "back()" }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "script-2",
+                    "type": "script",
+                    "name": "saveRecipe",
+                    "label": "Save",
+                    "idleTitle": "Saving your changes",
+                    "script": "updateData({type: \"Recipe\", id: $args.id, patch: {name: editName, method: editMethod || \"\", pic: editPic.url || \"\"}});\nback()"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "objectTypes_excerpt": [
+    {
+      "id": "objectType-1",
+      "type": "objectType",
+      "name": "Recipe",
+      "icon": "restaurant",
+      "fields": [
+        { "name": "name", "type": "text" },
+        { "name": "method", "type": "text", "variant": "multiline" },
+        { "name": "pic", "type": "text" }
+      ]
+    }
+  ],
+  "objectInstances_excerpt": [
+    {
+      "id": "recipe-1",
+      "type": "Recipe",
+      "name": "Tomato soup",
+      "method": "Soften an onion, add tomatoes and stock, simmer 20 minutes, blend.",
+      "pic": ""
+    },
+    {
+      "id": "recipe-2",
+      "type": "Recipe",
+      "name": "Flapjacks",
+      "method": "Melt butter, sugar and syrup, stir in oats, press into a tin, bake 20 minutes at 180C.",
+      "pic": ""
+    }
+  ]
+}

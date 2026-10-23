@@ -730,10 +730,16 @@ the user, and say plainly what it does and doesn't cover:
 
 - **Checked:** the draft renders signed-out, and the config works with the saved
   data.
-- **Not checked:** anything that needs someone signed in — saving, per-user
-  data, buttons only signed-in people see. The test pack (Step 5c) covers what
-  those would save; ask the user to try them once on the preview, by name
-  ("sign in on the preview and mark a country").
+- **Not checked:** anything that needs someone signed in — per-user data,
+  buttons only signed-in people see, saving.
+
+When the app has per-user screens or signed-in-only controls, add `--signed-in`:
+it loads the preview a second time **as the user**, so their own records render
+and their pages are checked too. It clicks nothing, so saving is still
+unchecked. The test pack (Step 5c) covers what a save would write; ask the user
+to try it once on the preview, by name ("sign in on the preview and mark a
+country"). If the report says the signed-in pass was `not checked` or
+`skipped`, say so.
 
 If it says the browser check was skipped (no Playwright), the render wasn't
 checked — say so. If your Claude Code has the Playwright MCP tools, you can open
