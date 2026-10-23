@@ -466,7 +466,16 @@ email; keep the records' `id`s as they come back.
 - **Then** switch the binding, validate, and publish the draft.
 - If anything can't come across — say several people have per-user records and
   only one partition can receive them — say exactly what will be lost **before**
-  promoting, and let the user decide.
+  promoting, and let the user decide. Before moving or dropping a per-user
+  collection, count who has records in it:
+
+  ```bash
+  og data info {username}/{appname} Visit --partitions
+  ```
+
+  It lists each person with how many records they have (names only for the
+  app's admins). Quote those numbers ("Sam's 12 visits and Jo's 3 would be
+  lost").
 
 ### Adding or changing a few records — `--individual`
 
@@ -499,6 +508,40 @@ same command again with `--yes`. It can't be undone. App admins can delete any
 record; anyone else only records they created. Realtime records (rooms, games) go
 through `og realtime prune` instead.
 
+### Group records and members
+
+A `scope: "group"` collection keeps each group's records apart, readable by its
+members only. To see or fix one group's records, add `--group {groupKey}` to
+`og data fetch`, `og data upload` or `og data info`; the user must be a member
+of that group. To see who is in which group, the app's admins can run:
+
+```bash
+og groups list {username}/{appname}
+og groups show {username}/{appname} {groupKey}
+```
+
+To take someone out of a group (the group's owner or an app admin), run
+`og groups remove-member {username}/{appname} {groupKey} {theirUsername}`. A
+member who signed in with the app's name and PIN has no username: pass the UID
+`og groups show` printed, with `--uid`. People join groups in the app, with the
+group's invite code; there's no command that adds them.
+
+### A second person to edit the app — `og admins`
+
+When another organiser should be able to change the app too, its creator adds
+them by their Orgiggly username (they need an account with a username first):
+
+```bash
+og admins {username}/{appname} add {theirUsername}
+```
+
+They can then fetch, edit and publish it with their own `og`, and it shows in
+their list of apps. `og admins {username}/{appname}` lists the current admins,
+and `og admins {username}/{appname} remove {theirUsername}` takes the rights
+away. Only the creator can add or remove admins. Don't list people under the
+config's `users` to give them access: publishing from `og` doesn't grant it,
+and says so.
+
 **But if the config is generated, change the generator, not the output.** The
 signs: a `{appname}/scripts/` folder, or a **Regenerate** command in `CLAUDE.md`.
 Then edit the script (or its `data/`), re-run it, and validate what it writes —
@@ -517,6 +560,30 @@ and functions available.
 
 Keep it **domain-agnostic** — there are no hardcoded schemas or app templates
 here; everything comes from the request + the schema reference.
+
+### Reusing a plugin card
+
+Before hand-authoring a common card (a link tile, a profile card, a badge), check
+whether a tested one exists:
+
+```bash
+og marketplace list                # plugins Orgiggly lists for every app
+og plugin list                     # the user's own, published from earlier apps
+og plugin fetch {user}/{plugin}    # one, as a node to paste into `plugins`
+```
+
+Paste the fetched node into the config's `plugins` section and use its `name` as
+a node's `type`, as `og reference plugins` shows. It's a copy: a later version
+reaches this app only when you fetch it again.
+
+When the user has built a card they'll want in their other apps, save the one
+plugin node to a file of its own and publish it into their namespace:
+
+```bash
+og plugin publish "$PWD/{appname}/plugins/{name}.json" --description "What it's for"
+```
+
+Publishing never lists it in the marketplace; Orgiggly reviews what's listed.
 
 ### Widget or content template?
 
@@ -590,6 +657,13 @@ picks it up on its next reload. For a widget a **live** app already uses, deploy
 the change under a new name (`{name}2`) and point the draft at it, so the app
 switches when the draft is promoted. To remove a widget, take it out of the
 config first, then `og widget delete {name}`.
+
+Before deploying a `{name}2`, run `og widget list`. It shows every widget in the
+user's folder and when each was last updated, which is how the old `{name}` and
+any earlier `{name}2` are found. Widgets are shared by all the user's apps, and
+the list doesn't say which app uses which. So check this app's config, and ask
+the user about their other apps, before offering to `og widget delete` the ones
+nothing uses.
 
 Commit the widget's folder with the rest of the app, and note its name in the
 app's `CLAUDE.md`.

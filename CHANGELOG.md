@@ -3,6 +3,19 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.20.0
+
+- **Add a second admin.** `og admins <app> add <username>` lets another organiser edit and publish your app with their own `og`; `og admins <app>` shows who can, and `remove` takes it away. Only the app's creator can add or remove admins.
+- **Publishing no longer fails on a config that lists people by email.** It used to publish and then stop with "Permission denied". Now it publishes and tells you those people weren't given access, and how to add them as admins.
+- **See and fix a group's records.** `og data fetch`, `upload` and `info` take `--group <key>` for a group you belong to. App admins can list an app's groups and members with `og groups list` and `og groups show`, and a group's owner or an app admin can take someone out with `og groups remove-member`.
+- **See whose records a change would affect.** `og data info <app> <Type> --partitions` lists everyone who has their own records of that type, and how many each. Claude checks it before moving or dropping such a collection, so it can tell you exactly what would be lost.
+
+## 0.19.0
+
+- **Reuse a card instead of rebuilding it.** `og marketplace list` shows the plugin cards anyone can reuse, `og plugin list` shows anyone's published ones, and `og plugin fetch <user>/<plugin>` prints one ready to paste into your app. Claude now checks these before writing a common card from scratch.
+- **Publish your own cards.** `og plugin publish <file>` publishes a plugin under your name so your other apps (or anyone you give the id to) can fetch it. It always goes into your own namespace, and it's only listed in the marketplace once Orgiggly has reviewed it.
+- **See your deployed widgets.** `og widget list` shows every widget in your folder and when it was last updated, so old copies are easy to find and delete.
+
 ## 0.18.2
 
 - **`og check-draft --signed-in` checks your app as you.** It opens the draft a second time signed in, so screens that show your own records, and buttons only signed-in people see, get checked too. It doesn't press anything, so nothing is saved.
