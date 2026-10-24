@@ -1,4 +1,4 @@
-> **Some commands named here are the Orgiggly team's own tools and aren't in your `og`:** `og library sync` (and the rest of `og library`), `og feature` and `og issues`. They explain where things come from; `og --help` lists what you can run.
+> **Some commands named here are the Orgiggly team's own tools and aren't in your `og`:** `og feature` and `og issues`. They explain where things come from; `og --help` lists what you can run.
 
 # Orgiggly Ubiquitous Language
 

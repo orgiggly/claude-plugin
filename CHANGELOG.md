@@ -3,6 +3,16 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.22.0
+
+- **Use shared helper libraries.** `og reference libraries` lists the published function libraries, each with its helpers' names and parameters, and `og reference libraries <id>` shows one in full. Claude checks it before writing a helper that sounds generic, such as a deck of cards or a seat lookup.
+- **Pin a library in your app.** Add a folder that names the library and its version, then `og library sync <app>` copies its helpers into your config. `og library status <app>` says whether a newer version exists, or whether the copy was edited by hand. `og library fetch <id> [version]` prints a library as it was published.
+
+## 0.21.0
+
+- **Make pictures and spoken audio for your app.** `og generate-image <app> "<prompt>"` draws card art or an illustration, and `og tts <app> "<text>"` turns text into an MP3. Both put the file in your app and print the URL to use. They're billed to your credits, and each shows the cost and your balance before it runs. `generate-image` is free on your own Gemini or Replicate key.
+- **Tidy files your app no longer uses.** `og data prune-orphans <app>` lists the uploaded files nothing in the app points at any more, and `--delete` removes them. If the app has group records or private live records, it still lists them but won't delete, because it can't see whether one of those records uses a file.
+
 ## 0.20.1
 
 - **Some invite codes now come with more apps.** If a code includes extra apps, `og redeem` says how many you can have, and `og whoami` shows the new limit.

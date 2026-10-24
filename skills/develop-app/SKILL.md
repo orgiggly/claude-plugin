@@ -255,6 +255,7 @@ whichever of those you need:
 og reference types       # every node type, its fields, and codecs — always read this
 og reference formula     # formula language: operators, $index/$data/etc., built-ins
 og reference functions   # host / callable-datasource functions
+og reference libraries   # shared helper libraries other apps pin (live; signed in)
 ```
 
 Read `types` before authoring anything; read `formula`/`functions` when the
@@ -312,6 +313,25 @@ PNG, JPEG, GIF, WebP and AVIF images and MP3/M4A/WAV/OGG audio go up to
 10 MB, MP4/WebM/MOV video up to 30 MB. An uploaded file can't be replaced, so a
 new version needs a new `--name`. SVG is refused, so convert it to PNG first. The
 app's logo is the exception: use `update-org-logo` for that (**Logo**, in Step 6).
+
+When there's no photo to find or upload (card art, an illustration, a spoken
+greeting), make one. Both commands put the file in the app's folder and print
+its URL, exactly as `og upload` does:
+
+```bash
+og generate-image {username}/{appname} "a watercolour fox reading a map" --name fox-card --aspect 3:4
+og tts {username}/{appname} "Welcome to the quiz! Ready?" --voice nova --name welcome
+```
+
+Both bill the user's own credits, so tell them first. Each prints the cost and
+their balance before it runs, and refuses an empty balance before spending
+anything. `generate-image` uses `nano-banana-2` by default; `--model flux-schnell`
+is cheaper. It's free on the user's own key when `OG_GEMINI_API_KEY` or
+`OG_REPLICATE_API_TOKEN` is set. The model picks the format, so give `--name`
+without an extension and use the name it prints. `tts` makes one MP3 of up to
+4,096 characters. Longer text goes in several clips, and `--input script.txt`
+reads it from a file. Only the app's admins can add files, and `--output` keeps
+a local copy.
 
 ---
 
@@ -508,6 +528,23 @@ same command again with `--yes`. It can't be undone. App admins can delete any
 record; anyone else only records they created. Realtime records (rooms, games) go
 through `og realtime prune` instead.
 
+### Tidying unused files — `data prune-orphans`
+
+Over time an app collects files nothing uses any more: an old card picture, a
+photo whose record was deleted. To list them (the app's admins only):
+
+```bash
+og data prune-orphans {username}/{appname}
+```
+
+It checks every upload against the config, the draft, the data and the live
+records, and deletes nothing. Show the user the list. Once they say yes, run it
+again with `--delete`, which can't be undone. Files that only deleted records
+use are kept, because deleting them would stop those records being restored;
+`--include-deleted` counts them as unused too. If the app has group records or
+private live records, the report runs but `--delete` is refused: you can't read
+those records, so a file one of them uses would look unused. It tells you so.
+
 ### Group records and members
 
 A `scope: "group"` collection keeps each group's records apart, readable by its
@@ -584,6 +621,39 @@ og plugin publish "$PWD/{appname}/plugins/{name}.json" --description "What it's 
 ```
 
 Publishing never lists it in the marketplace; Orgiggly reviews what's listed.
+
+### Shared helpers — function libraries
+
+Before writing a formula helper that sounds generic (card decks, seat lookups,
+scoring, a progress-bar width), check whether a published library has it:
+
+```bash
+og reference libraries                   # every library, each member's signature
+og reference libraries {owner}/{slug}    # one library, a member per line
+```
+
+To use one, add a folder anywhere under `appConfig` that pins it — nothing else
+inside it:
+
+```json
+{ "type": "folder", "name": "lib-{slug}", "library": { "id": "{owner}/{slug}", "version": 2 } }
+```
+
+Then vendor it in, which rewrites the file in place and stamps the folder:
+
+```bash
+og library sync "$PWD/{appname}/config.json"
+og library status "$PWD/{appname}"       # pinned vs latest; drift if hand-edited
+og library fetch {owner}/{slug} 2        # that version's raw JSON, to read a body
+```
+
+Call the members by name like the app's own functions. **Never edit inside a
+library folder** — the validator rejects a changed one (`library-folder-drift`).
+To change one member for this app, define a function of the same name outside the
+folder and run `sync` again; it records the name in the folder's `omitted`. To
+move to a newer version, change the pin's `version` and sync. A library's
+description lists what the host app must supply (object types, functions); check
+that before pinning.
 
 ### Widget or content template?
 

@@ -1,3 +1,5 @@
+> **Shared helpers may already exist as a function library** — a published set of `function`/`const` nodes several apps pin. `og reference libraries` lists them with each member's signature; pin one with `og library sync` rather than hand-rolling the same helper.
+
 <!-- Auto-generated from formulaModel.json. Do not edit manually. -->
 
 ## Available Operators
