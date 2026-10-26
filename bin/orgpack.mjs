@@ -382,7 +382,7 @@ w.UnknownRecord;var kh=function(e){Oe(t,e);function t(){var r=e.call(this,"objec
 "object"},function(n,a){return r.is(n)?(0,w.success)(n):(0,w.failure)(n,a)},w.identity)||this;return r._tag="ObjectType",
 r}return t}(Ce);w.ObjectType=kh;w.object=new kh;w.dictionary=dh;var $1=function(e){Oe(t,e);function t(r,n,a,i,o){var s=e.
 call(this,r,n,a,i)||this;return s.props=o,s._tag="StrictType",s}return t}(Ce);w.StrictType=$1;function R1(e){return e}w.
-clean=R1;function I1(e){return function(){return e}}w.alias=I1});var Ah=He((tD,_h)=>{"use strict";var nt=class e extends Array{constructor(t,r){if(super(t),this.sign=r,Object.setPrototypeOf(
+clean=R1;function I1(e){return function(){return e}}w.alias=I1});var Ah=He((rD,_h)=>{"use strict";var nt=class e extends Array{constructor(t,r){if(super(t),this.sign=r,Object.setPrototypeOf(
 this,e.prototype),t>e.__kMaxLength)throw new RangeError("Maximum BigInt size exceeded")}static BigInt(t){var r=Math.floor,
 n=Number.isFinite;if(typeof t=="number"){if(t===0)return e.__zero();if(e.__isOneDigitInt(t))return 0>t?e.__oneDigit(-t,!0):
 e.__oneDigit(t,!1);if(!n(t)||r(t)!==t)throw new RangeError("The number "+t+" cannot be converted to BigInt because it is\
@@ -604,27 +604,27 @@ return(1073741823&t)===t}};nt.__kMaxLength=33554432,nt.__kMaxLengthBits=nt.__kMa
 "u","v","w","x","y","z"],nt.__kBitConversionBuffer=new ArrayBuffer(8),nt.__kBitConversionDouble=new Float64Array(nt.__kBitConversionBuffer),
 nt.__kBitConversionInts=new Int32Array(nt.__kBitConversionBuffer),nt.__kBitConversionIntHigh=nt.__detectBigEndian()?0:1,
 nt.__kBitConversionIntLow=nt.__detectBigEndian()?1:0,nt.__clz30=Math.clz32?function(e){return Math.clz32(e)-2}:function(e){
-return e===0?30:0|29-(0|Math.log(e>>>0)/Math.LN2)},nt.__imul=Math.imul||function(e,t){return 0|e*t},_h.exports=nt});var ug=He((oD,cg)=>{"use strict";var lg="ArrowFunctionExpression",$S={name:"arrow",init(e){e.addBinaryOp("=>",.1,!0),e.hooks.
+return e===0?30:0|29-(0|Math.log(e>>>0)/Math.LN2)},nt.__imul=Math.imul||function(e,t){return 0|e*t},_h.exports=nt});var ug=He((sD,cg)=>{"use strict";var lg="ArrowFunctionExpression",$S={name:"arrow",init(e){e.addBinaryOp("=>",.1,!0),e.hooks.
 add("gobble-expression",function(n){if(this.gobbleSpaces(),this.code===e.OPAREN_CODE){let a=this.index;if(this.index++,this.
 gobbleSpaces(),this.code===e.CPAREN_CODE){this.index++;let i=this.gobbleBinaryOp();if(i==="=>"){let o=this.gobbleBinaryExpression();
 o||this.throwError("Expected expression after "+i),n.node={type:lg,params:null,body:o};return}}this.index=a}}),e.hooks.add(
 "after-expression",function(n){t(n.node)});function t(r){r&&(Object.values(r).forEach(n=>{n&&typeof n=="object"&&t(n)}),
 r.operator==="=>"&&(r.type=lg,r.params=r.left?[r.left]:null,r.body=r.right,r.params&&r.params[0].type===e.SEQUENCE_EXP&&
-(r.params=r.params[0].expressions),delete r.left,delete r.right,delete r.operator))}}};cg.exports=$S});var fg=He((sD,pg)=>{"use strict";var RS="ObjectExpression",dg="Property",IS={name:"object",init(e){function t(r){if(this.
+(r.params=r.params[0].expressions),delete r.left,delete r.right,delete r.operator))}}};cg.exports=$S});var fg=He((lD,pg)=>{"use strict";var RS="ObjectExpression",dg="Property",IS={name:"object",init(e){function t(r){if(this.
 code===123){this.index++;let n=[];for(;!isNaN(this.code);){if(this.gobbleSpaces(),this.code===125){this.index++,r.node=this.
 gobbleTokenProperty({type:RS,properties:n});return}let a=this.gobbleExpression();if(!a)break;if(this.gobbleSpaces(),a.type===
 e.IDENTIFIER&&(this.code===e.COMMA_CODE||this.code===125))n.push({type:dg,computed:!1,key:a,value:a,shorthand:!0});else if(this.
 code===e.COLON_CODE){this.index++;let i=this.gobbleExpression();i||this.throwError("unexpected object property");let o=a.
 type===e.ARRAY_EXP;n.push({type:dg,computed:o,key:o?a.elements[0]:a,value:i,shorthand:!1}),this.gobbleSpaces()}else a&&n.
 push(a);this.code===e.COMMA_CODE&&this.index++}this.throwError("missing }")}}e.hooks.add("gobble-token",t)}};pg.exports=
-IS});var mg=He((lD,hg)=>{"use strict";var OS={name:"regex",init(e){e.hooks.add("gobble-token",function(r){if(this.code===47){
+IS});var mg=He((cD,hg)=>{"use strict";var OS={name:"regex",init(e){e.hooks.add("gobble-token",function(r){if(this.code===47){
 let n=++this.index,a=!1;for(;this.index<this.expr.length;){if(this.code===47&&!a){let i=this.expr.slice(n,this.index),o="";
 for(;++this.index<this.expr.length;){let l=this.code;if(l>=97&&l<=122||l>=65&&l<=90||l>=48&&l<=57)o+=this.char;else break}
 let s;try{s=new RegExp(i,o)}catch(l){this.throwError(l.message)}return r.node={type:e.LITERAL,value:s,raw:this.expr.slice(
 n-1,this.index)},r.node=this.gobbleTokenProperty(r.node),r.node}this.code===e.OBRACK_CODE?a=!0:a&&this.code===e.CBRACK_CODE&&
-(a=!1),this.index+=this.code===92?2:1}this.throwError("Unclosed Regex")}})}};hg.exports=OS});var yg=He((cD,gg)=>{"use strict";var CS={name:"jsepSpread",init(e){e.hooks.add("gobble-token",function(r){[0,1,2].every(
+(a=!1),this.index+=this.code===92?2:1}this.throwError("Unclosed Regex")}})}};hg.exports=OS});var yg=He((uD,gg)=>{"use strict";var CS={name:"jsepSpread",init(e){e.hooks.add("gobble-token",function(r){[0,1,2].every(
 n=>this.expr.charCodeAt(this.index+n)===e.PERIOD_CODE)&&(this.index+=3,r.node={type:"SpreadElement",argument:this.gobbleExpression()})})}};
-gg.exports=CS});var bg=He((uD,vg)=>{"use strict";var NS="TaggedTemplateExpression",PS="TemplateLiteral",MS="TemplateElement",DS={name:"j\
+gg.exports=CS});var bg=He((dD,vg)=>{"use strict";var NS="TaggedTemplateExpression",PS="TemplateLiteral",MS="TemplateElement",DS={name:"j\
 sepTemplateLiteral",init(e){function t(r,n=!0){if(this.code===96){let a={type:PS,quasis:[],expressions:[]},i="",o="",s=!1,
 l=this.expr.length,c=()=>a.quasis.push({type:MS,value:{raw:o,cooked:i},tail:s});for(;this.index<l;){let u=this.expr.charAt(
 ++this.index);if(u==="`")return this.index+=1,s=!0,c(),r.node=a,n&&(r.node=this.gobbleTokenProperty(r.node)),r.node;if(u===
@@ -861,7 +861,7 @@ pe.useMemo=function(v,A){return L().useMemo(v,A)},pe.useOptimistic=function(v,A)
 function(v,A,j){return L().useReducer(v,A,j)},pe.useRef=function(v){return L().useRef(v)},pe.useState=function(v){return L().
 useState(v)},pe.useSyncExternalStore=function(v,A,j){return L().useSyncExternalStore(v,A,j)},pe.useTransition=function(){
 return L().useTransition()},pe.version="19.1.0",typeof __REACT_DEVTOOLS_GLOBAL_HOOK__<"u"&&typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.
-registerInternalModuleStop=="function"&&__REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error())}()});var Xn=He((vD,ld)=>{"use strict";process.env.NODE_ENV==="production"?ld.exports=Mg():ld.exports=Dg()});var Lg=He(wl=>{"use strict";var mE=Symbol.for("react.transitional.element"),gE=Symbol.for("react.fragment");function jg(e,t,r){
+registerInternalModuleStop=="function"&&__REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error())}()});var Xn=He((bD,ld)=>{"use strict";process.env.NODE_ENV==="production"?ld.exports=Mg():ld.exports=Dg()});var Lg=He(wl=>{"use strict";var mE=Symbol.for("react.transitional.element"),gE=Symbol.for("react.fragment");function jg(e,t,r){
 var n=null;if(r!==void 0&&(n=""+r),t.key!==void 0&&(n=""+t.key),"key"in t){r={};for(var a in t)a!=="key"&&(r[a]=t[a])}else
 r=t;return t=r.ref,{$$typeof:mE,type:e,key:n,ref:t!==void 0?t:null,props:r}}wl.Fragment=gE;wl.jsx=jg;wl.jsxs=jg});var Ug=He(Tl=>{"use strict";process.env.NODE_ENV!=="production"&&function(){function e(C){if(C==null)return null;if(typeof C==
 "function")return C.$$typeof===ve?null:C.displayName||C.name||null;if(typeof C=="string")return C;switch(C){case b:return"\
@@ -909,7 +909,7 @@ Ie=Array.isArray,ce=console.createTask?console.createTask:function(){return null
 return C()}};var Ue,ft={},st=f["react-stack-bottom-frame"].bind(f,i)(),jt=ce(n(i)),Rr={};Tl.Fragment=b,Tl.jsx=function(C,de,We,ht,Hr){
 var Ir=1e4>te.recentlyCreatedOwnerStacks++;return u(C,de,We,!1,ht,Hr,Ir?Error("react-stack-top-frame"):st,Ir?ce(n(C)):jt)},
 Tl.jsxs=function(C,de,We,ht,Hr){var Ir=1e4>te.recentlyCreatedOwnerStacks++;return u(C,de,We,!0,ht,Hr,Ir?Error("react-sta\
-ck-top-frame"):st,Ir?ce(n(C)):jt)}}()});var kl=He((TD,cd)=>{"use strict";process.env.NODE_ENV==="production"?cd.exports=Lg():cd.exports=Ug()});var ud=He(q=>{"use strict";Object.defineProperty(q,"__esModule",{value:!0});q.Allow=q.ALL=q.COLLECTION=q.ATOM=q.SPECIAL=
+ck-top-frame"):st,Ir?ce(n(C)):jt)}}()});var kl=He((kD,cd)=>{"use strict";process.env.NODE_ENV==="production"?cd.exports=Lg():cd.exports=Ug()});var ud=He(q=>{"use strict";Object.defineProperty(q,"__esModule",{value:!0});q.Allow=q.ALL=q.COLLECTION=q.ATOM=q.SPECIAL=
 q.INF=q._INFINITY=q.INFINITY=q.NAN=q.BOOL=q.NULL=q.OBJ=q.ARR=q.NUM=q.STR=void 0;q.STR=1;q.NUM=2;q.ARR=4;q.OBJ=8;q.NULL=16;
 q.BOOL=32;q.NAN=64;q.INFINITY=128;q._INFINITY=256;q.INF=q.INFINITY|q._INFINITY;q.SPECIAL=q.NULL|q.BOOL|q.INF|q.NAN;q.ATOM=
 q.STR|q.NUM|q.SPECIAL;q.COLLECTION=q.ARR|q.OBJ;q.ALL=q.ATOM|q.COLLECTION;q.Allow={STR:q.STR,NUM:q.NUM,ARR:q.ARR,OBJ:q.OBJ,
@@ -940,7 +940,7 @@ substring(0,e.lastIndexOf("e")))}catch{}i(String(h))}}let f=n;for(e[n]==="-"&&n+
 r&&!(nr.Allow.NUM&t)&&a("Unterminated number literal");try{return JSON.parse(e.substring(f,n))}catch{e.substring(f,n)===
 "-"&&a("Not sure what '-' is");try{return JSON.parse(e.substring(f,e.lastIndexOf("e")))}catch(y){i(String(y))}}},d=()=>{
 for(;n<r&&` 
-\r	`.includes(e[n]);)n++};return o()},wE=Fg;At.parse=wE});import{fileURLToPath as WP}from"node:url";var Me=ae(je(),1),tt=ae(je(),1);var js={done:!1,hasNext:!1};function Wc(e,...t){let r=e,n=t.map(i=>"lazy"in i?O1(i):void 0),a=0;for(;a<t.length;){if(n[a]===void 0||!C1(r)){let l=t[a];
+\r	`.includes(e[n]);)n++};return o()},wE=Fg;At.parse=wE});import{fileURLToPath as HP}from"node:url";var Me=ae(je(),1),tt=ae(je(),1);var js={done:!1,hasNext:!1};function Wc(e,...t){let r=e,n=t.map(i=>"lazy"in i?O1(i):void 0),a=0;for(;a<t.length;){if(n[a]===void 0||!C1(r)){let l=t[a];
 r=l(r),a+=1;continue}let i=[];for(let l=a;l<t.length;l++){let c=n[l];if(c===void 0||(i.push(c),c.isSingle))break}let o=[];
 for(let l of r)if(Sh(l,o,i))break;let{isSingle:s}=i.at(-1);r=s?o[0]:o,a+=i.length}return r}function Sh(e,t,r){if(r.length===
 0)return t.push(e),!1;let n=e,a=js,i=!1;for(let[o,s]of r.entries()){let{index:l,items:c}=s;if(c.push(n),a=s(n,l,c),s.index+=
@@ -1761,7 +1761,7 @@ configurable:!1}),Tr.supportedLocalesOf=go.supportedLocalesOf,In(Tr,"Intl.DateTi
 DurationFormat?.prototype??Object.create(null);function Qu(e){Intl.DurationFormat.prototype.resolvedOptions.call(this);let t=og(
 Mr(e));return ES.call(this,t)}Intl.DurationFormat?.prototype&&(Intl.DurationFormat.prototype.format=Qu,Intl.DurationFormat.
 prototype.formatToParts=function(e){Intl.DurationFormat.prototype.resolvedOptions.call(this);let t=og(Mr(e));return xS.call(
-this,t)});var rD=Object.freeze({__proto__:null,DateTimeFormat:Tr,ModifiedIntlDurationFormatPrototypeFormat:Qu}),yo=class{constructor(t){
+this,t)});var nD=Object.freeze({__proto__:null,DateTimeFormat:Tr,ModifiedIntlDurationFormatPrototypeFormat:Qu}),yo=class{constructor(t){
 if(arguments.length<1)throw new TypeError("missing argument: epochNanoseconds is required");Lm(this,Zs(t))}get epochMilliseconds(){
 return I(this,St),jr(g(this,re),"floor")}get epochNanoseconds(){return I(this,St),eg($.default.BigInt(g(this,re)))}add(t){
 return I(this,St),em("add",this,t)}subtract(t){return I(this,St),em("subtract",this,t)}until(t,r=void 0){return I(this,St),
@@ -1965,7 +1965,7 @@ return Xi(t,r)}static compare(t,r){let n=Xi(t),a=Xi(r),i=g(n,re),o=g(a,re);retur
 $.default.BigInt(o))?-1:$.default.greaterThan($.default.BigInt(i),$.default.BigInt(o))?1:0}};function Xr(e){return Dr(g(
 e,Re),g(e,re))}function Wt(e,t){I(e,ye);let r=Xr(e).isoDate;return Oo(e).isoToDate(r,{[t]:!0})[t]}function Wa(e,t){return I(
 e,ye),Xr(e).time[t]}In(Eo,"Temporal.ZonedDateTime");var Ve=Object.freeze({__proto__:null,Duration:wo,Instant:yo,Now:sg,PlainDate:vo,
-PlainDateTime:bo,PlainMonthDay:To,PlainTime:ko,PlainYearMonth:So,ZonedDateTime:Eo}),nD=class{toTemporalInstant(){return Yr(
+PlainDateTime:bo,PlainMonthDay:To,PlainTime:ko,PlainYearMonth:So,ZonedDateTime:Eo}),aD=class{toTemporalInstant(){return Yr(
 zr(Date.prototype.valueOf.call(this)))}}.prototype.toTemporalInstant,AS=[yo,vo,bo,wo,To,ko,So,Eo];for(let e of AS){let t=Object.
 getOwnPropertyDescriptor(e,"prototype");(t.configurable||t.enumerable||t.writable)&&(t.configurable=!1,t.enumerable=!1,t.
 writable=!1,Object.defineProperty(e,"prototype",t))}var Ur=ae(je(),1);var Pe=ae(je(),1),p=ae(je(),1),Dt=ae(je(),1),dt=ae(je(),1);var iv=ae(ug(),1),ov=ae(fg(),1),sv=ae(mg(),1),lv=ae(yg(),1),cv=ae(bg(),1);var ed=class{add(t,r,n){if(typeof arguments[0]!="string")for(let a in arguments[0])this.add(a,arguments[0][a],arguments[1]);else
@@ -2072,7 +2072,7 @@ n=>typeof n=="function"?`function ${n.name||"unnamed"}()`:typeof n).join(", ");t
 isArray(e)?e:[e];function zS(e){let t=Array.isArray(e[0])?e[0]:e;return YS(t,"createSelector expects all input-selectors\
  to be functions, but received the following types: "),t}function Tg(e,t){let r=[],{length:n}=e;for(let a=0;a<n;a++)r.push(
 e[a].apply(null,t));return r}var KS=(e,t)=>{let{identityFunctionCheck:r,inputStabilityCheck:n}={...HS,...t};return{identityFunctionCheck:{
-shouldRun:r==="always"||r==="once"&&e,run:BS},inputStabilityCheck:{shouldRun:n==="always"||n==="once"&&e,run:WS}}};var fD=Symbol();var hD=Object.getPrototypeOf({});var GS=class{constructor(e){this.value=e}deref(){return this.value}},JS=typeof WeakRef<"u"?WeakRef:GS,ZS=0,kg=1;function yl(){
+shouldRun:r==="always"||r==="once"&&e,run:BS},inputStabilityCheck:{shouldRun:n==="always"||n==="once"&&e,run:WS}}};var hD=Symbol();var mD=Object.getPrototypeOf({});var GS=class{constructor(e){this.value=e}deref(){return this.value}},JS=typeof WeakRef<"u"?WeakRef:GS,ZS=0,kg=1;function yl(){
 return{s:ZS,v:void 0,o:null,p:null}}function Sg(e,t={}){let r=yl(),{resultEqualityCheck:n}=t,a,i=0;function o(){let s=r,
 {length:l}=arguments;for(let d=0,f=l;d<f;d++){let h=arguments[d];if(typeof h=="function"||typeof h=="object"&&h!==null){
 let y=s.o;y===null&&(s.o=y=new WeakMap);let b=y.get(h);b===void 0?(s=yl(),y.set(h,s)):s=b}else{let y=s.p;y===null&&(s.p=
@@ -2128,10 +2128,10 @@ null;return t?new Ve.PlainTime(Number(t[1]),Number(t[2])):void 0},ME={mon:1,tue:
 filter(n=>n.length>0);if(t.length===0)return;let r=new Set;for(let n of t){let a=ME[n];if(a===void 0)return;r.add(a)}return r};var LE=(e,t)=>Bi(e)?e(t):e,Jo=()=>!0,UE=e=>e instanceof Error,FE=e=>UE(e)?e.message:String(e),BE=e=>e===void 0?[]:Array.
 isArray(e)?e:[e];var Qn=(e,t)=>e===t?0:e===void 0?1:t===void 0?-1:ir(e)&&ir(t)?Ve.PlainDate.compare(e,t):typeof e=="number"&&typeof t=="n\
 umber"?e-t:typeof e=="string"&&typeof t=="string"?e.localeCompare(t):String(e).localeCompare(String(t));var Oy={};var le=e=>tt.union([e,tt.undefined]),$e=le(tt.boolean),F=le(tt.string),mr=le(tt.number),On=tt.record(tt.string,tt.unknown),
-WE=tt.array(On),HE=tt.record(tt.string,tt.string),RD=tt.record(tt.string,tt.boolean);var qE=Me.intersection([Me.type({version:Me.number,verticalId:Me.string,answers:On,derived:Me.type({entities:Me.array(Me.string),
+WE=tt.array(On),HE=tt.record(tt.string,tt.string),ID=tt.record(tt.string,tt.boolean);var qE=Me.intersection([Me.type({version:Me.number,verticalId:Me.string,answers:On,derived:Me.type({entities:Me.array(Me.string),
 features:Me.array(Me.string)})}),Me.partial({notes:Me.string})]),VE=Me.keyof({clone:null,orgGen:null,orgGenHighRisk:null}),
 YE=Me.type({id:Me.string,label:Me.string,weight:Me.number,triggered:Me.boolean}),zE=Me.type({score:Me.number,factors:Me.array(
-YE),strategy:VE}),ID=Me.intersection([qE,Me.type({risk:zE})]);var KE=function(e,t,r){if(r||arguments.length===2)for(var n=0,a=t.length,i;n<a;n++)(i||!(n in t))&&(i||(i=Array.prototype.
+YE),strategy:VE}),OD=Me.intersection([qE,Me.type({risk:zE})]);var KE=function(e,t,r){if(r||arguments.length===2)for(var n=0,a=t.length,i;n<a;n++)(i||!(n in t))&&(i||(i=Array.prototype.
 slice.call(t,0,n)),i[n]=t[n]);return e.concat(i||Array.prototype.slice.call(t))};function GE(e){return e}function Cy(e,t,r,n,a,i,o,s,l){
 switch(arguments.length){case 1:return e;case 2:return t(e);case 3:return r(t(e));case 4:return n(r(t(e)));case 5:return a(
 n(r(t(e))));case 6:return i(a(n(r(t(e)))));case 7:return o(i(a(n(r(t(e))))));case 8:return s(o(i(a(n(r(t(e)))))));case 9:
@@ -2141,9 +2141,9 @@ return r(arguments)?t.apply(this,n):function(a){return t.apply(void 0,KE([a],n,!
 eft"},ZE=function(e){return e._tag==="Right"};var XE=function(e){return{_tag:"Right",right:e}};function Ny(e){return function(t,r){return e.map(t,function(){return r})}}
 function QE(e){var t=Ny(e);return function(r){return t(r,void 0)}}function ex(e){return function(t,r){return e.chain(t,function(n){
 return e.map(r(n),function(){return n})})}}var Py=XE,tx=Ud(2,function(e,t){return Cl(e)?e:t(e.right)}),My=function(e,t){return Cy(e,nx(t))},rx=function(e,t){return Cy(
-e,ix(t))},Fd="Either",nx=function(e){return function(t){return Cl(t)?t:Py(e(t.right))}},Dy={URI:Fd,map:My},OD=Ud(2,Ny(Dy)),
-CD=QE(Dy),ax=function(e){return function(t){return Cl(t)?t:Cl(e)?e:Py(t.right(e.right))}},ix=ax,ox={URI:Fd,map:My,ap:rx,
-chain:tx},sx={URI:Fd,fromEither:GE},Cl=JE,lx=ZE;var ND=Ud(2,ex(ox)),PD={fromEither:sx.fromEither},ln=e=>Dt.union([e,Dt.array(e)]),Ae=e=>{let t=r=>typeof r=="string";return new Dt.Type(
+e,ix(t))},Fd="Either",nx=function(e){return function(t){return Cl(t)?t:Py(e(t.right))}},Dy={URI:Fd,map:My},CD=Ud(2,Ny(Dy)),
+ND=QE(Dy),ax=function(e){return function(t){return Cl(t)?t:Cl(e)?e:Py(t.right(e.right))}},ix=ax,ox={URI:Fd,map:My,ap:rx,
+chain:tx},sx={URI:Fd,fromEither:GE},Cl=JE,lx=ZE;var PD=Ud(2,ex(ox)),MD={fromEither:sx.fromEither},ln=e=>Dt.union([e,Dt.array(e)]),Ae=e=>{let t=r=>typeof r=="string";return new Dt.Type(
 `lax(${e.name})`,t,(r,n)=>t(r)?Dt.success(r):Dt.failure(r,n),Dt.identity)};function Ad(e){return e.length===0?"":e[0].context.map(r=>r.key).filter(Boolean).join(".")}function cx(e){if(e.length===
 0)return"No errors";if(e.length===1){let a=e[0],i=Ad(e);return`Invalid value${i?` at ${i}`:""}: ${a.message||a.value}`}let t={};
 e.forEach(a=>{let i=Ad([a]);t[i]||(t[i]=[]),t[i].push(a)});let r=Object.keys(t).length,n=e.length;return`${n} validation\
@@ -2166,9 +2166,9 @@ ll"),p.literal("nano-banana-2")])),Hl=Ae(p.union([p.literal("claude-haiku-5-5"),
 "claude-sonnet-5")])),kx=Ae(p.union([p.literal("none"),p.literal("menu"),p.literal("tabs")])),Sx=Ae(p.union([p.literal("\
 onWrite"),p.literal("onTimer")])),Ex=Ae(p.union([p.literal("repeat"),p.literal("once"),p.literal("grid")])),Hy=Ae(p.union(
 [p.literal("tiles"),p.literal("bar"),p.literal("audioOnly"),p.literal("minimal")])),Yd=Ae(p.union([p.literal("video"),p.literal(
-"audio")])),xx=Ae(p.union([p.literal("anyone"),p.literal("admins")])),_x=Ae(p.literal("Person")),MD=Ae(p.union([p.literal(
+"audio")])),xx=Ae(p.union([p.literal("anyone"),p.literal("admins")])),_x=Ae(p.literal("Person")),DD=Ae(p.union([p.literal(
 "variable"),p.literal("text"),p.literal("number"),p.literal("boolean"),p.literal("temporal"),p.literal("parentRef"),p.literal(
-"image"),p.literal("imageUpload")])),DD=Ae(p.union([p.literal("id"),p.literal("type"),p.literal("_scope"),p.literal("cre\
+"image"),p.literal("imageUpload")])),jD=Ae(p.union([p.literal("id"),p.literal("type"),p.literal("_scope"),p.literal("cre\
 atedAt"),p.literal("updatedAt"),p.literal("createdBy"),p.literal("updatedBy"),p.literal("createdByUid"),p.literal("updat\
 edByUid"),p.literal("isDeleted"),p.literal("_parent")])),Ax=Ae(p.union([p.literal("tabGroup"),p.literal("tab"),p.literal(
 "folder")])),$x=Ae(p.union([p.literal("aiQuery"),p.literal("aiChat"),p.literal("fetchData"),p.literal("imageGeneration"),
@@ -2233,10 +2233,10 @@ rootType:p.string,runningDescription:p.string,runningTitle:p.string,script:p.str
 showEdit:p.boolean,showFilePicker:p.boolean,showHeader:p.union([p.boolean,p.string]),showSearch:p.boolean,size:Bd,sourceExpression:p.string,
 speakReplies:p.boolean,speechLang:p.string,steeringChips:p.string,step:p.union([p.number,p.string]),submitObjectType:p.string,
 successMessage:p.string,summary:p.string,textTransform:Wd,theme:Wy,themeColors:Jd,transitions:ln(Vy),typeDescription:p.string,
-userAvatarUid:p.string,validation:ln(Xd),value:p.unknown,variant:p.string,voiceInput:p.boolean})]),jD=Pe.type({verticalId:Pe.string,
+userAvatarUid:p.string,validation:ln(Xd),value:p.unknown,variant:p.string,voiceInput:p.boolean})]),LD=Pe.type({verticalId:Pe.string,
 title:Pe.string,entities:Pe.array(Pe.string),seedSlots:Pe.array(Pe.string),labels:Pe.array(Pe.string)}),Vx=Pe.keyof({light:null,
 dark:null}),Yx=Pe.partial({labels:Pe.record(Pe.string,Pe.string),theme:Pe.partial({preset:Vx,colors:Jd}),entityRenames:Pe.record(
-Pe.string,Pe.string),seedSlots:Pe.array(Pe.string)}),LD=Pe.intersection([Pe.type({appName:Pe.string}),Yx]),Qd={dataSourceType:[
+Pe.string,Pe.string),seedSlots:Pe.array(Pe.string)}),UD=Pe.intersection([Pe.type({appName:Pe.string}),Yx]),Qd={dataSourceType:[
 "embedded","storage","realtime","callable"],featureSlotKind:["list","value"],authMode:["public","private"],mode:["column\
 s","grid","spatial","flow"],axis:["x","y"],imageFormat:["jpeg","png","webp"],inputSize:["small","medium"],subsectionVariant:[
 "inline","masterDetail"],textVariant:["basic","multiline","stringArray"],textTransform:["none","uppercase","lowercase"],
@@ -2248,7 +2248,7 @@ erWorldcupSync"],audioGenerationModel:["musicgen","minimax-music-2.5"],transcrib
 "none","menu","tabs"],transitionTrigger:["onWrite","onTimer"],spanMode:["repeat","once","grid"],videoDisplayMode:["tiles",
 "bar","audioOnly","minimal"],mediaMode:["video","audio"],objectTypeWriteAccess:["anyone","admins"],wellKnownType:["Perso\
 n"],fieldTypeBuiltin:["variable","text","number","boolean","temporal","parentRef","image","imageUpload"],recordMetaField:[
-"id","type","_scope","createdAt","updatedAt","createdBy","updatedBy","createdByUid","updatedByUid","isDeleted","_parent"]};var rv=new Set(Qd.fieldTypeBuiltin),zx=e=>rv.has(e),UD=Qd.fieldTypeBuiltin.filter(zx);var Kx=e=>{if(typeof e!="string")return[];let t=[];for(let r of e.split(",")){let n=r.trim();if(!n)continue;let a=n.indexOf(
+"id","type","_scope","createdAt","updatedAt","createdBy","updatedBy","createdByUid","updatedByUid","isDeleted","_parent"]};var rv=new Set(Qd.fieldTypeBuiltin),zx=e=>rv.has(e),FD=Qd.fieldTypeBuiltin.filter(zx);var Kx=e=>{if(typeof e!="string")return[];let t=[];for(let r of e.split(",")){let n=r.trim();if(!n)continue;let a=n.indexOf(
 ":");if(a===-1){t.push({name:n});continue}let i=n.slice(0,a).trim(),o=n.slice(a+1).trim();i&&t.push(o?{name:i,type:o}:{name:i})}
 return t},Gx=e=>Kx(e).map(t=>t.name),Jx="__interp";var Vl="app",ki="appNode",hr="tree",Qo="screen",Yl="form",zl="flow",Br="flowStep",Kl="repeat",Gl="callableButton";var Aa="content",ls="textInput",cs="numberInput",Si="variable",ra="function",na="const",us="booleanInput",ds="temporalIn\
 put",ps="selectInput",Ei="fileInput",ep="pluginLeaf",tp="mediaRoom",Zx="videoRoom",fs="subsection",Xx=["app","appNode","\
@@ -2273,7 +2273,7 @@ action or a flow `script` step that calls `publishData({type, data: {...}})` wit
 submitObjectType:{since:"2026-10",use:"a declared action or a flow `script` step that calls `publishData({type, data: {.\
 ..}})` with the inputs named explicitly"}}},n_={objectTypeField:{isList:{since:"2026-10",use:'`type: "list<T>"`'},multiline:{
 since:"2026-10",use:'`variant: "multiline"` on a text field'}}},nv={list:"subsection",videoRoom:"mediaRoom"},a_=e=>{var t;
-return(t=nv[e])!=null?t:e};var av=e=>{var t;return(t=rp[e])!=null?t:{type:e}};var FD=Object.fromEntries(Object.entries(rp).map(([e,t])=>[`${t.type}:${t.variant}`,e]));var Hg="MatchExpression",qg="MatchArm",$d="->",Vg=123,Yg=125,i_=44,o_=e=>e>=48&&e<=57||e>=65&&e<=90||e>=97&&e<=122||e===
+return(t=nv[e])!=null?t:e};var av=e=>{var t;return(t=rp[e])!=null?t:{type:e}};var BD=Object.fromEntries(Object.entries(rp).map(([e,t])=>[`${t.type}:${t.variant}`,e]));var Hg="MatchExpression",qg="MatchArm",$d="->",Vg=123,Yg=125,i_=44,o_=e=>e>=48&&e<=57||e>=65&&e<=90||e>=97&&e<=122||e===
 36||e===95||e>=128,ci=e=>e.code,fd=e=>typeof e=="object"&&e!==null&&typeof e.type=="string",s_=(e,t)=>{if(fd(t)&&t.type===
 "ConditionalExpression"){let r=t.test;if(fd(r)&&r.type==="BinaryExpression"&&r.operator===$d)return{type:qg,test:r.left,
 consequent:{type:"ConditionalExpression",test:r.right,consequent:t.consequent,alternate:t.alternate}}}return fd(t)&&t.type===
@@ -2353,20 +2353,20 @@ me.literal(Yl),me.literal(zl),me.literal(Br),me.literal(Kl),me.literal(Gl),me.li
 me.literal(hr),me.literal(Si),me.literal(ra),me.literal(na),me.literal(Aa),me.literal(fs),me.literal(tp),me.literal(Zx)]),
 S_=me.recursion("node",()=>me.intersection([me.record(me.string,me.unknown),me.partial({children:me.array(S_)})])),E_={type:"\
 app",name:""},x_={};var __={include:Jo,traverseChildren:Jo,traverseParent:Jo},Zl={...__,direction:"forward"},Pn=e=>({...Zl,...e});var A_=yt.union([yt.literal("before"),yt.literal("after"),yt.literal("into")]),$_=yt.union([yt.literal("top"),yt.literal(
-"bottom"),yt.literal("center")]),R_=yt.type({target:yt.string,action:A_,position:$_}),WD=yt.type({currentDropZone:yt.union(
+"bottom"),yt.literal("center")]),R_=yt.type({target:yt.string,action:A_,position:$_}),HD=yt.type({currentDropZone:yt.union(
 [yt.undefined,R_]),src:yt.string}),I_=Be.keyof({html:null,sandboxed:null}),kv=Be.keyof({spotify:null}),O_=Be.partial({name:Be.string,
 type:Be.string,description:Be.string,exampleValue:Be.string,default:Be.string}),C_=Be.intersection([Be.type({name:Be.string,
 parameters:Be.array(O_),htmlTemplate:Be.string}),Be.partial({icon:Be.string,color:Be.string,description:Be.string,image:Zy,
 runtime:I_,embedsThirdPartyMedia:Be.boolean,connections:Be.array(kv),widgetOwner:Be.string})]);var N_=Ra.intersection([Ra.type({name:Ra.string,type:Ra.string}),Qy]);var P_=new Set(Qd.recordMetaField),hs=(...e)=>new Set(e),M_=hs("id"),D_=hs("createdAt","updatedAt","createdBy","updatedB\
-y"),j_=hs("createdByUid","updatedByUid"),HD=hs("type","_scope","isDeleted"),qD=hs("_parent");var VD=new Set([...M_,...D_,...j_]),L_=([e,t])=>({...t,name:e}),U_=e=>!!e[1],op=e=>Object.entries(e).filter(U_).map(L_),
+y"),j_=hs("createdByUid","updatedByUid"),qD=hs("type","_scope","isDeleted"),VD=hs("_parent");var YD=new Set([...M_,...D_,...j_]),L_=([e,t])=>({...t,name:e}),U_=e=>!!e[1],op=e=>Object.entries(e).filter(U_).map(L_),
 Ge=(e,t,r)=>(n={})=>({name:"",type:e,...n,...t,children:r?op(r):void 0}),Wr=(e,t)=>(r={},n={})=>{let a=op(r),i=n.submitObjectType?
 Sv():[],o=[...a,...i];return{name:"",type:e,...t,...n,children:o.length>0?o:void 0}},md=Ge(Si),Sv=()=>op({id:md(),createdAt:md(),
-createdBy:md()}),Ev=Wr(Vl),YD=Wr(ki),zD=Wr(ki,{variant:"tabGroup"}),KD=Wr(ki,{variant:"tab"}),GD=Wr(ki,{variant:"folder"}),
-JD=Wr(Qo),ZD=Wr(fs),XD=Wr(Yl),QD=Wr(zl),ej=Wr(Kl,{isRepeating:!0}),tj=Ge(Br),rj=Ge(Br,{variant:"aiQuery"}),nj=Ge(Br,{variant:"\
-aiChat"}),aj=Ge(Br,{variant:"fetchData"}),ij=Ge(Br,{variant:"imageGeneration"}),oj=Ge(Br,{variant:"audioGeneration"}),sj=Ge(
-Br,{variant:"transcribe"}),lj=Ge(Br,{variant:"publishData"}),cj=Ge(Br,{variant:"script"}),uj=Ge(Gl),dj=Ge(ls),pj=Ge(cs),
-fj=Ge(us),hj=Ge(ds),mj=Ge(ps),gj=Ge(Ei),yj=Ge(Aa),Bo=Ge(Si),vj=Ge(ra),bj=Ge(na),wj=Ge(ep),Tj=Ge(tp),kj=Wr(fs,{isRepeating:!0,
-variant:"masterDetail"}),Sj=Wr(fs,{isRepeating:!0,isRecord:!0,variant:"masterDetail"}),xv=Ge(hr,{isRepeating:!0},{value:Bo(),
+createdBy:md()}),Ev=Wr(Vl),zD=Wr(ki),KD=Wr(ki,{variant:"tabGroup"}),GD=Wr(ki,{variant:"tab"}),JD=Wr(ki,{variant:"folder"}),
+ZD=Wr(Qo),XD=Wr(fs),QD=Wr(Yl),ej=Wr(zl),tj=Wr(Kl,{isRepeating:!0}),rj=Ge(Br),nj=Ge(Br,{variant:"aiQuery"}),aj=Ge(Br,{variant:"\
+aiChat"}),ij=Ge(Br,{variant:"fetchData"}),oj=Ge(Br,{variant:"imageGeneration"}),sj=Ge(Br,{variant:"audioGeneration"}),lj=Ge(
+Br,{variant:"transcribe"}),cj=Ge(Br,{variant:"publishData"}),uj=Ge(Br,{variant:"script"}),dj=Ge(Gl),pj=Ge(ls),fj=Ge(cs),
+hj=Ge(us),mj=Ge(ds),gj=Ge(ps),yj=Ge(Ei),vj=Ge(Aa),Bo=Ge(Si),bj=Ge(ra),wj=Ge(na),Tj=Ge(ep),kj=Ge(tp),Sj=Wr(fs,{isRepeating:!0,
+variant:"masterDetail"}),Ej=Wr(fs,{isRepeating:!0,isRecord:!0,variant:"masterDetail"}),xv=Ge(hr,{isRepeating:!0},{value:Bo(),
 expanded:Bo(),dragAndDropState:Bo(),isDrawerClosed:Bo(),leftPanelWidth:Bo()});var sp=(e,t=".")=>{let r=e.lastIndexOf(t),n=r===-1?"":e.slice(0,r),a=r===-1?e:e.slice(r+1);return[n,a]},F_=(e,t=".")=>{let r=e.
 indexOf(t),n=r===-1?e:e.slice(0,r),a=r===-1?"":e.slice(r+1);return[n,a]},xr=(e,t=".")=>e.filter(Boolean).join(t),B_=e=>qc(
 e,/(?=[A-Z])/).map(t=>Gc(t)),Av=e=>B_(e).join(" ");var W_=e=>{switch(e){case ls:case cs:case us:case ds:case ps:case Ei:case ep:return!0;default:return!1}},H_=e=>{switch(e){case Vl:case ki:case Qo:case hr:case Yl:case zl:case Kl:case fs:
@@ -2376,15 +2376,15 @@ e)?[e]:e.isOwnScope||e.isRepeating?[e]:[e,...ms(e).flatMap(Rv)],lp=(e,t,r)=>{let
 name;let a=t.get(r);if(!a)throw new Error(`Node with name ${r.name} has no parent`);return`${lp(e,t,a)}$${r.name}`},cp=e=>H_(
 e.type),Y_=e=>e.type==="form"||!!e.submitObjectType,Iv=e=>!cp(e),up=e=>!!(e.isRepeating||e.isOwnScope),z_=e=>e,it=(e,t)=>t,
 Xl=(e,t,r)=>r,K_=(e,t,r)=>r,G_=(e,t,r,n)=>n,J_=(e,t,r)=>r,Ov=(e,t)=>t,Z_=(e,t,r)=>r,Cv=(e,t,r)=>r,X_=(e,t)=>t,Oa=e=>e,gs=k(
-Oa,$v),xj=k(Oa,yr("compute")),Q_=k(Oa,yr("name")),Ql=k(gs,e=>Fn(e,yr("name"))),dp=k(Oa,V_),Nv=k(gs,Ql,dp,(e,t,r)=>bt(e,n=>lp(
+Oa,$v),_j=k(Oa,yr("compute")),Q_=k(Oa,yr("name")),Ql=k(gs,e=>Fn(e,yr("name"))),dp=k(Oa,V_),Nv=k(gs,Ql,dp,(e,t,r)=>bt(e,n=>lp(
 t,r,n))),Pv=k(dp,Ov,(e,t)=>{var r;return(r=e.get(t))!=null?r:void 0}),Cn=k(Ql,dp,Ov,(e,t,r)=>lp(e,t,r)),Dl=k(Ql,Nv,it,(e,t,r)=>{
 let n=t[r];return n?[n]:e[r]||[]}),rs=k(Oa,Ql,Nv,it,(e,t,r)=>r,(e,t,r,n,a)=>{let i=r[n];if(i)return R(i);let o=t[n];if(!o){
 let[,s]=F_(n,"$");return s?rs(e,s,a):Il(`Node with id ${n} not found`)}if(o.length===1)return R(o[0]);if(!a){let s=ms(e).
 find(c=>c.name===n);if(s)return R(s);let l=q_(e,n);return l.length===1?R(l[0]):Il({matches:o.map(c=>Cn(e,c))})}return rs(
-a,n)}),_j=k(rs,et),Aj=k(Q_,Av),xi=(e,t,r)=>k(Oa,n=>{let a=n[t];return a===void 0&&r!==void 0&&(a=LE(r,n)),w_(a,e,t)}),eA=xi(
+a,n)}),Aj=k(rs,et),$j=k(Q_,Av),xi=(e,t,r)=>k(Oa,n=>{let a=n[t];return a===void 0&&r!==void 0&&(a=LE(r,n)),w_(a,e,t)}),eA=xi(
 _v.string,"nounLabel","Item"),tA=e=>{let{value:t,isFormula:r}=eA(e);return`${r?t:`'${t}'`} + ' ' + ($index + 1)`},rA=k(Oa,
-tA),$j=xi($e,"multiline"),Rj=k(gs,(e,t)=>t,(e,t)=>{let r=e.flatMap(n=>{var a;return Ti.is(n.data)&&n.data.source===t?(a=
-n.data.dataType)!=null?a:[]:[]});return da(r)}),Ij=k(gs,e=>{var t;let r=[],n=new Set;for(let a of e){if(!Ti.is(a.data)||
+tA),Rj=xi($e,"multiline"),Ij=k(gs,(e,t)=>t,(e,t)=>{let r=e.flatMap(n=>{var a;return Ti.is(n.data)&&n.data.source===t?(a=
+n.data.dataType)!=null?a:[]:[]});return da(r)}),Oj=k(gs,e=>{var t;let r=[],n=new Set;for(let a of e){if(!Ti.is(a.data)||
 a.data.source!=="callable")continue;let i=a.data.dataType,o=a.data.callable;if(!i||!o?.functionName)continue;let s=`${i}\
 ::${o.functionName}::${(t=o.args)!=null?t:""}`;n.has(s)||(n.add(s),r.push({typeName:i,functionName:o.functionName,...o.args?
 {args:o.args}:{}}))}return r}),nA=e=>{if(e.type===hr){let r=e.nodeTypes;return r&&typeof r=="object"?Object.keys(r):[]}let t=Ti.
@@ -2401,7 +2401,7 @@ a=gp(t);return n?a:xr([a,Cn(t.node,r)])},ys=e=>{let{parent:t,node:r}=e;if(!t)ret
 n])},jv=e=>{let{parent:t,node:r,index:n}=e,a=t?Cn(t.node,r):"";return up(r)?`${a}[${n}]`:a},cA=e=>({node:e,index:0,key:""}),
 Qg=e=>e.parent===void 0,Lv=e=>{let{parent:t}=e;return[...t?Lv(t):[],e]},Uv=(e,t)=>e.parent===t.parent&&e.node===t.node,uA=(e,t)=>{
 let r=t.find(n=>Uv(e,n));return r?r.index:-1},dA=(e,t,r)=>{let n=t.map(a=>Uv(e,a)?{...a,index:r}:a);return xr(n.map(jv))},
-Nj=yr("key"),pA=(e,t)=>{let{parent:r,node:n,key:a}=e,i=Dl(n,t);if(i.length)return n===i[0]?{key:xr([r?.key,t]),isDeclared:!0}:
+Pj=yr("key"),pA=(e,t)=>{let{parent:r,node:n,key:a}=e,i=Dl(n,t);if(i.length)return n===i[0]?{key:xr([r?.key,t]),isDeclared:!0}:
 {key:xr([a,t]),isDeclared:!0};if(t.includes("$")){let o=t.slice(t.lastIndexOf("$")+1);if(Dl(n,o).length)return{key:xr([a,
 t]),isDeclared:!0}}return{key:xr([a,t]),isDeclared:!1}},gd=(e,t,r)=>{let n=fA(e,t,r);return n?Cn(e,n):r},fA=(e,t,r)=>{let n=Dl(
 e,r);if(n.length!==0)return n.length===1?n[0]:Fv(e,t,r)},Fv=(e,t,r)=>{let n=Dl(t,r);if(n.length)return n[0];let a=Pv(e,t);
@@ -2429,7 +2429,7 @@ Il(`Type mismatch: ${JSON.stringify(e)} is not a ${t.name} (${r})`),kA=(e,t,r="n
 right;if(t.is(n))return R(n);let a=t;return a===Yv.string||a===F&&n!==void 0?R(ut(n)):Il(`Type mismatch: ${JSON.stringify(
 n)} is not a ${t.name} (${r})`)},SA=e=>{let t={},r=[];for(let n in e){let a=e[n];M(a)?r.push(a.left):t[n]=a.right}return r.
 length?{left:r}:{right:t}};var be=e=>{let t=SA(e);if(M(t))throw new Error(t.left.join(`
-`));return t.right};var[Dj,jj]=_i("persistence"),[Lj,Uj]=_i("PersistenceKey","");var EA=e=>{let t=e;return()=>(t=t*1103515245+12345&2147483647,t/2147483647)},Ll="0123456789abcdefghijklmnopqrstuvwxyzABC\
+`));return t.right};var[jj,Lj]=_i("persistence"),[Uj,Fj]=_i("PersistenceKey","");var EA=e=>{let t=e;return()=>(t=t*1103515245+12345&2147483647,t/2147483647)},Ll="0123456789abcdefghijklmnopqrstuvwxyzABC\
 DEFGHIJKLMNOPQRSTUVWXYZ",xA=248,_A=()=>{let e=globalThis.crypto;if(!e?.getRandomValues)return Math.floor(Math.random()*Ll.
 length);let t=new Uint8Array(1);for(;;){e.getRandomValues(t);let r=t[0];if(r<xA)return r%Ll.length}},AA=(e={})=>{let{length:t=8,
 seed:r}=e;if(t<=0)throw new Error("Length must be greater than 0");let n=r!==void 0?(()=>{let i=EA(r);return()=>Math.floor(
@@ -2607,7 +2607,7 @@ o={};return e.forEach((s,l)=>{let c=a(s,l);c!=null&&(o[ut(c)]=i(s,l))}),o},keys:
 r[a],a<t.length&&(n+=sb(t[a]));return new Yo(n)},progressBar:(e,t)=>new Yo(FA(e,t)),progressRing:(e,t)=>new Yo(BA(e,t)),
 sparkline:(e,t)=>new Yo(WA(e,t)),urlEncode:e=>encodeURIComponent(e==null?"":ut(e)),now:()=>new Date().toISOString().slice(
 0,19)+"Z",nextOccurrence:OE,byId:()=>{}},h$={forEach:!0,filter:!0,map:!0,reduce:!0,times:!0,every:!0,some:!0,find:!0,findIndex:!0,
-count:!0,groupBy:!0,sumBy:!0},m$=new Set([...Object.keys(Ul),...Object.keys(h$)]),Bj=new Set(Object.keys(Ul).filter(e=>!rb.
+count:!0,groupBy:!0,sumBy:!0},m$=new Set([...Object.keys(Ul),...Object.keys(h$)]),Wj=new Set(Object.keys(Ul).filter(e=>!rb.
 has(e))),$p=e=>typeof e=="function"?e:t=>e[t],ic=(e,t)=>(r,n)=>Object.prototype.hasOwnProperty.call(t,r)?t[r]:e(r,n),lb=e=>{
 let t={},r=ic($p(e),t),n=qA();return{dc:r,setter:(i,o)=>{t[i]=o,Xv(n)},memo:n}},g$=async(e,t,r)=>{let n=Ep(e);if(M(n))return n;
 let a=lb(t);return a.asyncHosts=r.asyncHosts,a.syncHosts=r.syncHosts,pi(n.right,a)},pi=async(e,t)=>{var r;if(Ml(e)&&e.operator===
@@ -2743,10 +2743,10 @@ u),o=k(V,W,J_,i),s=k(V,W,(l,c)=>{let u=i(l,c);return Y$(u)?u:{}});return{selectO
 e,t,gr,X$,(r,n,a)=>Ar(r,n,a))),J$=(e,t,r,n,a)=>{let i=gb(e,t),o=a?ic($p(i),a):i;return g$(r,o,n)},{selectValue:gr,selectComputedValue:Z$,
 selectLength:Ca}=N$(Ar),{selectChildIterationPointers:yb,selectChildNodePointers:vb}=W$(Ca),{selectOutput:X$,selectOutputObject:Op}=K$(
 gr,yb,vb),Na=e=>k(gr,t=>rc(t,e,"value")),bb=e=>k(gr,t=>kA(t,e,"value")),Q$=e=>k(Z$,t=>rc(t,e,"value")),Cp=bb(F),wb=Na(pt.union(
-[pt.undefined,pt.array(pt.string)])),eR=Na(pt.union([pt.undefined,pt.array(pt.number)])),Kj=bb(pt.string),tR=Na(mr),Tb=Na(
+[pt.undefined,pt.array(pt.string)])),eR=Na(pt.union([pt.undefined,pt.array(pt.number)])),Gj=bb(pt.string),tR=Na(mr),Tb=Na(
 $e),rR=Na(pt.union([pt.undefined,On])),nR=Q$(pt.union([pt.undefined,On])),aR=Na(pt.union([pt.undefined,ql])),Np=Na(Lx),iR=(e,t,r,n)=>rc(
 Ar(e,r,t.scope.key),n,r),Mt=k(V,W,(e,t)=>hb(t)?yb(e,t.key):vb(e,t.key)),kb=k(V,W,(e,t)=>{let r=H$(t)?`${t.key}[0]`:t.key;
-return Mt(e,r)}),vs=k(V,Gr,Z_,(e,t,r=Jo)=>{if(t)return r?.(t)?t:vs(e,t.key,r)}),Jj=k(V,W,Gr,(e,t,r)=>r?Mt(e,r.key):[t]),
+return Mt(e,r)}),vs=k(V,Gr,Z_,(e,t,r=Jo)=>{if(t)return r?.(t)?t:vs(e,t.key,r)}),Zj=k(V,W,Gr,(e,t,r)=>r?Mt(e,r.key):[t]),
 Sb=k(V,W,yp,(e,t,r)=>{if(t.key===r.key)return!0;let n=Gr(e,r.key);return n?Sb(e,t.key,n.key):!1}),x=(e,t,r)=>{let n=xi(e,
 t,r),a=k(gA,oR.has(t)?i=>sR(n(i)):n);return k(V,W,a,(i,o,s)=>Go(i,o,s,Ar))},oR=new Set(["htmlTemplate"]),sR=e=>!e.isFormula&&
 Eb.string.is(e.value)&&Tv(e.value)?{name:e.name,isFormula:!0,value:ap(ip(e.value)),targetCodec:e.targetCodec}:e,lR=x(bs.string,
@@ -2761,16 +2761,16 @@ let a=Gr(e,t.key);if(a&&r.traverseParent(a))return $b(e,a,r)},Rb=k(V,W,Cv,(e,t,r
 if(r.traverseChildren(t)){let n=Mt(e,t.key);if(n.length>0)return n[0]}return $b(e,t,r)}),bi=e=>{let{node:t}=e;switch(t.type){case"\
 screen":return!0;default:return!1}},mR=k(V,e=>Mt(e,"").filter(bi)),ws=(e,t,r)=>{let n=r.direction==="back"?Rb(e,t,r):Mp(
 e,t,r);if(n)return r.include(n)?n:ws(e,n.key,r)},Ib=(e,t,r)=>{let n=[],a=t;for(;a!==void 0;){let i=r.direction==="back"?
-Rb(e,a,r):Mp(e,a,r);if(!i)break;r.include(i)&&n.push(i),a=i.key}return n},lc=e=>k(V,it,(t,r)=>ws(t,r,e)),eL=lc(Pn({include:bi,
+Rb(e,a,r):Mp(e,a,r);if(!i)break;r.include(i)&&n.push(i),a=i.key}return n},lc=e=>k(V,it,(t,r)=>ws(t,r,e)),tL=lc(Pn({include:bi,
 direction:"back"})),gR=lc(Pn({include:bi,direction:"forward"})),yR=k(V,it,(e,t)=>{let r=vs(e,t,bi);if(!r){let n=Mp(e,"",
 Zl);return n||vp(e)}return r}),Ob=k(V,hp,(e,t)=>{let r=Fr(e,t);return M(r)?(console.warn(`[orgicore] cursor "${t}" does \
 not resolve in the current app def \u2014 falling back to the home screen (${r.left}).`),vp(e)):r.right}),Dp=k(V,Ob,(e,t)=>{
-if(bi(t))return t;let r=vs(e,t.key,bi);return r||gR(e,t.key)||vp(e)}),tL=k(fp,e=>Ls(e)),vR=k(V,Dp,(e,t)=>yR(e,t.key).key),
+if(bi(t))return t;let r=vs(e,t.key,bi);return r||gR(e,t.key)||vp(e)}),rL=k(fp,e=>Ls(e)),vR=k(V,Dp,(e,t)=>yR(e,t.key).key),
 bR=e=>Pn({traverseParent:t=>e!==t}),wR=k(W,bR),TR=k(wR,e=>xb(e,Pn({include:q$}))),kR=x(Uy,"variant","basic"),SR=x(Px,"va\
 riant"),ER=x(mr,"pageSize"),xR=x(mr,"maxLength"),Cb=x($e,"required"),_R=x($e,"hidden"),AR=x(le(Bd),"size"),$R=x(le(ln(Xd)),
 "validation"),RR=x(le(Zd),"imageOutputOptions"),IR=x(F,"pluginName"),Nb={maxColumns:1},OR=x(zd,"layout",Nb),Pa=k(W,_R,(e,t)=>{
 let{node:{type:r}}=e;return(r===Si||r===ra||r===na)&&Ee(t)&&t.right===void 0?R(!0):t}),CR=k(W,OR,(e,t)=>e.isIteration?R(
-Nb):t),NR=x(zy,"formConfig"),iL=x(Gd,"containerStyle",Oy),oL=x(Ti,"data",Oy),PR=x(le(Ai.array(Wl)),"pluginParams"),$i=k(
+Nb):t),NR=x(zy,"formConfig"),oL=x(Gd,"containerStyle",Oy),sL=x(Ti,"data",Oy),PR=x(le(Ai.array(Wl)),"pluginParams"),$i=k(
 Pp,Pa,(e,t)=>({label:e,hidden:t})),jp=k(gr,Cb,(e,t)=>M(t)?t:M(e)?R(!1):R(!!t.right&&Pb(e.right))),Lp=k(V,W,$R,gr,(e,t,r,n)=>{
 if(M(r))return r;if(M(n)||Pb(n.right))return R(void 0);let a=BE(r.right);for(let i of a){let o=Ar(e,i.expression,t.scope.
 key);if(M(o))return Ne(`error evaluating validation rule "${i.expression}": ${o.left}`);if(!o.right)return R(MR(e,i.errorMessage,
@@ -2783,40 +2783,40 @@ examples:s,size:l,aiEnabled:c})),Mb=k(cc,eR,(e,t)=>({...e,value:t})),Db=k(cc,wb,
 Ai.array(Gy),"pickerValues"),qR=e=>typeof e=="string"?{id:e,label:e}:e,VR=k(HR,e=>M(e)?e:R(e.right.map(qR))),uc=k(cc,BR,
 VR,(e,t,r)=>({...e,variant:t,pickerValues:r})),YR=k(uc,Cp,WR,(e,t,r)=>({...e,value:t,idiom:r})),zR=k(uc,wb,(e,t)=>({...e,
 value:t})),KR=e=>pn(e)?"":`${e.key}.`,Lb=e=>t=>`${KR(t)}${e}`,GR=Lb("value"),JR=Lb("expanded"),ZR=k(W,GR),XR=k(W,JR),Up=k(
-V,ZR,aR),Ub=k(V,XR,Tb),Fb=k(W,$i,Up,Ub,(e,t,r,n)=>{let a=pn(e);return{...t,value:r,expanded:n,isRoot:R(a)}}),sL=k($i,be),
-lL=k(cc,be),QR=k(jb,be),cL=k(Mb,be),uL=k(Db,be),dL=k(uc,be),pL=k(YR,be),fL=k(zR,be),eI=k(Fb,be),tI=k(IR,PR,(e,t)=>({name:e,
-params:t})),rI=k(tI,be),hL=k(V,W,rI,(e,t,{name:r,params:n=[]})=>{let a={};for(let i of n)if(i.type==="static"&&(a[i.name]=
+V,ZR,aR),Ub=k(V,XR,Tb),Fb=k(W,$i,Up,Ub,(e,t,r,n)=>{let a=pn(e);return{...t,value:r,expanded:n,isRoot:R(a)}}),lL=k($i,be),
+cL=k(cc,be),QR=k(jb,be),uL=k(Mb,be),dL=k(Db,be),pL=k(uc,be),fL=k(YR,be),hL=k(zR,be),eI=k(Fb,be),tI=k(IR,PR,(e,t)=>({name:e,
+params:t})),rI=k(tI,be),mL=k(V,W,rI,(e,t,{name:r,params:n=[]})=>{let a={};for(let i of n)if(i.type==="static"&&(a[i.name]=
 i.value),i.type==="dynamic"){let o=Ar(e,i.formula,t.scope.key);if(M(o))return Ne(`Error evaluating plugin "${r}" param "${i.
-name}": ${o.left}`);a[i.name]=o.right}return R(a)});var mL=k(V,W,ER,xR,(e,t,r,n)=>{let{node:a,key:i,isIteration:o}=t;if(o)return;let s=et(r),l=et(n);if(s===void 0)return;let c=l??
+name}": ${o.left}`);a[i.name]=o.right}return R(a)});var gL=k(V,W,ER,xR,(e,t,r,n)=>{let{node:a,key:i,isIteration:o}=t;if(o)return;let s=et(r),l=et(n);if(s===void 0)return;let c=l??
 1/0,u=a.data;if(Nl(u)){let f=gr(e,i);if(Ee(f)&&Array.isArray(f.right)){let h=f.right.length;c=l!==void 0?Math.min(h,l):h}}
 let d=et(Ca(e,i));return{currentLength:d,totalLength:c,hasMore:d<c,pageSize:s}}),wi={selectAppNodeVariant:x(Ax,"variant",
 "folder"),selectFlowStepVariant:x($x,"variant","aiQuery"),selectHidden:Pa,selectLabel:Pp,selectMissingRequired:jp,selectValidationError:Lp},
-gL=x(F,"name"),yL=x(F,"label"),vL=x($e,"isRepeating"),bL=x($e,"isOwnScope"),wL=x($e,"isRecord"),TL=x(F,"recordKey"),kL=x(
-F,"recordValue"),SL=x(se.unknown,"compute"),EL=x($e,"isDerived"),xL=x($e,"isTransient"),_L=x(mr,"maxLength"),AL=x(mr,"pa\
+yL=x(F,"name"),vL=x(F,"label"),bL=x($e,"isRepeating"),wL=x($e,"isOwnScope"),TL=x($e,"isRecord"),kL=x(F,"recordKey"),SL=x(
+F,"recordValue"),EL=x(se.unknown,"compute"),xL=x($e,"isDerived"),_L=x($e,"isTransient"),AL=x(mr,"maxLength"),$L=x(mr,"pa\
 geSize"),nI=x(le(Kd),"place"),aI=x(le(zd),"layout"),iI=x(le(Gd),"containerStyle"),oI=x(F,"submitObjectType"),sI=x(le(ln(
-Xd)),"validation"),lI=x($e,"required"),cI=x(F,"help"),uI=x(F,"placeholder"),$L=x(F,"deepHelp"),RL=x(le(se.array(se.string)),
+Xd)),"validation"),lI=x($e,"required"),cI=x(F,"help"),uI=x(F,"placeholder"),RL=x(F,"deepHelp"),IL=x(le(se.array(se.string)),
 "examples"),dI=x(le(Bd),"size"),pI=x($e,"aiEnabled"),fI=x(F,"iterationLabel"),hI=x(F,"nounLabel"),Fp=x(F,"icon"),Bb=x(F,
-"color"),IL=x(le(jy),"authMode"),OL=x($e,"orgLogin"),CL=x(F,"appLogo"),NL=x(le(ln(qy)),"notifications"),PL=x(le(ln(Vy)),
-"transitions"),ML=x(le(ln(Yy)),"botActors"),DL=x(le(Wy),"theme"),jL=x(le(Jd),"themeColors"),LL=x(F,"customCss"),UL=x(mr,
-"contentMaxWidth"),FL=x(le(Ky),"navigation"),BL=x(le(ev),"library"),WL=x(le(tv),"feature"),Wb=x($e,"hideHeader"),HL=x(le(
+"color"),OL=x(le(jy),"authMode"),CL=x($e,"orgLogin"),NL=x(F,"appLogo"),PL=x(le(ln(qy)),"notifications"),ML=x(le(ln(Vy)),
+"transitions"),DL=x(le(ln(Yy)),"botActors"),jL=x(le(Wy),"theme"),LL=x(le(Jd),"themeColors"),UL=x(F,"customCss"),FL=x(mr,
+"contentMaxWidth"),BL=x(le(Ky),"navigation"),WL=x(le(ev),"library"),HL=x(le(tv),"feature"),Wb=x($e,"hideHeader"),qL=x(le(
 Ly),"variant"),mI=x($e,"showHeader"),gI=x($e,"collapsible"),yI=x($e,"collapsedByDefault"),vI=x($e,"reorderable"),bI=x(F,
 "orderField"),wI=x($e,"hideTopBar"),TI=x($e,"hideNav"),kI=x(F,"itemLabel"),SI=x(F,"summary"),Hb=x(mr,"min"),qb=x(mr,"max"),
 EI=x($e,"autoAdvance"),Vb=x(F,"actionLabel"),xI=x(F,"idleTitle"),_I=x(F,"idleDescription"),AI=x(F,"runningTitle"),$I=x(F,
 "runningDescription"),RI=x(F,"authTitle"),II=x(F,"authDescription"),OI=x(F,"noCreditsTitle"),CI=x(F,"noCreditsDescriptio\
-n"),Yb=x(F,"promptTemplate"),qL=x(F,"imageSource"),zb=x(F,"resultObjectType"),Kb=x(F,"typeDescription"),VL=x(le(se.union(
+n"),Yb=x(F,"promptTemplate"),VL=x(F,"imageSource"),zb=x(F,"resultObjectType"),Kb=x(F,"typeDescription"),YL=x(le(se.union(
 [Hl,se.string])),"model"),Ts=x($e,"mockEnabled"),NI=x(mr,"mockResultCount"),PI=x(F,"mockResults"),MI=x(mr,"maxUserTurns"),
 DI=x(F,"steeringChips"),jI=x($e,"voiceInput"),LI=x($e,"speakReplies"),UI=x(F,"speechLang"),FI=x(F,"inputPlaceholder"),BI=x(
 F,"mockReplies"),WI=x(F,"fetchUrl"),Gb=x(F,"prompt"),HI=x(F,"mockImageUrl"),qI=x(F,"lyrics"),VI=x(mr,"durationSec"),YI=x(
-F,"mockAudioUrl"),zI=x(F,"audioSourceUrl"),KI=x(F,"language"),GI=x(F,"mockTranscript"),YL=x(F,"sourceExpression"),JI=x(F,
-"publishDataType"),ZI=x(F,"publishScope"),XI=x(F,"publishVariant"),QI=x(F,"script"),zL=x(le(Vd),"functionName"),KL=x(F,"\
+F,"mockAudioUrl"),zI=x(F,"audioSourceUrl"),KI=x(F,"language"),GI=x(F,"mockTranscript"),zL=x(F,"sourceExpression"),JI=x(F,
+"publishDataType"),ZI=x(F,"publishScope"),XI=x(F,"publishVariant"),QI=x(F,"script"),KL=x(le(Vd),"functionName"),GL=x(F,"\
 args"),eO=x(le(se.array(se.string)),"refreshCallables"),tO=x(F,"onSuccessNavigate"),rO=x(F,"successMessage"),nO=x(le(se.record(
-se.string,Jy)),"nodeTypes"),aO=x(F,"rootType"),iO=x($e,"canAdd"),oO=x($e,"canEdit"),GL=x(le(Wd),"textTransform"),sO=x(mr,
-"step"),JL=x(le(se.union([Hd,se.string])),"format"),ZL=x(le(se.union([qd,se.string])),"idiom"),XL=x(F,"placeholderIcon"),
+se.string,Jy)),"nodeTypes"),aO=x(F,"rootType"),iO=x($e,"canAdd"),oO=x($e,"canEdit"),JL=x(le(Wd),"textTransform"),sO=x(mr,
+"step"),ZL=x(le(se.union([Hd,se.string])),"format"),XL=x(le(se.union([qd,se.string])),"idiom"),QL=x(F,"placeholderIcon"),
 lO=x(le(Zd),"imageOutputOptions"),cO=x(F,"aiSystemPromptFormula"),uO=x(F,"userAvatarUid"),dO=x($e,"showCamera"),pO=x($e,
 "showFilePicker"),fO=x($e,"showSearch"),hO=x($e,"showEdit"),mO=x($e,"showCommit"),gO=x($e,"multiple"),yO=x(mr,"maxSizeMb"),
 vO=x(F,"htmlTemplate"),bO=x(F,"purpose"),wO=x(le(se.record(se.string,Xy)),"actions"),TO=x(F,"parameters"),kO=x(F,"return\
-s"),SO=x(F,"returnTypeHint"),QL=x(F,"pluginName"),e6=x(le(se.array(Wl)),"pluginParams"),t6=x(F,"roomKey"),EO=x(F,"displa\
-yName"),xO=x(F,"identity"),r6=x(le(Yd),"mediaMode"),_O=x(le(Hy),"displayMode"),AO=x(mr,"maxTiles"),$O=x(F,"focusIdentity"),
+s"),SO=x(F,"returnTypeHint"),e6=x(F,"pluginName"),t6=x(le(se.array(Wl)),"pluginParams"),r6=x(F,"roomKey"),EO=x(F,"displa\
+yName"),xO=x(F,"identity"),n6=x(le(Yd),"mediaMode"),_O=x(le(Hy),"displayMode"),AO=x(mr,"maxTiles"),$O=x(F,"focusIdentity"),
 RO=x(Ly,"variant","inline"),IO=x(se.unknown,"imageSource"),OO=x(le(se.union([Hl,se.string])),"model"),CO=x(le(se.union([
 Hl,se.string])),"model"),NO=x(le(se.union([Tx,se.string])),"model"),PO=x(le(se.union([bx,se.string])),"model"),MO=x(le(se.union(
 [wx,se.string])),"model"),DO=x(se.unknown,"sourceExpression"),jO=x(Vd,"functionName"),LO=x(se.unknown,"args"),UO=x(Uy,"v\
@@ -2827,7 +2827,7 @@ nI,(e,t,r)=>({label:e,hidden:t,place:r})),Bp=k(aI,iI,oI,(e,t,r)=>({layout:e,cont
 $r,sI,lI,cI,uI,dI,pI,wi.selectMissingRequired,wi.selectValidationError,(e,t,r,n,a,i,o,s,l)=>({...e,validation:t,required:r,
 help:n,placeholder:a,size:i,aiEnabled:o,missingRequired:s,errorMessage:l})),KO=k(fI,hI,Fp,Bb,(e,t,r,n)=>({iterationLabel:e,
 nounLabel:t,icon:r,color:n})),dc=k($r,Bp,wi.selectAppNodeVariant,(e,t,r)=>({...e,...t,variant:r})),GO=k(dc,e=>({...e,variant:R(
-"tabGroup")})),JO=k(dc,e=>({...e,variant:R("tab")})),ZO=k(dc,e=>({...e,variant:R("folder")})),n6=k($r,Bp,Fp,Wb,(e,t,r,n)=>({
+"tabGroup")})),JO=k(dc,e=>({...e,variant:R("tab")})),ZO=k(dc,e=>({...e,variant:R("folder")})),a6=k($r,Bp,Fp,Wb,(e,t,r,n)=>({
 ...e,...t,icon:r,hideHeader:n})),XO=k($r,Bp,KO,RO,mI,gI,yI,vI,bI,(e,t,r,n,a,i,o,s,l)=>({...e,...t,...r,variant:n,showHeader:a,
 collapsible:i,collapsedByDefault:o,reorderable:s,orderField:l})),QO=k($r,wI,TI,(e,t,r)=>({...e,hideTopBar:t,hideNav:r})),
 eC=k($r,kI,SI,Hb,qb,(e,t,r,n,a)=>({...e,itemLabel:t,summary:r,min:n,max:a})),fn=k($r,wi.selectFlowStepVariant,EI,Vb,xI,_I,
@@ -2861,19 +2861,19 @@ t)?Mt(e,t.key):mb(t)?Mt(e,`${t.key}.${t.node.name}`):[]),l0=k(fc,e=>e.length>0),
 find(t=>t.node.type===hr)),c0=k(V,W,(e,t)=>{let{scope:r}=t;return r.node.type!==hr?0:1+c0(e,ys(r))}),yC=k(V,it,(e,t)=>vs(
 e,t,Ia)),vC=k(V,W,yp,(e,t,r)=>{let n=pc(e,t.key);if(!n)return[];let a=ss(e,r.key),i=[];a.allowedChildTypes.includes(n)&&
 i.push("into");let o=yC(e,r.key);return o&&ss(e,o.key).allowedChildTypes.includes(n)&&(i.push("before"),i.push("after")),
-i}),i6=k(V,W,yp,(e,t,r,n)=>n,(e,t,r,n)=>{let a=vC(e,t.key,r.key),{mouseY:i,elementTop:o,elementBottom:s}=n,l=r.key;if(a.
+i}),o6=k(V,W,yp,(e,t,r,n)=>n,(e,t,r,n)=>{let a=vC(e,t.key,r.key),{mouseY:i,elementTop:o,elementBottom:s}=n,l=r.key;if(a.
 length===0)return;let c=s-o,u=i-o<=10,d=s-i<=10,f=!u&&!d,h=i-o<=c/2,y=s-i<=c/2,b=a.includes("before"),T=a.includes("afte\
 r");if(a.includes("into")&&f)return{target:l,action:"into",position:"center"};if(h&&b)return{target:l,action:"before",position:"\
-top"};if(y&&T)return{target:l,action:"after",position:"bottom"}}),o6=lc(Pn({include:Ia,direction:"forward"})),s6=lc(Pn({
+top"};if(y&&T)return{target:l,action:"after",position:"bottom"}}),s6=lc(Pn({include:Ia,direction:"forward"})),l6=lc(Pn({
 include:Ia,direction:"back"})),u0=k(V,X_,(e,t)=>Pn({include:Ia,direction:t,traverseChildren:r=>{if(!Ia(r))return!0;let n=Ub(
-e,r.key);return Ee(n)&&!!n.right}})),l6=k(V,it,(e,t)=>ws(e,t,u0(e,"forward"))),c6=k(V,it,(e,t)=>ws(e,t,u0(e,"back"))),d6=k(
-V,e=>Op(e,"")),bC=e=>k(Op,t=>zv(t,e,"output")),wC=k(V,W,(e,t)=>yy(t)?t:vs(e,t.key,yy)),p6=k(V,wC,(e,t)=>{if(!t||!t.node.
+e,r.key);return Ee(n)&&!!n.right}})),c6=k(V,it,(e,t)=>ws(e,t,u0(e,"forward"))),u6=k(V,it,(e,t)=>ws(e,t,u0(e,"back"))),p6=k(
+V,e=>Op(e,"")),bC=e=>k(Op,t=>zv(t,e,"output")),wC=k(V,W,(e,t)=>yy(t)?t:vs(e,t.key,yy)),f6=k(V,wC,(e,t)=>{if(!t||!t.node.
 submitObjectType)return;let{scope:r,node:n,key:a}=t,i=Op(e,a),o=Cn(e.def,n),s=d=>xr([r.key,`${o}$${d}`]),l=s("id"),c=s("\
 createdAt"),u=s("createdBy");return{pointer:t,type:t.node.submitObjectType,idKey:l,createdAtKey:c,createdByKey:u,obj:i}}),
 d0=k(V,TR,(e,t)=>xb(t,Pn({include:r=>{let n=Ed(jp(e,r.key),!1),a=!!Ed(Lp(e,r.key),void 0);return n||a}}))),TC=k(V,it,d0,
-ws),kC=(e,t)=>M(Fr(e,t))?void 0:TC(e,t),h6=k(V,it,d0,Ib),SC=k(V,it,(e,t)=>Ib(e,t,Pn({traverseParent:Jo,include:r=>{if(r.
+ws),kC=(e,t)=>M(Fr(e,t))?void 0:TC(e,t),m6=k(V,it,d0,Ib),SC=k(V,it,(e,t)=>Ib(e,t,Pn({traverseParent:Jo,include:r=>{if(r.
 node.type!==Ei)return!1;let n=Np(e,r.key);if(M(n)||Array.isArray(n.right))return!1;let{url:a,previewUrl:i}=n.right;return!a&&
-!!i}}))),m6=k(V,SC,(e,t)=>t.flatMap(r=>{let n=et(Np(e,r.key));return Array.isArray(n)?[]:[{pointerKey:r.key,value:n,imageOutputOptions:Ed(
+!!i}}))),g6=k(V,SC,(e,t)=>t.flatMap(r=>{let n=et(Np(e,r.key));return Array.isArray(n)?[]:[{pointerKey:r.key,value:n,imageOutputOptions:Ed(
 RR(e,r.key),void 0)}]})),EC=k(dc,be),xC=k(GO,be),_C=k(JO,be),AC=k(ZO,be),$C=k(XO,be),RC=k(QO,be),IC=k(eC,be),OC=k(fn,be),
 CC=k(tC,be),NC=k(rC,be),PC=k(nC,be),MC=k(aC,be),DC=k(iC,be),jC=k(oC,be),LC=k(sC,be),UC=k(lC,be),FC=k(Jb,be),BC=k(Zb,be),
 WC=k(Xb,be),HC=k(Qb,be),qC=k(e0,be),VC=k(t0,be),YC=k(r0,be),zC=k(n0,be),KC=k(a0,be),GC=k(i0,be),JC=k(o0,be),p0=k($i,nO,aO,
@@ -2898,7 +2898,7 @@ let i=mi(e,t.key,a.x),o=mi(e,t.key,a.y);if(i===void 0||o===void 0)return vy;let 
 a)&&a.right)}):[r])),f0=e=>{var t,r;return((r=oc((t=e.node.data)==null?void 0:t.span))==null?void 0:r.mode)==="grid"},o2=k(
 Ri,e=>e.filter(t=>sc(t)&&f0(t))),s2=k(V,Ri,(e,t,r)=>r,(e,t,r,n)=>n,(e,t,r,n)=>{let a=t.find(o=>sc(o)&&o.node.name===r);if(!a)
 return[];let i=[];return Mt(e,a.key).forEach((o,s)=>{let l=Pa(e,o.key);if(Ee(l)&&l.right)return;let c=a2(e,o.key,n);c.kind===
-"placed"&&i.push({index:s,x:c.x,y:c.y})}),i}),w6=k(V,(e,t)=>t,(e,t,r)=>r,(e,t,r,n)=>n,(e,t,r,n)=>{var a;let i=W(e,r),o=oc(
+"placed"&&i.push({index:s,x:c.x,y:c.y})}),i}),T6=k(V,(e,t)=>t,(e,t,r)=>r,(e,t,r,n)=>n,(e,t,r,n)=>{var a;let i=W(e,r),o=oc(
 (a=i.node.data)==null?void 0:a.span);if(!o||o.mode!=="grid")return[];let s=s2(e,t,o.slots,n);if(s.length===0)return[];let l=l2(
 e,t,o.slots),c=s.map(d=>{let f=l[d.index];if(f===void 0)return;let h=Ar(e,o.axis,f);return Ee(h)?h.right:void 0}),u=[];for(let d of Mt(
 e,r)){let f=Pa(e,d.key);if(Ee(f)&&f.right)continue;let h=gr(e,d.key),y=Ee(h)?Md(h.right):void 0;if(!y)continue;let b={start:y.
@@ -2982,17 +2982,17 @@ let d=xr([s,l]),f=a(d);if(M(f)){if(String(f.left).endsWith("not found"))return;t
 if(h.node.isRecord&&On.is(c)){let y=(u=h.node.recordKey)!=null?u:"key",b=h.node.recordValue;Object.entries(c).forEach(([
 T,S],E)=>{i(typeof b=="string"?{[y]:T,[b]:S}:{[y]:T,...On.is(S)?S:{}},`${d}[${E}]`)})}else h.node.isRepeating&&WE.is(c)?
 c.forEach((y,b)=>{zc(y)?r.insertSlot(h.key,b):i(y,`${d}[${b}]`)}):h.node.isOwnScope?On.is(c)&&i(c,`${d}[0]`):r.updateValue(
-h.key,c)}})};i(t)};var[T6,Z2,k6]=_i("App"),[S6,X2,E6]=_i("Pointer"),F0=(e={})=>Ut(e)?{pointerKey:e}:e;var jd=(e,t)=>{let r=Up(e,t.key);if(!Ee(r)||r.right===void 0)return;let n=r.right,a=fc(e,t.key);if(a.length===0)return{...n};
-let i=[];for(let o of a){let s=jd(e,o);s&&i.push(s)}return{...n,_children:i}},[_6,A6]=_i("AppData",{ctx:{}}),$6={createAppInstance:Kc(),
+h.key,c)}})};i(t)};var[k6,Z2,S6]=_i("App"),[E6,X2,x6]=_i("Pointer"),F0=(e={})=>Ut(e)?{pointerKey:e}:e;var jd=(e,t)=>{let r=Up(e,t.key);if(!Ee(r)||r.right===void 0)return;let n=r.right,a=fc(e,t.key);if(a.length===0)return{...n};
+let i=[];for(let o of a){let s=jd(e,o);s&&i.push(s)}return{...n,_children:i}},[A6,$6]=_i("AppData",{ctx:{}}),R6={createAppInstance:Kc(),
 toOutputData:aa};var Q2=(e,t)=>{switch(t){case"@root":return H0(e);case"@parent":return e.parentAppContext;case"@self":return e}return B0(
 e,t)},B0=(e,t)=>e.name===t?e:e.parentAppContext?B0(e.parentAppContext,t):null,W0=(e,t)=>t===void 0||e.namespace===t?e:e.
 parent?W0(e.parent,t):null,Hp=(e="@self")=>{let t=Z2(),r=Q2(t,e);if(!r)throw new Error(`App context not found for search\
  param ${e}`);return r},eN=e=>{let{namespace:t,pointerKey:r}=F0(e),{name:n}=Hp(t),a=X2();if(r)return{namespace:n,pointerKey:r};
 let i=W0(a,n);if(!i)throw new Error(`Pointer context not found for namespace ${n}`);return i},tN=(e,t)=>{let{state:r}=Hp(
 t);return e(r)},Ii=e=>t=>tN(e,t),rN=e=>eN(e).pointerKey,nN=(e,t)=>{let r=rN(t),{state:n}=Hp(F0(t).namespace);return e(n,
-r)},ee=e=>t=>nN(e,t),R6=ee(W),I6=ee(kb),O6=ee(Ri),C6=ee(r2),N6=ee(i2);var P6=ee(o2);var M6=ee(k(Ca,et));var D6=Ii(hp),j6=Ii(mp),L6=Ii(Ob),U6=Ii(Dp),F6=Ii(QC),B6=Ii(mR);var W6=ee(Pp);var H6=ee(XC),q6=ee(ZC);var V6=ee(QR);var Y6=ee(gC),z6=ee(c0),K6=ee(fc),G6=ee(l0),J6=ee(pC),Z6=ee(mC),X6=ee(fC),Q6=ee(hC),eU=ee(pc),tU=ee(eI),rU=ee(kC);var H0=e=>{let{parentAppContext:t}=e;return t?H0(t):e};var nU=ee(EC),aU=ee(xC),iU=ee(_C),oU=ee(AC),sU=ee($C),lU=ee(RC),cU=ee(IC),uU=ee(OC),dU=ee(CC),pU=ee(NC),fU=ee(PC),hU=ee(
-MC),mU=ee(DC),gU=ee(jC),yU=ee(LC),vU=ee(UC),bU=ee(FC),wU=ee(BC),TU=ee(WC),kU=ee(HC),SU=ee(qC),EU=ee(VC),xU=ee(YC),_U=ee(
-zC),AU=ee(KC),$U=ee(GC),RU=ee(JC);var[IU,OU]=_i("form");var Vp=e=>e,oN=k(Vp,e=>bt(e,t=>t.name)),sN=k(Vp,e=>e.reduce((t,r)=>(t[r.name]={allowedChildTypes:[],icon:r.icon||"extens\
+r)},ee=e=>t=>nN(e,t),I6=ee(W),O6=ee(kb),C6=ee(Ri),N6=ee(r2),P6=ee(i2);var M6=ee(o2);var D6=ee(k(Ca,et));var j6=Ii(hp),L6=Ii(mp),U6=Ii(Ob),F6=Ii(Dp),B6=Ii(QC),W6=Ii(mR);var H6=ee(Pp);var q6=ee(XC),V6=ee(ZC);var Y6=ee(QR);var z6=ee(gC),K6=ee(c0),G6=ee(fc),J6=ee(l0),Z6=ee(pC),X6=ee(mC),Q6=ee(fC),eU=ee(hC),tU=ee(pc),rU=ee(eI),nU=ee(kC);var H0=e=>{let{parentAppContext:t}=e;return t?H0(t):e};var aU=ee(EC),iU=ee(xC),oU=ee(_C),sU=ee(AC),lU=ee($C),cU=ee(RC),uU=ee(IC),dU=ee(OC),pU=ee(CC),fU=ee(NC),hU=ee(PC),mU=ee(
+MC),gU=ee(DC),yU=ee(jC),vU=ee(LC),bU=ee(UC),wU=ee(FC),TU=ee(BC),kU=ee(WC),SU=ee(HC),EU=ee(qC),xU=ee(VC),_U=ee(YC),AU=ee(
+zC),$U=ee(KC),RU=ee(GC),IU=ee(JC);var[OU,CU]=_i("form");var Vp=e=>e,oN=k(Vp,e=>bt(e,t=>t.name)),sN=k(Vp,e=>e.reduce((t,r)=>(t[r.name]={allowedChildTypes:[],icon:r.icon||"extens\
 ion",color:r.color||"#9E9E9E",category:"plugins"},t),{})),lN=k(Vp,e=>e.map(t=>t.name)),cN=k(oN,it,(e,t)=>e[t]),uN=[ls,cs,
 us,Ei,ds,ps,Si,ra,na],dN=e=>{let t=[...uN,Aa,"textContent","subsection",Gl,...lN(e)],r=sN(e),n=["appNode:folder",Qo,ra,na];
 return{app:{allowedChildTypes:n,icon:"dashboard",color:"#3468b2"},screen:{allowedChildTypes:["appNode:tabGroup","form","\
@@ -3054,45 +3054,47 @@ length:i.length}),i.forEach((c,u)=>{z0(c,`t[${u}]`,n,a)}));let l={data:n,lengths
 r),l},wN=e=>({versionId:e.versionId,apiVersion:e.apiVersion,minClientVersion:e.minClientVersion,appConfig:Ho(e.appConfig,
 e.appConfig?"t[0]":void 0),users:Ho(e.users,e.users?"t[0]":void 0),objectTypes:Ho(e.objectTypes,e.objectTypes?"t[0]":void 0),
 objectInstances:Ho(e.objectInstances,e.objectInstances?"t[0].t[0]":void 0),plugins:Ho(e.plugins,e.plugins?"t[0]":void 0)}),
-TN="\0ORGIGGLY_SANDBOXED_WIDGET\0",NU=Rt.intersection([Rt.type({kind:Rt.literal("sandboxed-widget"),pluginName:Rt.string,
+TN="\0ORGIGGLY_SANDBOXED_WIDGET\0",PU=Rt.intersection([Rt.type({kind:Rt.literal("sandboxed-widget"),pluginName:Rt.string,
 params:Rt.UnknownRecord}),Rt.partial({embedsThirdPartyMedia:Rt.boolean,connections:Rt.array(kv),widgetOwner:Rt.string})]),
 kN=(e,t,{embedsThirdPartyMedia:r,connections:n,widgetOwner:a}={})=>{let i={kind:"sandboxed-widget",pluginName:e,params:t,
 ...r?{embedsThirdPartyMedia:!0}:{},...n?.length?{connections:n}:{},...a!==void 0?{widgetOwner:a}:{}};return TN+JSON.stringify(
 i)};var SN=({name:e,htmlTemplate:t,parameters:r,runtime:n,embedsThirdPartyMedia:a,connections:i,widgetOwner:o})=>(...s)=>{let l=r.
 reduce((c,u,d)=>(c[u.name||`param${d}`]=s[d],c),{});return n==="sandboxed"?kN(e,l,{embedsThirdPartyMedia:a,connections:i,
 widgetOwner:o}):String(i$(ip(t),l))},EN=e=>e.reduce((t,r)=>(t[r.name]=SN(r),t),{});var xN=Q.intersection([Q.type({name:Q.string}),ql]),_N=Q.intersection([ql,On]),AN=Q.union([Q.literal("text"),Q.literal("\
-number"),Q.literal("boolean"),Q.literal("temporal")]),PU=AN.types.map(e=>e.value);var $N=Q.type({pointer:Q.string,value:Q.unknown}),RN=Q.type({pointer:Q.string,length:Q.number}),qo=Q.partial({cursor:Q.string,
-navStack:Q.array(Q.string),data:Q.array($N),lengths:Q.array(RN)}),MU=Q.intersection([Q.type({versionId:Q.string,appConfig:qo,
+number"),Q.literal("boolean"),Q.literal("temporal")]),MU=AN.types.map(e=>e.value);var $N=Q.type({pointer:Q.string,value:Q.unknown}),RN=Q.type({pointer:Q.string,length:Q.number}),qo=Q.partial({cursor:Q.string,
+navStack:Q.array(Q.string),data:Q.array($N),lengths:Q.array(RN)}),DU=Q.intersection([Q.type({versionId:Q.string,appConfig:qo,
 users:qo,objectTypes:qo,objectInstances:qo,plugins:qo}),Q.partial({apiVersion:Q.string,minClientVersion:Q.number})]),IN=Q.intersection(
 [Q.type({id:Q.string,pointer:Q.string,type:Q.union([Q.literal("user"),Q.literal("group")])}),Q.partial({name:Q.string,email:Q.string,
-isAdmin:Q.boolean,usernames:Q.string})]);var ON=e=>e,K0=k(ON,e=>e.fields.filter(t=>N_.is(t))),G0=k(K0,e=>bt(e,t=>t.name)),LU=k(G0,it,(e,t)=>e[t]),CN=e=>{let t=e.
+isAdmin:Q.boolean,usernames:Q.string})]);var ON=e=>e,K0=k(ON,e=>e.fields.filter(t=>N_.is(t))),G0=k(K0,e=>bt(e,t=>t.name)),UU=k(G0,it,(e,t)=>e[t]),CN=e=>{let t=e.
 map(J0).filter(Wi);return da(["name",...t]).map(n=>`value.${n}`).join(" || ")},J0=e=>{let t=G0(e),r=t.name||t.Name;if(r)
-return r.name;let n=K0(e)[0];return n&&(n.type==="text"||n.type==="number")?n.name:"id"};var Z0=["type","_scope","_groupKey"],UU=new Set(Z0);var NN=e=>Wi(e.type)&&Wi(e.id),PN=e=>e,X0=k(PN,e=>e.types),FU=k(X0,CN),MN=k(X0,e=>bt(e,t=>t.name)),DN=k(MN,it,(e,t)=>e[t]),
-BU=k(DN,e=>e&&J0(e));var Q0=e=>e,jN=k(Q0,e=>e.nodes),LN=k(Q0,e=>e.plugins),HU=k(jN,LN,(e,t)=>da([...e.map(r=>r.name),...t.map(r=>r.name)]));var UN=(e,t)=>({metaModel:e,repo:{objects:t}}),FN=e=>e,Ss=e=>k(FN,t=>{let{data:r=[]}=t??{};return r.map(n=>Yc(n.value)?{
-...n.value,pointer:n.pointer}:n.value).filter(e.is)}),BN=Ss(Bx),WN=Ss(_N),HN=Ss(C_),YU=Ss(xN),Yp=Ss(IN),ew=e=>e,tw=(e,{lenient:t}={})=>{
+return r.name;let n=K0(e)[0];return n&&(n.type==="text"||n.type==="number")?n.name:"id"};var Z0=["type","_scope","_groupKey"],FU=new Set(Z0);var NN=e=>Wi(e.type)&&Wi(e.id),PN=e=>e,X0=k(PN,e=>e.types),BU=k(X0,CN),MN=k(X0,e=>bt(e,t=>t.name)),DN=k(MN,it,(e,t)=>e[t]),
+WU=k(DN,e=>e&&J0(e));var Q0=e=>e,jN=k(Q0,e=>e.nodes),LN=k(Q0,e=>e.plugins),qU=k(jN,LN,(e,t)=>da([...e.map(r=>r.name),...t.map(r=>r.name)]));var UN=(e,t)=>({metaModel:e,repo:{objects:t}}),FN=e=>e,Ss=e=>k(FN,t=>{let{data:r=[]}=t??{};return r.map(n=>Yc(n.value)?{
+...n.value,pointer:n.pointer}:n.value).filter(e.is)}),BN=Ss(Bx),WN=Ss(_N),HN=Ss(C_),zU=Ss(xN),Yp=Ss(IN),ew=e=>e,tw=(e,{lenient:t}={})=>{
 let r=e.versionId,n=e.apiVersion,a=HN(e.plugins),i=WN(e.objectInstances).filter(NN),o=vN(e.appConfig,a,{lenient:t});return M(
 o)?o:R({appConfig:o.right,users:e.users,objectTypes:BN(e.objectTypes),objectInstances:i,plugins:a,versionId:r,apiVersion:n})},
-qN=k(ew,e=>tw(e)),zU=k(ew,e=>tw(e,{lenient:!0})),rw=e=>e,VN=k(rw,e=>({types:e.objectTypes})),KU=k(rw,VN,(e,t)=>UN(t,e.objectInstances)),
+qN=k(ew,e=>tw(e)),KU=k(ew,e=>tw(e,{lenient:!0})),rw=e=>e,VN=k(rw,e=>({types:e.objectTypes})),GU=k(rw,VN,(e,t)=>UN(t,e.objectInstances)),
 gc=e=>e,nw=e=>{let[t]=sp(e);return t},zp=e=>e.replace(/\.?value$/,""),aw=k(Yp,e=>bt(e,t=>zp(t.pointer)));var Kp=k(gc,aw,it,(e,t,r)=>{let n=t[r];if(!n)return;let{id:a,name:i=a,type:o,isAdmin:s}=n;if(o!=="group")return;let l=r?
 Kp(e,nw(r)):void 0;return{id:a,name:i,parent:l,isAdmin:s}}),YN=k(gc,aw,it,(e,t,r)=>{let n=t[r];if(!n)return;let{id:a,name:i=a,
 email:o,type:s,isAdmin:l}=n;if(s!=="user"||!o)return;let c=Kp(e,nw(r));return{id:a,name:i,email:o,parent:c,isAdmin:l}}),
 iw=k(Yp,e=>Fn(e,t=>t.type)),ow=k(gc,iw,(e,t)=>(t.user||[]).flatMap(({pointer:a})=>{let i=YN(e,zp(a));return i?[i]:[]})),
-GU=k(gc,iw,(e,t)=>t.group.flatMap(({pointer:n})=>{let a=Kp(e,zp(n));return a?[a]:[]})),zN=k(ow,e=>bt(e,t=>t.email)),KN=k(
-ow,e=>bt(e,t=>t.name)),JU=k(KN,it,(e,t)=>e[t]),ZU=k(zN,it,(e,t)=>e[t]),Sy=e=>(e??"").split(/[\s,]+/).map(t=>t.trim().toLowerCase()).
-filter(t=>t&&t!=="anon"),XU=k(Yp,it,(e,t)=>{var r;let n=t.trim().toLowerCase();if(!n||n==="anon")return;let a=e.find(i=>i.
-type==="user"&&Sy(i.usernames).includes(n));if(a)return{id:a.id,name:(r=a.name)!=null?r:a.id,usernames:Sy(a.usernames)}});var QU=29*24*60*60*1e3;var GN=(e,t={})=>{var r,n,a,i;let o=qN(wN(e));if(M(o))throw new Error(`org config failed to decode: ${String(o.left)}`);
-let s=o.right.appConfig,l=new Set(["storage","realtime","callable"].flatMap(E=>aA(s,E).map(_=>_.typeName))),c=[...new Set(
-((r=t.records)!=null?r:[]).map(E=>E.type).filter(E=>!l.has(E)))];if(c.length)throw new Error(`orgPack: record type(s) ${c.
-join(", ")} are not declared as a datasource by any node in this config \u2014 the live app would never load them. Declare a \
-data node (e.g. a subsection with data: {dataType, source: "storage"}) or remove the fixture records.`);let u=((n=t.records)!=
-null?n:[]).filter(E=>E.isDeleted!==!0),d={objects:[...o.right.objectInstances,...u]},f=t.plugins?{...EN(o.right.plugins),
-...t.context}:(a=t.context)!=null?a:{},h=G2(s,f,d);J2(h,(i=t.init)!=null?i:{});let y=()=>h.getState(),b=[],T=E=>{let _=Pa(
-y(),E);return Ee(_)&&_.right===!0},S=E=>{let _=W(y(),E);for(;_;){if(T(_.key))return!1;_=Gr(y(),_.key)}return!0};return{...h,
-evalAt:(E,_="")=>et(Ar(y(),E.startsWith("@")?E:`@${E}`,_)),value:E=>et(gr(y(),E)),lengthOf:E=>et(Ca(y(),E)),setValue:(E,_)=>{
-h.api.updateValue(E,_)},clearValue:E=>{h.api.clearSubtree(E)},setCursor:(E,_)=>{h.api.setCursor(E,_)},isVisible:S,visibleChildren:E=>S(
-E)?Ri(y(),E).map(_=>_.key):[],childKeys:E=>Mt(y(),E).map(_=>_.key),renderHtml:E=>{let _=W(y(),E).node.htmlTemplate;if(typeof _!=
-"string")throw new Error(`no htmlTemplate at pointer "${E}"`);let O=ip(_);if(!O.startsWith("@"))return O;let D=et(Ar(y(),
-O,E));if(D!==void 0&&typeof D!="string")throw new Error(`htmlTemplate at "${E}" evaluated to a non-string (${JSON.stringify(
+JU=k(gc,iw,(e,t)=>t.group.flatMap(({pointer:n})=>{let a=Kp(e,zp(n));return a?[a]:[]})),zN=k(ow,e=>bt(e,t=>t.email)),KN=k(
+ow,e=>bt(e,t=>t.name)),ZU=k(KN,it,(e,t)=>e[t]),XU=k(zN,it,(e,t)=>e[t]),Sy=e=>(e??"").split(/[\s,]+/).map(t=>t.trim().toLowerCase()).
+filter(t=>t&&t!=="anon"),QU=k(Yp,it,(e,t)=>{var r;let n=t.trim().toLowerCase();if(!n||n==="anon")return;let a=e.find(i=>i.
+type==="user"&&Sy(i.usernames).includes(n));if(a)return{id:a.id,name:(r=a.name)!=null?r:a.id,usernames:Sy(a.usernames)}});var eF=29*24*60*60*1e3;var GN=e=>{if(!("$now"in e))return e;let{$now:t,...r}=e;if("now"in r&&r.now!==t)throw new Error(`orgPack: context sets b\
+oth $now (${String(t)}) and now (${String(r.now)}) \u2014 pass one.`);return{...r,now:t}},JN=(e,t={})=>{var r,n,a,i;let o=qN(
+wN(e));if(M(o))throw new Error(`org config failed to decode: ${String(o.left)}`);let s=o.right.appConfig,l=new Set(["sto\
+rage","realtime","callable"].flatMap(E=>aA(s,E).map(_=>_.typeName))),c=[...new Set(((r=t.records)!=null?r:[]).map(E=>E.type).
+filter(E=>!l.has(E)))];if(c.length)throw new Error(`orgPack: record type(s) ${c.join(", ")} are not declared as a dataso\
+urce by any node in this config \u2014 the live app would never load them. Declare a data node (e.g. a subsection with data: \
+{dataType, source: "storage"}) or remove the fixture records.`);let u=((n=t.records)!=null?n:[]).filter(E=>E.isDeleted!==
+!0),d={objects:[...o.right.objectInstances,...u]},f=GN(t.plugins?{...EN(o.right.plugins),...t.context}:(a=t.context)!=null?
+a:{}),h=G2(s,f,d);J2(h,(i=t.init)!=null?i:{});let y=()=>h.getState(),b=[],T=E=>{let _=Pa(y(),E);return Ee(_)&&_.right===
+!0},S=E=>{let _=W(y(),E);for(;_;){if(T(_.key))return!1;_=Gr(y(),_.key)}return!0};return{...h,evalAt:(E,_="")=>et(Ar(y(),
+E.startsWith("@")?E:`@${E}`,_)),value:E=>et(gr(y(),E)),lengthOf:E=>et(Ca(y(),E)),setValue:(E,_)=>{h.api.updateValue(E,_)},
+clearValue:E=>{h.api.clearSubtree(E)},setCursor:(E,_)=>{h.api.setCursor(E,_)},isVisible:S,visibleChildren:E=>S(E)?Ri(y(),
+E).map(_=>_.key):[],childKeys:E=>Mt(y(),E).map(_=>_.key),renderHtml:E=>{let _=W(y(),E).node.htmlTemplate;if(typeof _!="s\
+tring")throw new Error(`no htmlTemplate at pointer "${E}"`);let O=ip(_);if(!O.startsWith("@"))return O;let D=et(Ar(y(),O,
+E));if(D!==void 0&&typeof D!="string")throw new Error(`htmlTemplate at "${E}" evaluated to a non-string (${JSON.stringify(
 D)}); the renderer rejects it. Wrap a html\`\u2026\` result in a template: @\`\${html\`\u2026\`}\``);return String(D)},widgetCommands:b,
 nodeAt:E=>W(y(),E).node,runScriptAt:(E,_,O,D)=>{let H=O??W(y(),E).node.script;if(typeof H!="string"||H.length===0)throw new Error(
 `no script found at pointer "${E}"`);let K=async(...L)=>{(L.length===1&&Array.isArray(L[0])?L[0]:L).map(Z=>{let Ie=ey(y(),
@@ -3100,8 +3102,8 @@ E,String(Z));if(Ie===void 0)throw new Error(`clearValues: no node named "${Strin
 Z=>h.api.clearSubtree(Z))},J=async(L,ve,te)=>{let Z=ey(y(),E,String(L));if(Z===void 0)throw new Error(`sendToWidget: no \
 node named "${String(L)}" is in scope here`);if(!W(y(),Z).node.pluginName)throw new Error(`sendToWidget: "${String(L)}" \
 is not a widget node`);b.push({widget:String(L),key:Z,command:String(ve),...te===void 0?{}:{args:te}})};return J$(y(),E,
-H,{..._,asyncHosts:{clearValues:K,sendToWidget:J,..._.asyncHosts}},D)}}},JN=["id",...Z0],Ey=e=>Object.fromEntries(Object.
-entries(e).filter(([t])=>!JN.includes(t))),xy=e=>typeof e=="object"&&e!==null&&!Array.isArray(e),ZN=(e=[])=>{let t=new Map(
+H,{..._,asyncHosts:{clearValues:K,sendToWidget:J,..._.asyncHosts}},D)}}},ZN=["id",...Z0],Ey=e=>Object.fromEntries(Object.
+entries(e).filter(([t])=>!ZN.includes(t))),xy=e=>typeof e=="object"&&e!==null&&!Array.isArray(e),XN=(e=[])=>{let t=new Map(
 e.map(({id:o,type:s,...l})=>[`${s}/${o}`,l])),r=[],n=(o,s)=>{let l=String(s);if(typeof s!="string"||l.split("/").some(c=>c.
 length===0))throw new Error(`${o}: path "${l}" has an empty segment`);return l};return{writes:r,record:o=>t.get(o),asyncHosts:{
 setRealtime:async(o,s)=>{if(n("setRealtime",o),!xy(s))throw new Error("setRealtime: `value` must be an object");let l=Ey(
@@ -3109,52 +3111,52 @@ s);return r.push({kind:"set",path:String(o),value:l}),t.set(String(o),l),l},upda
 teRealtime",o),!xy(s))throw new Error("updateRealtime: `patch` must be an object");let c=Object.keys(s);if(c.length===0)
 throw new Error("updateRealtime: `patch` must have at least one field");if(c.some(f=>f.includes("/")))throw new Error("u\
 pdateRealtime: patch top-level fields only");let u=Ey(s);r.push({kind:"update",path:String(o),value:u});let d={...(l=t.get(
-String(o)))!=null?l:{}};return Object.entries(u).forEach(([f,h])=>{h===null?delete d[f]:d[f]=h}),t.set(String(o),d),u}}}};var XN=(e,t,r)=>{if(t.size===0)return`No ${r}s declared. Add a declaration to satisfy the reference.`;let n=[...t].map(o=>({
+String(o)))!=null?l:{}};return Object.entries(u).forEach(([f,h])=>{h===null?delete d[f]:d[f]=h}),t.set(String(o),d),u}}}};var QN=(e,t,r)=>{if(t.size===0)return`No ${r}s declared. Add a declaration to satisfy the reference.`;let n=[...t].map(o=>({
 p:o,d:Hv(e,o)})).sort((o,s)=>o.d-s.d),a=n[0];if(a&&a.d<=3)return`Closest ${r}: \`${a.p}\`. Either rename the reference or\
  add \`${e}\` to the org config.`;let i=n.slice(0,5).map(o=>o.p).join(", ");return`Available ${r}s: ${i}. Either rename \
-the reference or add \`${e}\`.`};var QN=["objectType","objectInstance","field","plugin","record","user"],eF=new Set([...Xx,...Qx,...Object.keys(rp),...QN,
-...Object.keys(nv)]);var eP=e=>e.includes(Jx)||e.includes("$")||e.includes("@")||e.includes("{"),tP=e=>{var t;let n=(e.startsWith("/")?e.slice(
+the reference or add \`${e}\`.`};var eP=["objectType","objectInstance","field","plugin","record","user"],tF=new Set([...Xx,...Qx,...Object.keys(rp),...eP,
+...Object.keys(nv)]);var tP=e=>e.includes(Jx)||e.includes("$")||e.includes("@")||e.includes("{"),rP=e=>{var t;let n=(e.startsWith("/")?e.slice(
 1):e).split(".");return((t=n[n.length-1])!=null?t:"").replace(/\[\d+\]$/g,"")};var ea=e=>typeof e=="object"&&e!==null&&typeof e.type=="string",sw=new Set(["navigate","replaceScreen","pushCursor","set\
-Cursor"]),rP=new Set(["replaceScreen","setCursor"]);var Gp=e=>Array.isArray(e.arguments)?e.arguments:[],nP=e=>{if(!ea(e))return;let t=e.value;if(typeof t=="string")return t;
+Cursor"]),nP=new Set(["replaceScreen","setCursor"]);var Gp=e=>Array.isArray(e.arguments)?e.arguments:[],aP=e=>{if(!ea(e))return;let t=e.value;if(typeof t=="string")return t;
 if(typeof t=="object"&&t!==null){let r=t.cooked;if(typeof r=="string")return r}},Jp=e=>{if(ea(e)){if(e.type==="Literal"&&
 typeof e.value=="string")return e.value;if(e.type==="TemplateLiteral"&&Array.isArray(e.expressions)&&e.expressions.length===
-0&&Array.isArray(e.quasis))return nP(e.quasis[0])}},aP=e=>(t,r)=>{var n;let a=[],[i,o]=Gp(t);if(i===void 0)return a.push(
+0&&Array.isArray(e.quasis))return aP(e.quasis[0])}},iP=e=>(t,r)=>{var n;let a=[],[i,o]=Gp(t);if(i===void 0)return a.push(
 {path:r.path,kind:"host-arg-missing",message:`\`${e}()\` needs a target \u2014 the screen (or named node) to move to.`,fixHint:`\
 Write \`${e}('screenName')\`; a Back button is \`back()\`.`,severity:"error"}),a;ea(o)&&o.type==="Literal"&&a.push({path:r.
 path,kind:"host-arg-type",message:`\`${e}\`'s second argument must be an object of nav args, not a literal.`,fixHint:`e.\
 g. \`${e}('detail', {id: $params.id})\`.`,severity:"error"});let s=Jp(i);if(s!==void 0&&s.length===0)return a.push({path:r.
 path,kind:"host-arg-missing",message:`\`${e}()\` needs a target \u2014 the screen (or named node) to move to.`,fixHint:`\
-Write \`${e}('screenName')\`; a Back button is \`back()\`.`,severity:"error"}),a;if(s===void 0||r.navTargets===void 0||eP(
-s))return a;let l=tP(s);return l.length===0?a:r.navTargets.has(l)?(rP.has(e)&&((n=r.flowBearing)==null?void 0:n.has(l))===
+Write \`${e}('screenName')\`; a Back button is \`back()\`.`,severity:"error"}),a;if(s===void 0||r.navTargets===void 0||tP(
+s))return a;let l=rP(s);return l.length===0?a:r.navTargets.has(l)?(nP.has(e)&&((n=r.flowBearing)==null?void 0:n.has(l))===
 !0&&a.push({path:r.path,kind:"action-replace-into-flow",message:`\`${e}("${s}")\` replaces into a screen that contains a \
 flow \u2014 replace skips the flow-state reset, so re-entering shows the previous run's completed step instead of a fresh flo\
 w.`,fixHint:`Use \`navigate("${s}")\` (push resets flow state under the target and gives Back a nav-stack entry).`,severity:"\
 warning"}),a):(a.push({path:r.path,kind:"missing-screen",message:`\`${e}("${s}")\` does not match any named node in appCo\
-nfig \u2014 the call will fail at runtime.`,fixHint:XN(l,r.navTargets,"navigation target"),severity:"error"}),a)},iP=(e,t)=>Gp(
+nfig \u2014 the call will fail at runtime.`,fixHint:QN(l,r.navTargets,"navigation target"),severity:"error"}),a)},oP=(e,t)=>Gp(
 e).length===0?[]:[{path:t.path,kind:"host-arg-type",message:"`back()` takes no arguments \u2014 it always goes back one nav-s\
 tack entry.",fixHint:"Use `back()`; to go to a specific screen use `navigate('screen')`.",severity:"warning"}],Sd=(e,t)=>{
 if(!ea(e)||e.type!=="ObjectExpression")return;let r=Array.isArray(e.properties)?e.properties:[];for(let n of r){if(!ea(n)||
 n.type!=="Property"||n.computed===!0)continue;let a=n.key;if((ea(a)?a.type==="Identifier"&&typeof a.name=="string"?a.name:
-Jp(a):void 0)===t)return n.value}},oP=e=>ea(e)?e.type==="ObjectExpression"?[e]:e.type==="ArrayExpression"&&Array.isArray(
+Jp(a):void 0)===t)return n.value}},sP=e=>ea(e)?e.type==="ObjectExpression"?[e]:e.type==="ArrayExpression"&&Array.isArray(
 e.elements)?e.elements.filter(t=>ea(t)&&t.type==="ObjectExpression"):[]:[],_y=(e,t)=>(r,n)=>{var a;let i=n.objectTypeFieldTypes,
 [o]=Gp(r),s=Jp(Sd(o,"type"));if(i===void 0||s===void 0)return[];let l=i.get(s);if(l===void 0)return[];let c=(a=[...l].find(
-([,u])=>u.kind==="builtin"&&u.name==="parentRef"))==null?void 0:a[0];return c===void 0?[]:oP(Sd(o,t)).filter(u=>Sd(u,"_p\
+([,u])=>u.kind==="builtin"&&u.name==="parentRef"))==null?void 0:a[0];return c===void 0?[]:sP(Sd(o,t)).filter(u=>Sd(u,"_p\
 arent")!==void 0).map(()=>({path:n.path,kind:"tree-mixed-parent-spellings",message:`${e} writes \`_parent\` on a \`${s}\`\
 , but \`${s}\` declares the \`parentRef\` field \`${c}\`, so the tree reads only \`${c}\` and ignores \`_parent\`.`,fixHint:`\
 Write the parent's id to \`${c}\` instead (\`${c}: <parent id>\`), or remove the \`parentRef\` field from \`${s}\` to use\
- the implicit \`_parent\` link everywhere.`,severity:"error"}))},tF=new Map([...[...sw].map(e=>[e,aP(e)]),["back",iP],["\
-publishData",_y("publishData","data")],["updateData",_y("updateData","patch")]]),rF=new RegExp(`\\b(?:${[...sw].join("|")}\
-)\\(`);var sP=lw.keyof({Person:null});var lP=N.intersection([N.type({name:N.string}),N.partial({type:N.string})]),cw=N.intersection([N.type({name:N.string,fields:N.array(
-lP)}),N.partial({description:N.string,wellKnown:sP})]),cP=N.keyof({appFeature:null,none:null}),uP=N.keyof({host:null,global:null,
-user:null,group:null}),dP=N.partial({types:N.array(cw),scope:uP,nav:cP,plugins:N.array(N.string)}),pP=N.intersection([N.type(
-{screen:N.string,title:N.string}),N.partial({pic:N.string})]),fP=N.intersection([N.type({name:N.string,shape:N.union([N.string,
-N.record(N.string,N.string)])}),N.partial({description:N.string})]),hP=N.intersection([N.type({types:N.array(N.string),screens:N.array(
-N.string)}),N.partial({functions:N.array(N.string),plugins:N.array(N.string),nav:N.array(pP),notifications:N.array(N.string),
-slots:N.array(fP)})]),mP=N.partial({entities:N.array(N.string),seedSlots:N.array(N.string),labels:N.array(N.string)});var gP=N.intersection([N.type({name:N.string,hostType:cw,slot:N.string,fn:N.string}),N.partial({description:N.string})]),
-yP=N.intersection([N.type({id:N.string,version:N.number,description:N.string,requires:dP,provides:hP}),N.partial({params:mP,
-seams:N.array(gP)})]),vP=N.partial({nav:N.array(N.unknown),navFolder:N.string,notifications:N.array(N.unknown)}),bP=N.partial(
+ the implicit \`_parent\` link everywhere.`,severity:"error"}))},rF=new Map([...[...sw].map(e=>[e,iP(e)]),["back",oP],["\
+publishData",_y("publishData","data")],["updateData",_y("updateData","patch")]]),nF=new RegExp(`\\b(?:${[...sw].join("|")}\
+)\\(`);var lP=lw.keyof({Person:null});var cP=N.intersection([N.type({name:N.string}),N.partial({type:N.string})]),cw=N.intersection([N.type({name:N.string,fields:N.array(
+cP)}),N.partial({description:N.string,wellKnown:lP})]),uP=N.keyof({appFeature:null,none:null}),dP=N.keyof({host:null,global:null,
+user:null,group:null}),pP=N.partial({types:N.array(cw),scope:dP,nav:uP,plugins:N.array(N.string)}),fP=N.intersection([N.type(
+{screen:N.string,title:N.string}),N.partial({pic:N.string})]),hP=N.intersection([N.type({name:N.string,shape:N.union([N.string,
+N.record(N.string,N.string)])}),N.partial({description:N.string})]),mP=N.intersection([N.type({types:N.array(N.string),screens:N.array(
+N.string)}),N.partial({functions:N.array(N.string),plugins:N.array(N.string),nav:N.array(fP),notifications:N.array(N.string),
+slots:N.array(hP)})]),gP=N.partial({entities:N.array(N.string),seedSlots:N.array(N.string),labels:N.array(N.string)});var yP=N.intersection([N.type({name:N.string,hostType:cw,slot:N.string,fn:N.string}),N.partial({description:N.string})]),
+vP=N.intersection([N.type({id:N.string,version:N.number,description:N.string,requires:pP,provides:mP}),N.partial({params:gP,
+seams:N.array(yP)})]),bP=N.partial({nav:N.array(N.unknown),navFolder:N.string,notifications:N.array(N.unknown)}),wP=N.partial(
 {appConfig:N.array(N.unknown),objectTypes:N.array(N.unknown),objectInstances:N.array(N.unknown),plugins:N.array(N.unknown),
-shell:vP}),nF=N.type({manifest:yP,body:bP});var aF=new Uint32Array([1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,
+shell:bP}),aF=N.type({manifest:vP,body:wP});var iF=new Uint32Array([1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,
 310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,
 1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,
 773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,
@@ -3386,8 +3388,8 @@ ishes the content node's enclosing submit context object (the legacy `@submit` h
 ource fields and shows a success snackbar. Returns the published record. Throws when there is no submit context or the p\
 ublish fails \u2014 so a failing `submit()` aborts the action's `navigate` step.",availableIn:["content:action"],examples:[
 "submit()"],status:"legacy",use:"a declared action or a flow `script` step that calls `publishData({type, data: {...}})`\
- with the inputs named explicitly"}],wP=yc.filter(e=>e.async).map(e=>e.name),iF=yc.filter(e=>!e.async).map(e=>e.name),TP=e=>uw.
-some(t=>t===e),kP=e=>TP(e)?yc.filter(t=>t.availableIn.includes(e)).map(t=>t.name):[];var oF=[...P_];var SP={if:{min:3,max:3},and:{min:0,max:null},or:{min:0,max:null},length:{min:1,max:1},sum:{min:1,max:1},avg:{min:1,max:1},
+ with the inputs named explicitly"}],TP=yc.filter(e=>e.async).map(e=>e.name),oF=yc.filter(e=>!e.async).map(e=>e.name),kP=e=>uw.
+some(t=>t===e),SP=e=>kP(e)?yc.filter(t=>t.availableIn.includes(e)).map(t=>t.name):[];var sF=[...P_];var EP={if:{min:3,max:3},and:{min:0,max:null},or:{min:0,max:null},length:{min:1,max:1},sum:{min:1,max:1},avg:{min:1,max:1},
 min:{min:0,max:null},max:{min:0,max:null},first:{min:1,max:1},last:{min:1,max:1},flatten:{min:1,max:1},clamp:{min:3,max:3},
 split:{min:1,max:2},join:{min:1,max:2},concat:{min:0,max:null},upper:{min:1,max:1},lower:{min:1,max:1},floor:{min:1,max:1},
 ceil:{min:1,max:1},round:{min:1,max:1},abs:{min:1,max:1},today:{min:0,max:0},dateFrom:{min:1,max:1},dateCompare:{min:2,max:2},
@@ -3398,7 +3400,7 @@ entries:{min:1,max:1},mapValues:{min:2,max:2},escapeHtml:{min:1,max:1},urlEncode
 min:1,max:2},progressRing:{min:1,max:2},sparkline:{min:1,max:2},now:{min:0,max:0},nextOccurrence:{min:3,max:4},byId:{min:2,
 max:2},forEach:{min:2,max:2},filter:{min:2,max:2},map:{min:2,max:2},reduce:{min:2,max:3},times:{min:2,max:2},every:{min:2,
 max:2},some:{min:2,max:2},find:{min:2,max:2},findIndex:{min:2,max:2},count:{min:1,max:2},groupBy:{min:2,max:2},sumBy:{min:2,
-max:2}};var sF=new Set(yc.map(e=>e.name));var lF=new Map(uw.map(e=>[e,new Set(kP(e))])),cF=new Set(wP);var uF=new Map(Object.entries(SP));var EP=[{attribute:"data-action",label:"Declared action",html:'<button data-action="openTab" data-param-id="${id}">Open<\
+max:2}};var lF=new Set(yc.map(e=>e.name));var cF=new Map(uw.map(e=>[e,new Set(SP(e))])),uF=new Set(TP);var dF=new Map(Object.entries(EP));var xP=[{attribute:"data-action",label:"Declared action",html:'<button data-action="openTab" data-param-id="${id}">Open<\
 /button>',purpose:"Invoke a named action declared in the node's `actions` field \u2014 a `script`; to move screens it calls `\
 navigate('screen')`, usually as the last line. `data-param-*` values are render-time interpolated literals, read into `$\
 params` with no click-time evaluation. If the action declares `confirm`, the click asks first and the script runs only o\
@@ -3424,7 +3426,7 @@ cord's detail page to a different record's). Works on `rel=` too",status:"legacy
  item's scope. Resolves *relative to the clicked row*, so it can only reach a screen nested inside that same subsection",
 status:"legacy"},{attribute:"rel",label:"Seed a form target",html:'<a rel="formScreen" param="expression">Edit</a>',purpose:"\
 Writes the evaluated value at the destination pointer before navigating. **Forms only** \u2014 a flow reads `data-args`/`$arg\
-s`, never `param`",status:"legacy"}],dF=EP.map(e=>e.attribute).filter((e,t,r)=>r.indexOf(e)===t),vc=[{id:"rel",tokens:["\
+s`, never `param`",status:"legacy"}],pF=xP.map(e=>e.attribute).filter((e,t,r)=>r.indexOf(e)===t),vc=[{id:"rel",tokens:["\
 rel="],attributes:["rel"],fixHint:'Declare an action whose script ends with navigate("screen") and reference it via data\
 -action instead.',prompt:{order:1,line:'`rel="screen"` / `href="screen" data-args=\u2026` \u2192 an action whose script calls `nav\
 igate(\'screen\', {id: $params.id})`'}},{id:"setValue",tokens:["setValue="],attributes:["setValue"],fixHint:"Declare an \
@@ -3442,11 +3444,11 @@ eference it via `data-action` instead.",prompt:{order:4,line:'`data-speak=\u2026
 t, lang?, rate?)`; `data-speak-action="stop"` \u2192 `stopSpeech()`'}},{id:"href-pop",tokens:['href="@pop"'],attributes:[],
 prompt:{order:6,line:'`href="@pop"` \u2192 an action whose script is `back()`'}},{id:"href-submit",tokens:['href="@submi\
 t"'],attributes:[],prompt:{order:5,line:'`href="@submit"` \u2192 an action whose `script` calls `publishData({type, data: {\u2026}\
-})`, naming each input'}}],xP=Object.fromEntries(vc.map(e=>[e.id,e]));var pF=vc.flatMap(e=>[...e.tokens]),fF=vc.filter(e=>e.prompt!==void 0).sort((e,t)=>e.prompt.order-t.prompt.order).map(e=>e.
-prompt.line);var hF=xP.rel,mF=vc.filter(e=>e.id!=="rel"&&e.attributes.length>0);var _P=["versionId","apiVersion","appConfig","objectTypes","objectInstances","plugins","users"],AP=["orgSummary","minCli\
-entVersion"],gF=[..._P,...AP];var yF=new Map(Object.entries(e_));var vF=new Map(Object.entries(t_)),bF=new Map(Object.entries(r_).map(([e,t])=>[e,Object.entries(t)])),Ay,wF=Object.entries(
-(Ay=n_.objectTypeField)!=null?Ay:{});var $P=["archiveData","archiveId"],TF=["archiveType",...$P];var kF=Bl.Allow.OBJ|Bl.Allow.ARR;var SF=[...rv].filter(e=>e!=="variable");var RP="| `customize` | `feature`, `reason` | declares that you are changing an installed feature's own nodes. Without i\
-t, the closing gate refuses any change inside a `feature-\u2026` folder |",EF=`
+})`, naming each input'}}],_P=Object.fromEntries(vc.map(e=>[e.id,e]));var fF=vc.flatMap(e=>[...e.tokens]),hF=vc.filter(e=>e.prompt!==void 0).sort((e,t)=>e.prompt.order-t.prompt.order).map(e=>e.
+prompt.line);var mF=_P.rel,gF=vc.filter(e=>e.id!=="rel"&&e.attributes.length>0);var AP=["versionId","apiVersion","appConfig","objectTypes","objectInstances","plugins","users"],$P=["orgSummary","minCli\
+entVersion"],yF=[...AP,...$P];var vF=new Map(Object.entries(e_));var bF=new Map(Object.entries(t_)),wF=new Map(Object.entries(r_).map(([e,t])=>[e,Object.entries(t)])),Ay,TF=Object.entries(
+(Ay=n_.objectTypeField)!=null?Ay:{});var RP=["archiveData","archiveId"],kF=["archiveType",...RP];var SF=Bl.Allow.OBJ|Bl.Allow.ARR;var EF=[...rv].filter(e=>e!=="variable");var IP="| `customize` | `feature`, `reason` | declares that you are changing an installed feature's own nodes. Without i\
+t, the closing gate refuses any change inside a `feature-\u2026` folder |",xF=`
 
 ## Installed features
 
@@ -3455,10 +3457,10 @@ inside one only when the request needs it, and declare the change first:
 
 | op | fields | what it does |
 |---|---|---|
-${RP}`;var xF=new Set("a an the and or for of to in on with my our your me i we it its this that app apps application something\
+${IP}`;var _F=new Set("a an the and or for of to in on with my our your me i we it its this that app apps application something\
  some thing things help keep can like want make build create need would should could be is are was let lets using use si\
-mple new tool tools just also all any".split(" ")),IP=e=>e.length>4&&e.endsWith("ies")?`${e.slice(0,-3)}y`:e.length>3&&e.
-endsWith("s")&&!e.endsWith("ss")?e.slice(0,-1):e;var OP=[[["chat","tutor","talk","conversation","speak","spoken","voice"],["ai-chat"]],[["ai","generate","generated","gen\
+mple new tool tools just also all any".split(" ")),OP=e=>e.length>4&&e.endsWith("ies")?`${e.slice(0,-3)}y`:e.length>3&&e.
+endsWith("s")&&!e.endsWith("ss")?e.slice(0,-1):e;var CP=[[["chat","tutor","talk","conversation","speak","spoken","voice"],["ai-chat"]],[["ai","generate","generated","gen\
 erator","smart"],["ai-query","image-generation"]],[["image","picture","photo","camera","illustrated"],["image-generation",
 "ai-query"]],[["game","party","multiplayer","player","live","realtime","round"],["realtime","transitions"]],[["quiz","re\
 vise","revision","flashcard","exam","study","learn","lesson"],["flows","tabs"]],[["booking","book","schedule","calendar",
@@ -3466,23 +3468,23 @@ vise","revision","flashcard","exam","study","learn","lesson"],["flows","tabs"]],
 ["push"]],[["video","call","youtube"],["video"]],[["music","song","audio","jingle","playlist","podcast"],["audio"]],[["m\
 ap","trip","travel","holiday","itinerary","route"],["maps"]],[["login","member","private","pin"],["org-login","auth-priv\
 ate"]],[["team","group","share","shared","friend"],["group-scoped","realtime"]],[["personal","journal","diary"],["user-s\
-coped"]]],_F=new Map(OP.flatMap(([e,t])=>e.map(r=>[IP(r),t])));var CP=ze.intersection([ze.type({name:ze.string}),ze.partial({parent:ze.union([ze.string,ze.null])})]),NP=ze.type({orgIds:ze.array(
-ze.string)}),AF=ze.partial({folders:ze.record(ze.string,CP),containers:ze.record(ze.string,NP),folderOrder:ze.array(ze.string)});var pw=B.keyof({new:null,claimed:null,"fixed-draft":null,published:null,closed:null}),Pt=e=>B.union([e,B.null]),PP=B.intersection(
+coped"]]],AF=new Map(CP.flatMap(([e,t])=>e.map(r=>[OP(r),t])));var NP=ze.intersection([ze.type({name:ze.string}),ze.partial({parent:ze.union([ze.string,ze.null])})]),PP=ze.type({orgIds:ze.array(
+ze.string)}),$F=ze.partial({folders:ze.record(ze.string,NP),containers:ze.record(ze.string,PP),folderOrder:ze.array(ze.string)});var pw=B.keyof({new:null,claimed:null,"fixed-draft":null,published:null,closed:null}),Pt=e=>B.union([e,B.null]),MP=B.intersection(
 [B.type({qualifiedOrgId:B.string}),B.partial({configSource:Pt(B.string),versionId:Pt(B.string),previewDraft:Pt(B.boolean),
-variant:Pt(B.string)})]),MP=B.intersection([B.type({pathname:B.string}),B.partial({search:Pt(B.string),pointerKey:Pt(B.string),
-screenLabel:Pt(B.string)})]),DP=B.partial({buildCommit:B.string,buildTimestamp:B.string,capabilityVersion:B.number,userAgent:B.string,
+variant:Pt(B.string)})]),DP=B.intersection([B.type({pathname:B.string}),B.partial({search:Pt(B.string),pointerKey:Pt(B.string),
+screenLabel:Pt(B.string)})]),jP=B.partial({buildCommit:B.string,buildTimestamp:B.string,capabilityVersion:B.number,userAgent:B.string,
 platform:B.string,language:B.string,timezone:B.string,viewport:B.type({w:B.number,h:B.number}),dpr:B.number,standalone:B.boolean,
-online:B.boolean,touch:B.boolean}),jP=B.partial({screenshot:B.type({path:B.string,bytes:B.number,w:B.number,h:B.number}),
-state:B.type({path:B.string,bytes:B.number})}),fw={statusNote:Pt(B.string),branch:Pt(B.string),prUrl:Pt(B.string)},$F=B.intersection(
-[B.type({id:B.string,createdAt:B.string,reporterUid:B.string,description:B.string,target:PP,location:MP,status:pw}),B.partial(
-{reporterUsername:Pt(B.string),reporterIsOwner:Pt(B.boolean),client:Pt(DP),attachments:Pt(jP),...fw,statusUpdatedAt:Pt(B.string),
-statusUpdatedBy:Pt(B.string)})]),RF=B.intersection([B.type({status:pw,statusUpdatedAt:B.string,statusUpdatedBy:B.string}),
-B.partial(fw)]);import LP from"node:fs";var UP=e=>{if(e===null||typeof e!="object")return!1;let t=e.appConfig;if(!t||typeof t!="object")return!1;let r=t;return Array.
+online:B.boolean,touch:B.boolean}),LP=B.partial({screenshot:B.type({path:B.string,bytes:B.number,w:B.number,h:B.number}),
+state:B.type({path:B.string,bytes:B.number})}),fw={statusNote:Pt(B.string),branch:Pt(B.string),prUrl:Pt(B.string)},RF=B.intersection(
+[B.type({id:B.string,createdAt:B.string,reporterUid:B.string,description:B.string,target:MP,location:DP,status:pw}),B.partial(
+{reporterUsername:Pt(B.string),reporterIsOwner:Pt(B.boolean),client:Pt(jP),attachments:Pt(LP),...fw,statusUpdatedAt:Pt(B.string),
+statusUpdatedBy:Pt(B.string)})]),IF=B.intersection([B.type({status:pw,statusUpdatedAt:B.string,statusUpdatedBy:B.string}),
+B.partial(fw)]);import UP from"node:fs";var FP=e=>{if(e===null||typeof e!="object")return!1;let t=e.appConfig;if(!t||typeof t!="object")return!1;let r=t;return Array.
 isArray(r.data)&&Array.isArray(r.lengths)?!1:!!(Array.isArray(r._children)||r.type==="app")},hw=e=>e instanceof Error?e.
-message:String(e),Zp=e=>typeof e=="object"&&e!==null&&!Array.isArray(e),FP=e=>Zp(e)&&UP(e),BP=e=>Zp(e)&&Zp(e.appConfig)&&
-Array.isArray(e.appConfig.data)&&Array.isArray(e.appConfig.lengths),mw=e=>{let t;try{t=LP.readFileSync(e,"utf8")}catch(n){
+message:String(e),Zp=e=>typeof e=="object"&&e!==null&&!Array.isArray(e),BP=e=>Zp(e)&&FP(e),WP=e=>Zp(e)&&Zp(e.appConfig)&&
+Array.isArray(e.appConfig.data)&&Array.isArray(e.appConfig.lengths),mw=e=>{let t;try{t=UP.readFileSync(e,"utf8")}catch(n){
 return Ne(`cannot read ${e}: ${hw(n)}`)}let r;try{r=JSON.parse(t)}catch(n){return Ne(`${e} is not valid JSON: ${hw(n)}`)}
-return FP(r)?R(r):BP(r)?R(Y0(r)):Ne(`${e} is not an org config (no appConfig in tree or pointer format)`)};var BF=e=>{let t=typeof e=="string"&&!e.startsWith("file:")?e:WP(e),r=mw(t);if(M(r))throw new Error(r.left);return r.right};export{GN as createOrgPackApi,ZN as createRealtimeStore,BF as loadOrgTree};
+return BP(r)?R(r):WP(r)?R(Y0(r)):Ne(`${e} is not an org config (no appConfig in tree or pointer format)`)};var WF=e=>{let t=typeof e=="string"&&!e.startsWith("file:")?e:HP(e),r=mw(t);if(M(r))throw new Error(r.left);return r.right};export{JN as createOrgPackApi,XN as createRealtimeStore,WF as loadOrgTree};
 /*! Bundled license information:
 
 react/cjs/react.production.js:

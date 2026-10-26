@@ -130,7 +130,9 @@ const pack = createOrgPackApi(tree, { records: visits, context: { $userKey: "ada
 `"anon"` for a visitor), `$userKey` (a username, or `"anon"` — a Google user
 with no username yet is signed in but keyed `"anon"`, which is why saving
 gates on `$userKey != 'anon'` and viewing on `$authKind != 'anon'`), `$email`,
-and any other `$`-variable the config reads. `init`
+`$now` (a UTC ISO string such as `"2026-10-20T09:15:00Z"`, which pins the
+clock; unset, `$now` is undefined, so formulas guard `$now != null`), and any
+other `$`-variable the config reads. `init`
 pre-fills inputs by name; `plugins: true` makes the app's own html plugins
 callable when a template uses one.
 

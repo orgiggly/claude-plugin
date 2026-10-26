@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.22.1
+
+- **Pin the clock in an app test.** `context: { $now: "2026-10-20T09:15:00Z" }` now sets `$now` in `og test`, the same way `$userKey` and `$email` are set. It used to be ignored, so a test of anything that depends on the date saw no date at all.
+
 ## 0.22.0
 
 - **Use shared helper libraries.** `og reference libraries` lists the published function libraries, each with its helpers' names and parameters, and `og reference libraries <id>` shows one in full. Claude checks it before writing a helper that sounds generic, such as a deck of cards or a seat lookup.
