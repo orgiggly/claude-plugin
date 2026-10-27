@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.22.4
+
+- **An icon.** The plugin now shows the Orgiggly logo wherever Claude lists it.
+
 ## 0.22.3
 
 - **Example apps on the plugin's page.** The README now opens with apps running on Orgiggly that you can try on your phone, and a link to build one in your browser if you don't have Claude Code.
