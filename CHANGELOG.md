@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.22.2
+
+- **Tap-to-call and tap-to-text links.** An app can link a phone number with `tel:`, a text message with `sms:`, an email address with `mailto:` or a map location with `geo:`. Checking the app used to reject these links as if they named a missing screen.
+- **Quieter `og test` in a cloud session.** Behind a proxy, each test file no longer prints a warning that Node's proxy support is experimental.
+- **No raw Firebase warning from `og delete-org`.** When the app has another admin, the delete no longer prints a permission warning naming their account. The message saying they may still see the app listed is unchanged.
+
 ## 0.22.1
 
 - **Pin the clock in an app test.** `context: { $now: "2026-10-20T09:15:00Z" }` now sets `$now` in `og test`, the same way `$userKey` and `$email` are set. It used to be ignored, so a test of anything that depends on the date saw no date at all.
