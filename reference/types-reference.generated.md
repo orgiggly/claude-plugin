@@ -1427,9 +1427,13 @@ type CallableButtonOptions = CommonOptions & {
    * The Firebase callable to invoke. Constrained to a server-vetted allow-list — extending the list is a code change (web dispatcher + admin picker).
    * `setUserProfile`: Writes the signed-in user's profile
    * `triggerWorldcupSync`: Kicks off the World Cup results sync
+   * `socialFollow`: Follows a person, or changes the tier of an existing follow. Args: targetUid and an optional tier of follow or close
+   * `socialUnfollow`: Stops following a person. Args: targetUid
+   * `socialLike`: Likes an app. Args: orgId, the username/orgName pair
+   * `socialUnlike`: Removes the caller's like from an app. Args: orgId
    * A server-vetted allow-list, not a free-text name: adding a callable is a code change in both the web dispatcher and the admin picker.
    */
-  functionName: "setUserProfile" | "triggerWorldcupSync";
+  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike";
   /**
    * Formula (prefix with @) producing the args object passed to the callable. Example: `@({ bio, avatarUrl: avatar.url })`.
    * Formula producing the arguments object passed to the callable.
@@ -1461,6 +1465,25 @@ type CallableButtonOptions = CommonOptions & {
    * Worth setting whenever `onSuccessNavigate` is not, or a successful call looks like nothing happening.
    */
   successMessage?: string;
+  /**
+   * Button style. Filled buttons span the full width; outlined and text buttons size to their label, so several can sit in a row.
+   * `contained`: A filled button across the full width, for a page's main action
+   * `outlined`: An outlined button sized to its label, for secondary actions like Follow
+   * `text`: A borderless button sized to its label, for small inline actions like Like
+   */
+  variant?: "contained" | "outlined" | "text";
+  /**
+   * Button size.
+   * `small`: A compact button, for actions repeated on every card
+   * `medium`: The standard size
+   */
+  size?: "small" | "medium";
+  /**
+   * Material Symbols icon name shown before the label.
+   * Icon shown before the label, by Material Symbols name.
+   * Examples: favorite, person_add, check
+   */
+  icon?: string;
 };
 
 /** HTML content node with template syntax for dynamic rendering. */

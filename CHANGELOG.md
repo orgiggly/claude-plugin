@@ -3,6 +3,11 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.23.0
+
+- **No invite code needed.** Setting up no longer asks for one, and every account can deploy widgets. If a launch post or an email gave you a code, tell Claude: `og redeem` still applies it, and some are worth extra apps.
+- **`og whoami` is shorter.** It no longer has an `enrollment:` line.
+
 ## 0.22.4
 
 - **An icon.** The plugin now shows the Orgiggly logo wherever Claude lists it.

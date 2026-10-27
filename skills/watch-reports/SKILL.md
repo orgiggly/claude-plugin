@@ -62,7 +62,7 @@ Only `id`, `reporterUid` and `target.qualifiedOrgId` are checked by the rules.
 
 ## 1. Start
 
-1. Run `og whoami`. If it says not signed in, not enrolled or no name claimed (or `og`
+1. Run `og whoami`. If it says not signed in or no name claimed (or `og`
    isn't found), tell the user to type `/orgiggly` first, and stop. Otherwise note their
    name (the `{username}` below).
 2. Run `og report list --json`. Its `orgs` array is the set of apps being watched. If it

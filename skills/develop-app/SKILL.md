@@ -40,7 +40,7 @@ start — it answers all of that in one call:
 og whoami
 ```
 
-If it reports **not signed in** (exit 1), **not enrolled**, or **no namespace
+If it reports **not signed in** (exit 1) or **no namespace
 claimed** — or if `og` isn't on PATH at all — tell the user to type
 **`/orgiggly`** first, and stop. That sets up `og`, signs them in, and picks
 their name on Orgiggly (the `<name>` in `orgiggly.com/<name>/…`); it hands back
@@ -69,8 +69,10 @@ config**, in the same message where you'd start the build:
 > • upgrade — the Upgrade button on orgiggly.com/admin (£10/month, up to 5 apps)
 
 Let them choose. For a paid plan or a raised limit, drop the upgrade option and
-offer "email dave@orgiggly.com to raise it" instead. Never build a whole app the
-platform is going to refuse.
+offer "email dave@orgiggly.com to raise it" instead. If they say they have a
+code (a launch post or an email offers some worth extra apps), `og redeem
+THEIR-CODE` applies it, then re-run `og whoami` to see the new limit. Never
+build a whole app the platform is going to refuse.
 
 If they choose to delete one, name the app and say that its data and files go
 with it and can't be brought back. Delete it only after they say yes to **that
@@ -716,7 +718,7 @@ change, no `localStorage`). Then:
 
    It inlines the bridge, checks the page (name, under 2 MB, an `<html>` page),
    uploads it to the user's own widget folder, and prints a plugin block with
-   their uid as `widgetOwner`. It needs an enrolled account (`og whoami`).
+   their uid as `widgetOwner`. Any signed-in account may deploy one.
 5. **Wire it into the config:** paste the plugin block into `plugins`, add a
    `parameters` entry for each param the page reads, put a node of that `type`
    on a screen, declare any `actions` the page calls with `runAction`, and set

@@ -1,6 +1,6 @@
 ---
 name: getting-started
-description: "Set up Orgiggly from scratch and build your first app. Use when the user is new to Orgiggly and needs onboarding — e.g. 'get started with Orgiggly', 'set up Orgiggly', 'help me build my first app', 'onboard me', 'I just installed this', '/getting-started' — or when any Orgiggly command reports they're not signed in, not enrolled, or have no namespace. Sets up the `og` command, signs them in, redeems an invite code, claims their name on Orgiggly, then hands the actual build to the develop-app skill."
+description: "Set up Orgiggly from scratch and build your first app. Use when the user is new to Orgiggly and needs onboarding — e.g. 'get started with Orgiggly', 'set up Orgiggly', 'help me build my first app', 'onboard me', 'I just installed this', '/getting-started' — or when any Orgiggly command reports they're not signed in or have no namespace. Sets up the `og` command, signs them in, claims their name on Orgiggly, then hands the actual build to the develop-app skill."
 user-invocable: true
 allowed-tools:
   - Bash
@@ -147,34 +147,24 @@ Steps 3 and 4.
 
 ---
 
-## Step 3 — Enrollment (invite code)
+## Step 3 — A code, only if they bring one
 
-Read the `enrollment:` line from Step 2's `og whoami`.
+**Never ask for a code.** Nothing needs one: anyone signed in can create,
+publish and host widgets.
 
-- **`enrolled ✓`** → say nothing, go to Step 4.
-- **`not enrolled`** → ask whether they were given an invite code. (To them
-  it's "no invite code recorded yet" — "enrolled" is the CLI's word, not theirs.)
+If the user has mentioned a code (a launch post or an email offers one, often
+for extra apps), apply it:
 
-  **With a code:**
+```bash
+og redeem THEIR-CODE
+```
 
-  ```bash
-  og redeem YOUR-CODE
-  ```
+It prints what the code gave them, e.g. `Code applied ✓ — you can now have up
+to 5 apps.`. Re-redeeming a code they've already used is fine. If it's
+rejected (revoked, used up, typo'd), say what the CLI said, offer one retry,
+then go to Step 4 either way.
 
-  Re-redeeming a code you've already used is fine — it succeeds without
-  consuming another use. If it's rejected (revoked, exhausted, typo'd), say what
-  the CLI said, offer one retry, then continue to Step 4 regardless.
-
-  **Without a code**, say this and **keep going**:
-
-  > No code? Email **dave@orgiggly.com** with a line about what you want to
-  > build and you'll get one. You don't have to wait for it — carry on and
-  > build your app now; redeeming later just records how you found us.
-
-**Never treat a missing code as a wall.** Enrollment is attribution, not
-permission — nothing on the create-or-publish path checks it, so a user with no
-code reaches a live app exactly like anyone else. Blocking them here would be a
-gate the platform doesn't actually have.
+No code mentioned → say nothing about codes and go to Step 4.
 
 ---
 
@@ -268,7 +258,7 @@ them at the limit before a new app. Never up front.
 
 - **Probe, don't assume.** `og whoami` before every branch. A user who ran half
   of this last week must not be walked through it again.
-- **The invite gate is soft.** No code is never a stop.
+- **There is no invite gate.** Never ask for a code; apply one only if offered.
 - **Delegate the build.** Step 5 hands to `develop-app`; this skill authors
   nothing.
 - **Never edit shell rc files** on the user's behalf — hand them the line.

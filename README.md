@@ -36,9 +36,8 @@ once a day and tells you when a new version is out, and after an update it
 shows what's new ([full history](CHANGELOG.md)). In a cloud environment it
 works differently; see [Getting a new version](#getting-a-new-version) below.
 
-**No invite code?** Email dave@orgiggly.com with a line about what you want to
-build. You don't need one to get started — the code records how you found us,
-it doesn't unlock anything.
+You don't need an invite code. If a launch post or an email gave you one
+(some are worth extra apps), tell Claude and it will apply it.
 
 ## Claude Code cloud environment
 
@@ -81,7 +80,7 @@ sessions". A personal Pro or Max plan doesn't need this.
      | `*.firebasedatabase.app` | the database |
      | `firebasestorage.googleapis.com` | app configs, data, widgets |
      | `identitytoolkit.googleapis.com`, `securetoken.googleapis.com` | signing in with your token |
-     | `*.cloudfunctions.net` | creating apps, invite codes, saving data |
+     | `*.cloudfunctions.net` | creating apps, saving data, widgets |
 
      Optional: `raw.githubusercontent.com` (the plugin's "update available"
      check), and `generativelanguage.googleapis.com` or `api.replicate.com` if
@@ -145,8 +144,8 @@ rather than hanging: add that domain to the environment and try again.
 
 ## Skills
 
-- **`getting-started`** — the on-ramp: install → sign in → invite code →
-  your name → your first app. Type `/orgiggly` to start it, or to resume —
+- **`getting-started`** — the on-ramp: install → sign in → your name →
+  your first app. Type `/orgiggly` to start it, or to resume —
   it's idempotent, so running it again is always safe.
 - **`develop-app`** — the one skill for both creating and maintaining an app.
   It figures out whether the app already exists and does the right thing:
