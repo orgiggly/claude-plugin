@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.22.3
+
+- **Example apps on the plugin's page.** The README now opens with apps running on Orgiggly that you can try on your phone, and a link to build one in your browser if you don't have Claude Code.
+
 ## 0.22.2
 
 - **Tap-to-call and tap-to-text links.** An app can link a phone number with `tel:`, a text message with `sms:`, an email address with `mailto:` or a map location with `geo:`. Checking the app used to reject these links as if they named a missing screen.
