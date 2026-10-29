@@ -4,6 +4,8 @@ Build and manage apps on [orgiggly.com](https://orgiggly.com) from Claude Code.
 Describe the app you want; Claude writes the config and publishes it live under
 your own name (`orgiggly.com/<name>/…`) — with auth, realtime data, storage and hosting built in.
 
+![In Claude Code, the prompt "a page for my running club" is typed; the checks go green, and the app lands on a phone at orgiggly.com/you/runclub](https://firebasestorage.googleapis.com/v0/b/orgiggly-dev.firebasestorage.app/o/gh-issue-assets%2Fclaude-plugin%2F2026%2F10%2Freadme-build-to-link-q0falb.gif?alt=media)
+
 [![Six apps running on Orgiggly: Squiggly, Shuffly, Cassino, Jumbly, Bandwagon and What Is It?](https://firebasestorage.googleapis.com/v0/b/orgiggly-dev.firebasestorage.app/o/gh-issue-assets%2Fclaude-plugin%2F2026%2F10%2Freadme-example-apps-lsdbqm.png?alt=media)](https://orgiggly.com)
 
 Some apps running on Orgiggly now. Open one on your phone, or on two phones at once:

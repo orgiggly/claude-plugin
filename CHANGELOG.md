@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.26.1
+
+- **See it before you install it.** The README now opens with a short animation of the whole path: a prompt typed in Claude Code, the checks, and the app live on a phone at its own link.
+
 ## 0.26.0
 
 - **Upgrade without leaving the chat.** At the free plan's 1-app limit, Claude can give you a checkout link for the paid plan (£10/month, up to 5 apps). It's only a link: nothing is charged until you pay on Stripe's page.

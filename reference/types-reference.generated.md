@@ -693,6 +693,13 @@ type AppOptions = CommonOptions & DataOptions & {
    * Examples: 720
    */
   contentMaxWidth?: number;
+  /**
+   * Picture shown at the left of the site header in place of the org's logo: an image URL, or an @-formula that evaluates to one (for a page about a person, their avatar). Shown as a circle, which sets the page apart from an org's. Falls back to the org's logo while the formula is empty or the image fails to load.
+   * An image URL or @-formula for the header picture, instead of the org's logo.
+   * Use it when the page is about someone or something with its own picture, as the user home does with @$data.UserProfile[0].avatarUrl. The header shows it as a circle, where an org's logo keeps its own shape. The formula is evaluated against the org's own data, so it can read $data. While it is empty (data still loading) and when the image fails to load, the header shows the org's logo as before. It changes the header only: the tab icon, home-screen icon and link preview still use the org's logo.
+   * Examples: @$data.UserProfile[0].avatarUrl
+   */
+  headerLogo?: string;
 };
 
 /** Generic container. Authored only through its variants — `tabGroup`, `tab`, `folder` — each written as its own `type`; a bare `appNode` is a plain container that just groups its children. */
