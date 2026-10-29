@@ -66,10 +66,16 @@ config**, in the same message where you'd start the build:
 > few options:
 > • change your existing app, or add this as a new screen in it
 > • delete an app you no longer need, which frees its slot
-> • upgrade — the Upgrade button on orgiggly.com/admin (£10/month, up to 5 apps)
+> • upgrade to the paid plan: £10/month (or £100/year) for up to 5 apps. I can
+>   give you a checkout link if you'd like one
 
-Let them choose. For a paid plan or a raised limit, drop the upgrade option and
-offer "email dave@orgiggly.com to raise it" instead. If they say they have a
+Let them choose, and mention the upgrade once only. Run `og upgrade` (or
+`og upgrade --annual`) only after they say yes to it. It prints a Stripe
+checkout link: pass it on as it is, and say they pay on Stripe's page, since
+nothing has been charged yet. Never open the link yourself. Once they say
+they've paid, re-run `og whoami`, and the `apps:` line should read `paid plan`.
+For a paid plan or a raised limit, drop the upgrade option and offer "email
+dave@orgiggly.com to raise it" instead (`og upgrade` refuses both). If they say they have a
 code (a launch post or an email offers some worth extra apps), `og redeem
 THEIR-CODE` applies it, then re-run `og whoami` to see the new limit. Never
 build a whole app the platform is going to refuse.
@@ -784,6 +790,18 @@ pass"); they never need to read the files.
 It doesn't cover bot moves, push/SMS or security rules, so mention any of those
 the change touches as something to try on the preview.
 
+**Notifications** (`notifications` on the app) only fire on the live app, so
+check one before the user relies on it (a morning reminder, say). Once it's
+published and they've opened it on their phone signed in and allowed
+notifications, send a test to their own devices:
+
+```bash
+og push test {username}/{appname} --title "Clouds at 8" --body "Look up!" --screen today
+```
+
+It reaches only their devices, never other users'. "No devices of yours are
+registered" means the phone hasn't allowed notifications while signed in yet.
+
 **A rule "doesn't work" on the live app?** Look at what the server did before
 changing anything:
 
@@ -1039,7 +1057,10 @@ og update-org-logo {username}/{appname} --prompt "a red fox head, flat icon, bol
 - `--reference-org <user/app>` matches the style of another app's logo
   (default model only).
 - If the balance is too low, the command refuses **before** spending anything.
-  It names the top-up page and the cheaper model; pass that on.
+  Offer the cheaper model, and offer to top up, once: `og buy-credits` lists
+  the packs with their prices and the balance. Run `og buy-credits --pack <n>`
+  only for the pack they pick. It prints a Stripe checkout link and charges
+  nothing, so pass the link on as it is, and never open it yourself.
 - **Their own key, no credits:** if they already pay Google or Replicate, they
   can `export OG_GEMINI_API_KEY=…` (for nano-banana-2) or
   `export OG_REPLICATE_API_TOKEN=…` (for flux-schnell) in their shell, and
@@ -1074,6 +1095,19 @@ og set-org-meta {username}/{appname} --display-name "World Tracker" --descriptio
 
 Unset, the title falls back to the app's name and the description to a generic
 Orgiggly line. It takes effect straight away; no publish needed.
+
+### Short address (optional)
+
+If the user wants a shorter link, give the app a short address. Each person
+gets one, for an app they created:
+
+```bash
+og alias clouds {username}/{appname}      # orgiggly.com/clouds opens the app
+og alias clouds --remove                  # free it, e.g. to use it for another app
+```
+
+It works straight away. It always shows the live app, so keep using the full
+`?preview=draft` link to review drafts.
 
 ---
 

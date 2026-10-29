@@ -244,8 +244,13 @@ Then stop. They have a working app; let them enjoy it.
 ### If they ask about plans, more apps, or custom domains
 
 The free plan includes **1 app**. The paid plan is **£10/month (or £100/year)
-for up to 5 apps** — they upgrade with the **Upgrade button on
-`orgiggly.com/admin`**. `og whoami`'s `apps:` line shows where they stand.
+for up to 5 apps**. If they want to upgrade, `og upgrade` (or
+`og upgrade --annual`) prints a Stripe checkout link. Pass it on and say they
+pay on Stripe's page, since nothing is charged until then; never open it
+yourself. Credits work the same way: `og buy-credits` lists the packs, and
+`og buy-credits --pack <n>` prints the link for one. The Upgrade button on
+`orgiggly.com/admin` does the same. `og whoami`'s `apps:` line shows where they
+stand.
 Custom domains aren't shipped yet; for that, or for more than 5 apps, point
 them at **dave@orgiggly.com**.
 

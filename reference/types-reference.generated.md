@@ -758,6 +758,14 @@ type SubsectionOptions = CommonOptions & ContainerOptions & IterationOptions & D
    */
   collapsedByDefault?: boolean | string;
   /**
+   * Puts the subsection's children behind a single ⋮ button that opens a menu; each callableButton inside becomes one menu item. Use it for a card's several actions (Unfollow, Make close friend) so they take no rows of their own, and pin it to a corner with containerStyle.overlay.
+   * `true`: The children sit behind a ⋮ menu; each callable button inside is one menu item
+   * `false`: The children render in place (default)
+   * Put the subsection beside the card inside a wrapper subsection, and give it containerStyle.overlay (topRight) so the ⋮ pins to the card's corner, as for a like pill. Any callableButton inside renders as a menu item whatever its variant, and reports a failure in a snackbar since the menu has closed. Hidden buttons drop out of the menu.
+   * Examples: true
+   */
+  actionMenu?: boolean | string;
+  /**
    * Lets the user drag the items of a repeating subsection into a new order. For a data-bound list the order is written onto the records as a dense integer in orderField; an app-state list just moves its slots.
    * `true`: Each item gets a drag handle; dropping it writes the new order
    * `false`: Items render in query order with no drag handle
@@ -1431,9 +1439,10 @@ type CallableButtonOptions = CommonOptions & {
    * `socialUnfollow`: Stops following a person. Args: targetUid
    * `socialLike`: Likes an app. Args: orgId, the username/orgName pair
    * `socialUnlike`: Removes the caller's like from an app. Args: orgId
+   * `kickFromHome`: Platform admins only: takes an app off the orgiggly.com home feeds, or puts it back. Args: orgId and an optional undo
    * A server-vetted allow-list, not a free-text name: adding a callable is a code change in both the web dispatcher and the admin picker.
    */
-  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike";
+  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike" | "kickFromHome";
   /**
    * Formula (prefix with @) producing the args object passed to the callable. Example: `@({ bio, avatarUrl: avatar.url })`.
    * Formula producing the arguments object passed to the callable.
@@ -1466,12 +1475,14 @@ type CallableButtonOptions = CommonOptions & {
    */
   successMessage?: string;
   /**
-   * Button style. Filled buttons span the full width; outlined and text buttons size to their label, so several can sit in a row.
+   * Button style. Filled buttons span the full width; outlined and text buttons size to their label, so several can sit in a row; menu shows only a ⋮ icon that opens a menu holding the action; pill is a compact rounded button with its own backing, for sitting over an image. Menu and pill report errors in a snackbar.
    * `contained`: A filled button across the full width, for a page's main action
    * `outlined`: An outlined button sized to its label, for secondary actions like Follow
    * `text`: A borderless button sized to its label, for small inline actions like Like
+   * `menu`: A small ⋮ icon that opens a menu holding the action, for an action on every card that shouldn't take a row of its own — pin it to a corner with containerStyle.overlay
+   * `pill`: A compact rounded button with its own light backing, readable over a picture — pin it to a card corner with containerStyle.overlay, as for a like
    */
-  variant?: "contained" | "outlined" | "text";
+  variant?: "contained" | "outlined" | "text" | "menu" | "pill";
   /**
    * Button size.
    * `small`: A compact button, for actions repeated on every card

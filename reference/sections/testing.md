@@ -73,13 +73,23 @@ through its parent (`"visits[1].card"`).
 | `runScriptAt(name, hosts, script?, staticContext?)` | Runs the script at `name` (a flow step, or a script you pass) with your stub hosts. **Returns a promise — always `await` it.** Result is `{ right: value }` or `{ left: error }`. |
 | `widgetCommands` | Every `sendToWidget(...)` the scripts made, in order: `{ widget, key, command, args }`. |
 
-Writers that reach the outside world — `publishData`, `updateData`,
-`deleteData`, `navigate`, `setAppValue`, `callFunction` — do not exist in a
-pack. You pass them as `async` stubs in `hosts.asyncHosts`, record what they
-were called with, and assert on that: the test proves what the app *would*
-have saved, with the exact shape. `clearValues` runs for real (assert the value
-is gone); `sendToWidget` is recorded in `widgetCommands`. Stubs under
-`syncHosts` are silently ignored, so keep them all in `asyncHosts`.
+Four hosts run for real, because they only change the page's own values:
+`setValue` and `setValues` (assert with `pack.value()`), `clearValues` (assert
+the value is gone) and `sendToWidget` (recorded in `widgetCommands`).
+
+Every other host — `publishData`, `updateData`, `deleteData`, `navigate`,
+`setAppValue`, `callFunction`, `createGroup`, `speak`, `submit` and the rest —
+does not exist in a pack. You pass it as an `async` stub in `hosts.asyncHosts`,
+record what it was called with, and assert on that: the test proves what the
+app *would* have saved, with the exact shape. A script that calls a host you
+didn't stub fails, with `left.message` naming it ("setAppValue isn't
+available in a test pack: stub it in hosts.asyncHosts"), so add a stub even
+for a call you don't assert on: `navigate: async () => undefined`. A stub in
+`syncHosts` doesn't count. Your own stub always wins, including over the four
+that run for real.
+
+A failed run's `left` is `{ message, expression }`, the error and the source
+of the part that failed, so `JSON.stringify(result)` prints it.
 
 ```js
 test("adding a visit publishes a Visit record for the typed place", async () => {
@@ -100,7 +110,17 @@ test("adding a visit publishes a Visit record for the typed place", async () => 
 A button action that declares `params` (a `data-param-id` on the element) gets
 them through the fourth argument: `runScriptAt("card", hosts, script, { $params: { id: "V1" } })`.
 A value the script sets with `setAppValue` is read from your stub's capture,
-not from `pack.value()`.
+not from `pack.value()`. One set with `setValue` is read with `pack.value()`:
+
+```js
+test("tapping a size chip fills in the size", async () => {
+  const pack = createOrgPackApi(tree, { context: { $authKind: "google" } });
+  const script = pack.nodeAt("size").actions.pick.script; // setValue($params.v)
+  const result = await pack.runScriptAt("size", {}, script, { $params: { v: "568" } });
+  assert.ok("right" in result, JSON.stringify(result));
+  assert.equal(pack.value("size"), "568");
+});
+```
 
 ### Records and identity
 

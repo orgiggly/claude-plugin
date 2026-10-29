@@ -84,6 +84,21 @@ Writes an app-level value to the given pointer key (relative to the app root). T
 setAppValue("whoAmI", AuthorId)
 ```
 
+### `setPresenceContext` _(async)_
+
+```
+setPresenceContext(value: string | null): void
+```
+
+Tells the signed-in user's friends what they are doing in this app, beside the platform's own record of which app they have open — e.g. the room code of the game they're in, so a friend can join it. `value` is a string of at most 256 characters; `null` clears it. Only friends can read it, and it lasts for this page: opening another app starts without it. It does nothing for a visitor who isn't signed in, signed in with a name and PIN, or has no friends yet, so call it unconditionally. There is no invite or notification: a friend's app reads it and decides what to show.
+
+**Examples:**
+
+```
+setPresenceContext(roomCode)
+setPresenceContext(null)
+```
+
 ### `clearValues` _(async)_
 
 ```
@@ -560,6 +575,21 @@ Writes an app-level value to the given pointer key (relative to the app root). T
 setAppValue("whoAmI", AuthorId)
 ```
 
+### `setPresenceContext` _(async)_
+
+```
+setPresenceContext(value: string | null): void
+```
+
+Tells the signed-in user's friends what they are doing in this app, beside the platform's own record of which app they have open — e.g. the room code of the game they're in, so a friend can join it. `value` is a string of at most 256 characters; `null` clears it. Only friends can read it, and it lasts for this page: opening another app starts without it. It does nothing for a visitor who isn't signed in, signed in with a name and PIN, or has no friends yet, so call it unconditionally. There is no invite or notification: a friend's app reads it and decides what to show.
+
+**Examples:**
+
+```
+setPresenceContext(roomCode)
+setPresenceContext(null)
+```
+
 ### `clearValues` _(async)_
 
 ```
@@ -946,6 +976,21 @@ Writes an app-level value to the given pointer key (relative to the app root). T
 
 ```
 setAppValue("whoAmI", AuthorId)
+```
+
+### `setPresenceContext` _(async)_
+
+```
+setPresenceContext(value: string | null): void
+```
+
+Tells the signed-in user's friends what they are doing in this app, beside the platform's own record of which app they have open — e.g. the room code of the game they're in, so a friend can join it. `value` is a string of at most 256 characters; `null` clears it. Only friends can read it, and it lasts for this page: opening another app starts without it. It does nothing for a visitor who isn't signed in, signed in with a name and PIN, or has no friends yet, so call it unconditionally. There is no invite or notification: a friend's app reads it and decides what to show.
+
+**Examples:**
+
+```
+setPresenceContext(roomCode)
+setPresenceContext(null)
 ```
 
 ### `clearValues` _(async)_

@@ -3,6 +3,21 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.26.0
+
+- **Upgrade without leaving the chat.** At the free plan's 1-app limit, Claude can give you a checkout link for the paid plan (£10/month, up to 5 apps). It's only a link: nothing is charged until you pay on Stripe's page.
+- **Top up credits the same way.** When a logo or a sound needs more credits than you have, Claude can list the credit packs and give you a checkout link for the one you pick.
+
+## 0.25.0
+
+- **App tests say when they're missing something.** If a test runs a button or step that calls something the test didn't provide, it now fails and names it, so Claude knows to add it. Before, the call quietly did nothing and a test could look like it passed.
+- **Buttons that fill in a value can be tested.** A tap that sets a value with `setValue` or `setValues` now does so in a test too, so Claude can check the box really filled in.
+
+## 0.24.0
+
+- **A short address for your app.** Ask Claude for one and `orgiggly.com/clouds` opens your app. Everyone gets one, for an app they made.
+- **Test a notification before relying on it.** Claude can send one to your own phone, so you can check a reminder's wording and where a tap lands before it goes out for real.
+
 ## 0.23.0
 
 - **No invite code needed.** Setting up no longer asks for one, and every account can deploy widgets. If a launch post or an email gave you a code, tell Claude: `og redeem` still applies it, and some are worth extra apps.
