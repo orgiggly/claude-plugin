@@ -144,6 +144,37 @@ rather than hanging: add that domain to the environment and try again.
 - **Nothing to download separately.** The CLI ships inside this plugin as a
   self-contained bundle (`bin/og-public.mjs`) with a `bin/og` shim.
 
+## What it runs, sends and fetches
+
+- **When a Claude Code session starts**, one hook runs on your machine
+  (`hooks/first-run-check.mjs`, with Node):
+  - It checks whether you're signed in by looking for a credential in
+    `~/.orgiggly/auth/`, and points you at `/orgiggly` if you aren't.
+  - After an update, it shows what's new from this plugin's `CHANGELOG.md`.
+  - Once a day, it fetches this repository's `.claude-plugin/plugin.json` from
+    `raw.githubusercontent.com` to see whether a newer version is out. The
+    request carries nothing about you. Set `ORGIGGLY_PLUGIN_UPDATE_CHECK=0` to
+    turn it off.
+  - It adds the session's transcript *path* (not its contents) to
+    `~/.orgiggly/plugin-sessions.jsonl`, so `/orgiggly:feedback` can find the
+    sessions that used the plugin. That file never leaves your machine unless
+    you send feedback.
+- **The `og` CLI** only goes online when Claude runs one of its commands:
+  - `og login` signs you in with Google in your browser (`accounts.google.com`,
+    `oauth2.googleapis.com`), after fetching Orgiggly's sign-in settings from
+    `www.orgiggly.com/cli/oauth-client.json`. It keeps the resulting credential
+    in `~/.orgiggly/`.
+  - Every other command reads and writes your apps on Orgiggly's backend
+    (Firebase: Auth, Realtime Database, Storage and Cloud Functions) as you,
+    under the same security rules as the website. An app's config, data and
+    images go there when you publish them. `og check-draft` also opens your
+    draft on orgiggly.com in a headless browser.
+  - Generated logos, images and sounds are made on Orgiggly's servers, which
+    call AI providers. The plugin holds no AI keys of its own.
+- **`/orgiggly:feedback`** uploads your redacted session transcripts to
+  Orgiggly, and only after showing you exactly what it would send and you say
+  yes.
+
 ## Skills
 
 - **`getting-started`** — the on-ramp: install → sign in → your name →
@@ -165,6 +196,7 @@ rather than hanging: add that domain to the environment and try again.
 ```
 bin/og                   # command on PATH → spawns the bundle (as `og`)
 bin/og-public.mjs        # the self-contained CLI bundle
+bin/orgpack.mjs          # the test harness `og test` runs your app's tests with
 reference/*.md           # node-model schema docs `og reference` serves
 commands/orgiggly.md     # /orgiggly → the getting-started skill
 commands/og-setup.md     # legacy /og-setup → same place

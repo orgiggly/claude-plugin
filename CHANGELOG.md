@@ -3,6 +3,11 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.27.0
+
+- **Sign-in fetches its settings.** `og login` now reads Google's sign-in settings from orgiggly.com when you sign in, instead of carrying them in the plugin's files. Signing in works as before, but needs that one extra request.
+- **The README says what the plugin runs and sends**: the start-of-session check, the daily update check, and when the CLI talks to Orgiggly.
+
 ## 0.26.1
 
 - **See it before you install it.** The README now opens with a short animation of the whole path: a prompt typed in Claude Code, the checks, and the app live on a phone at its own link.
