@@ -1,7 +1,7 @@
 ---
 name: orgiggly
 description: Start here with Orgiggly — install the CLI, sign in, and build your first app. Alias for /getting-started.
-allowed-tools: Skill
+allowed-tools: Skill(orgiggly:getting-started)
 ---
 
 This is the discoverable front door: someone who has just installed the plugin

@@ -1,7 +1,7 @@
 ---
 name: feedback
 description: Tell Orgiggly how your test run went — three quick questions, then (only if you say yes) your answers plus a redacted copy of this run's Claude Code sessions go to the Orgiggly team.
-allowed-tools: Bash, AskUserQuestion
+allowed-tools: Bash(og feedback:*), AskUserQuestion
 ---
 
 The user is sending feedback on their Orgiggly plugin test run. Keep it light and

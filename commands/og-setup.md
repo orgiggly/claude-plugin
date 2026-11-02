@@ -1,7 +1,7 @@
 ---
 name: og-setup
 description: Set up the Orgiggly `og` command. Now part of the fuller /orgiggly onboarding — this command redirects there.
-allowed-tools: Skill
+allowed-tools: Skill(orgiggly:getting-started)
 ---
 
 Installing `og` is now the first step of **`/orgiggly`**, which carries on

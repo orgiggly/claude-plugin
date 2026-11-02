@@ -3,12 +3,15 @@ name: watch-reports
 description: "Watch for issue reports on the user's own Orgiggly apps and fix them as they arrive. Runs `og report watch` in the background; on each new report it claims it, fixes the app's config, publishes a draft, asks before going live, writes the status back for the reporter, and starts watching again. Use when the user says 'watch reports', 'watch for issue reports', 'watch my apps', 'fix reports on my app', 'start the watcher', or references /watch-reports."
 user-invocable: true
 allowed-tools:
-  - Bash
+  - Bash(og:*)
+  - Bash(git rev-parse:*)
+  - Bash(git status:*)
+  - Bash(git add:*)
+  - Bash(git commit:*)
   - Read
   - Write
   - Edit
   - AskUserQuestion
-  - Skill
 ---
 
 # watch-reports
@@ -129,7 +132,7 @@ This loop adds only the report bookkeeping around them.
 4. **Draft** it and check the draft (develop-app Step 6):
 
    ```bash
-   og update-org {username}/{appname} --data "$PWD/{appname}/config.json" --draft
+   og update-org {username}/{appname} --data "{appname}/config.json" --draft
    og check-draft {username}/{appname}
    og report update <ref> --status fixed-draft \
      --note "preview: https://orgiggly.com/{username}/{appname}?preview=draft"

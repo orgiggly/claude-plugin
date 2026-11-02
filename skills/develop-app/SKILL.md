@@ -3,7 +3,12 @@ name: develop-app
 description: "Build or change an app on Orgiggly with Claude Code. Use when the user wants to create a new app or add/modify/improve an existing one — e.g. 'build me a book-club app', 'create an app for my running club', 'add a schedule to my app', 'change the colours', 'my app should also track X'. Claude writes the config, validates it, and publishes it to orgiggly.com under the user's own name with the `og` command. One skill for both creating and maintaining — you never have to decide which."
 user-invocable: true
 allowed-tools:
-  - Bash
+  - Bash(og:*)
+  - Bash(mkdir:*)
+  - Bash(git rev-parse:*)
+  - Bash(git status:*)
+  - Bash(git add:*)
+  - Bash(git commit:*)
   - Read
   - Write
   - Edit
@@ -625,7 +630,7 @@ When the user has built a card they'll want in their other apps, save the one
 plugin node to a file of its own and publish it into their namespace:
 
 ```bash
-og plugin publish "$PWD/{appname}/plugins/{name}.json" --description "What it's for"
+og plugin publish "{appname}/plugins/{name}.json" --description "What it's for"
 ```
 
 Publishing never lists it in the marketplace; Orgiggly reviews what's listed.
@@ -650,8 +655,8 @@ inside it:
 Then vendor it in, which rewrites the file in place and stamps the folder:
 
 ```bash
-og library sync "$PWD/{appname}/config.json"
-og library status "$PWD/{appname}"       # pinned vs latest; drift if hand-edited
+og library sync "{appname}/config.json"
+og library status "{appname}"       # pinned vs latest; drift if hand-edited
 og library fetch {owner}/{slug} 2        # that version's raw JSON, to read a body
 ```
 
@@ -719,7 +724,7 @@ change, no `localStorage`). Then:
 4. **Deploy it:**
 
    ```bash
-   og widget deploy {name} --file "$PWD/{appname}/widgets/{name}/index.html"
+   og widget deploy {name} --file "{appname}/widgets/{name}/index.html"
    ```
 
    It inlines the bridge, checks the page (name, under 2 MB, an `<html>` page),
@@ -878,10 +883,10 @@ Publish to a draft so the user reviews before it goes live.
 
 ```bash
 # CREATE
-og create-org {username} {appname} --data "$PWD/{appname}/config.json" --draft
+og create-org {username} {appname} --data "{appname}/config.json" --draft
 
 # MAINTAIN
-og update-org {username}/{appname} --data "$PWD/{appname}/config.json" --draft
+og update-org {username}/{appname} --data "{appname}/config.json" --draft
 ```
 
 (The creator identity and org association come from the signed-in session — no

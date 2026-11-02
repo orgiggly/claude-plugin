@@ -3,12 +3,12 @@ name: getting-started
 description: "Set up Orgiggly from scratch and build your first app. Use when the user is new to Orgiggly and needs onboarding — e.g. 'get started with Orgiggly', 'set up Orgiggly', 'help me build my first app', 'onboard me', 'I just installed this', '/getting-started' — or when any Orgiggly command reports they're not signed in or have no namespace. Sets up the `og` command, signs them in, claims their name on Orgiggly, then hands the actual build to the develop-app skill."
 user-invocable: true
 allowed-tools:
-  - Bash
+  - Bash(og:*)
   - Read
   - Write
   - Edit
   - AskUserQuestion
-  - Skill
+  - Skill(orgiggly:develop-app)
 ---
 
 # getting-started
