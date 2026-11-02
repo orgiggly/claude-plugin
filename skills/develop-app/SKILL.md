@@ -764,13 +764,19 @@ Read the findings. **Fix every `critical` finding and re-run** until validation
 passes with no critical findings (exit 0). Address warnings where they're clearly
 right. Don't publish a config that still has critical findings.
 
+It prints a readable summary on stderr and a JSON report on stdout. To work
+with the JSON (to filter findings, say), add `--quiet` and read stdout on its
+own; `2>&1` mixes the summary into the JSON and it no longer parses.
+
 ### Step 5b — Test the rules (apps with `app.transitions`)
 
-A live / multiplayer app's rules run on the server, and a draft never runs them,
-so the preview can't show whether a rule fires. A rule whose `condition` is
-subtly wrong validates clean and then **silently never fires**. So whenever the
-config has `app.transitions`, run them through the real engine on your machine
-before every publish:
+A live / multiplayer app's rules run on the server. A **new** app's draft runs
+them too, so until its first promote the preview is a real, playable game. Once
+an app is live, its draft doesn't: a changed rule only runs after
+`promote-draft`, so the preview can't show whether it fires. Either way, a rule
+whose `condition` is subtly wrong validates clean and then **silently never
+fires**. So whenever the config has `app.transitions`, run them through the real
+engine on your machine before every publish:
 
 ```bash
 og sim {appname}/config.json {appname}/sim/{scenario}.json
@@ -810,7 +816,8 @@ og transition-rules {username}/{appname}
 ```
 
 It lists the rules the live version wired up (a rule missing here was never
-published), what's scheduled with its deadline, and the last outcome of each rule:
+published; for a new app not yet promoted, `versionId: draft` means they're the
+draft's), what's scheduled with its deadline, and the last outcome of each rule:
 `condition-false` (its condition didn't hold), `stale` (another move got there
 first), `formula-error`, and so on. Error details are withheld because they can
 quote players' hidden values, so reproduce a `formula-error` with an `og sim`

@@ -3,6 +3,11 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.28.0
+
+- **Play a new game before it goes live.** A brand-new multiplayer app's draft now runs its game rules, so you and a friend can play a real game on the preview link before you make it live. Changes to an app that's already live still need to be promoted before their rules run.
+- **Fewer stumbles when checking an app.** Claude now reads the checker's report the right way the first time, instead of mixing its two outputs together and having to try again.
+
 ## 0.27.0
 
 - **Sign-in fetches its settings.** `og login` now reads Google's sign-in settings from orgiggly.com when you sign in, instead of carrying them in the plugin's files. Signing in works as before, but needs that one extra request.
