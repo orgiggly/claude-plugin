@@ -344,15 +344,29 @@ Object types live in the org config's top-level `objectTypes` slot — a sibling
 
 ## 5. AI generation
 
-### The org-gen agent
+### The plugin agent
 
-> The multi-turn loop in `packages/shared/src/prompts/generate.ts` that drives org and plugin generation.
+> Claude Code running the Orgiggly plugin, building an app for a plugin user from their own terminal.
 
-Canonical short form: **the generator**. In code comments, you'll also see **the orchestrator**. All three refer to the same thing — the shared `generate()` function parameterized by a `GenerationSpec`.
+The **main product focus**. New authoring features land for the plugin agent first, with the richest guidance (`og reference` topics, the plugin's skills). It reads the same docs as the in-app agent; nothing is hidden from either, but the plugin agent is the one we design for.
 
-**Critical: this is NOT "the agent" / "Claude" / "Claude Code".** Those refer to the dev assistant (the one writing this glossary with you). See the disambiguation block below.
+**The Orgiggly plugin** is the Claude Code plugin shipped from `plugin/`. Always say "the Orgiggly plugin", never bare "plugin" — that is the [marketplace component](#plugin).
 
-*How we say it:* "The org-gen agent called `search_images` three times." • "Did the generator hit the closing gate?"
+*How we say it:* "The plugin agent should reach for the ai-progress recipes." • "Install the Orgiggly plugin first."
+
+*Anchor:* `plugin/` (skills, commands, `reference/`)
+
+### The in-app agent
+
+> The multi-turn loop in `packages/shared/src/prompts/generate.ts` that drives org and plugin generation from the Admin app's "create an org".
+
+Also called **the org-gen agent** — the two names are interchangeable, and older docs and rules use "org-gen agent" throughout. Short forms: **the generator**; in code comments, **the orchestrator**. All refer to the shared `generate()` function parameterized by a `GenerationSpec`.
+
+It gets the simple path of a feature; the plugin agent gets the rich one. Not "the Orgiggly agent" — both agents are Orgiggly's.
+
+**Critical: this is NOT "Claude" / "Claude Code".** Those refer to the dev assistant (the one writing this glossary with you). See the disambiguation block below.
+
+*How we say it:* "The in-app agent called `search_images` three times." • "Did the generator hit the closing gate?"
 
 *Anchor:* `packages/shared/src/prompts/generate.ts`, `packages/shared/src/prompts/generateOrg.ts`
 
@@ -519,12 +533,15 @@ Four words in our space are overloaded enough that bare usage is ambiguous. Alwa
 
 ### "the agent"
 
-- **In Orgiggly conversation, "the agent" always means the org-gen agent** (the multi-turn loop that generates orgs and plugins). Equivalent: "the generator", "the orchestrator".
-- **"Claude" or "Claude Code" means the dev assistant** — the AI that pair-programs with the user in this terminal. Never call the dev assistant "the agent" when working on Orgiggly; it collides with the org-gen agent.
+**Bare "the agent" is retired** — there are two app-building agents, so always say which:
 
-> ✗ "The agent should write that test."
+- **The plugin agent** — Claude Code + the Orgiggly plugin, in a plugin user's terminal. The main product focus. (Informally: "Claude org gen".)
+- **The in-app agent** (= **the org-gen agent**) — the `generate()` loop behind the Admin app's "create an org". (Informally: "web org gen".)
+- **"Claude" or "Claude Code" means the dev assistant** — the AI that pair-programs with the user on the platform itself. It is Claude Code too, but not running the Orgiggly plugin on a user's app; never call it "the agent".
+
+> ✗ "The agent should get the recipes."
+> ✓ "The plugin agent should get the recipes; the in-app agent keeps the simple path."
 > ✓ "Claude should write that test."
-> ✓ "The org-gen agent should call `search_images` first."
 
 ### "mock"
 

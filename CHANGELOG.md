@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.30.0
+
+- **Watch an AI step's answer arrive.** While an AI step runs, the app can now show the answer as it's written instead of a spinner: a program typing itself out, say, or a plan's steps appearing one by one. Ask Claude for it in your own words; it reads how with `og reference ai-progress`.
+- **A Stop button on every AI step.** Stopping charges for the work done up to that point. A failed or dropped run is never charged.
+- **Formulas can read inside a group.** A formula like `quiz.answer1`, which names a field inside a group that doesn't repeat, now returns that field's value. Before, it came back empty.
+- **Safe colours from data.** The new `safeCssColor(value, fallback)` formula function makes a colour someone typed in safe to put inside a style attribute.
+
 ## 0.29.0
 
 - **Tighter permissions.** The plugin's skills now pre-approve only the `og` command and a few git steps (checking the repo, adding and committing). Claude asks before it runs anything else, such as installing a package or pushing to GitHub.

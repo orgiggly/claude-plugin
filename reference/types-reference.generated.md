@@ -1127,7 +1127,7 @@ type FlowStepBaseOptions = CommonOptions & {
   noCreditsDescription?: string;
 };
 
-/** AI query with structured output. */
+/** AI query with structured output. Child nodes placed on the step are its running slot: the web UI renders them in place of the spinner while the step runs. While running, the step's value is { status: "running", partial?, ready? }, so a formula reads myStep.partial.x (the answer so far) and myStep.ready (the finished parts); both are undefined until the answer starts and once the step stops running. */
 type AiQueryStepOptions = FlowStepBaseOptions & {
   type: "aiQuery";
   /**
