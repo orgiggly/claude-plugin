@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.31.0
+
+- **Update without restarting.** Type `/orgiggly:update` and Claude fetches the newest version. Then type `/reload-plugins` and your session switches to it, conversation and all. The "a newer version is out" line now points here instead of asking you to restart Claude Code. In a cloud environment, updating still means changing the setup script and starting a new session; `/orgiggly:update` tells you how.
+
 ## 0.30.0
 
 - **Watch an AI step's answer arrive.** While an AI step runs, the app can now show the answer as it's written instead of a spinner: a program typing itself out, say, or a plan's steps appearing one by one. Ask Claude for it in your own words; it reads how with `og reference ai-progress`.

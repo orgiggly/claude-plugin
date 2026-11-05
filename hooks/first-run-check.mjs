@@ -275,10 +275,11 @@ export const updateNudge = async ({
         "is enough), save it, and start a new session."
       );
     }
+    // `/reload-plugins` switches a running session to the new copy, so no
+    // restart (#2928).
     return (
-      `Orgiggly plugin ${latest} is out (you have ${installed}). To update, ` +
-      "run /plugin marketplace update orgiggly, then " +
-      "/plugin update orgiggly@orgiggly, and restart Claude Code."
+      `Orgiggly plugin ${latest} is out (you have ${installed}). To update ` +
+      "without leaving this session, type /orgiggly:update."
     );
   } catch {
     return null;

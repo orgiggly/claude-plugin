@@ -32,8 +32,10 @@ the plugin and needs Node 22 or newer), signs you in, picks your name on
 Orgiggly, and hands off to building your first app — stopping at whichever step
 you've already done. Safe to re-run at any point; it picks up where you left off.
 
-To update later: `/plugin marketplace update orgiggly`, then
-`/plugin update orgiggly@orgiggly`, and restart Claude Code. The plugin checks
+To update later, type `/orgiggly:update`: Claude fetches the new version, and
+typing `/reload-plugins` switches your session to it without a restart. (By
+hand: `/plugin marketplace update orgiggly`, then
+`/plugin update orgiggly@orgiggly`, then `/reload-plugins`.) The plugin checks
 once a day and tells you when a new version is out, and after an update it
 shows what's new ([full history](CHANGELOG.md)). In a cloud environment it
 works differently; see [Getting a new version](#getting-a-new-version) below.
