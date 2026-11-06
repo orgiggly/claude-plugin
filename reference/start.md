@@ -75,7 +75,6 @@ Don't declare `id`, `createdAt`, `createdBy`, `updatedAt` or `updatedBy`. Every 
 
 Put the inputs on a `screen` inside a `flow`, followed by a `script` step that saves them. Then:
 
-- Put the flow inside a `screen` of its own, and `navigate()` to that screen, never to the flow. A flow with no screen around it renders as a bare page, and its `advanceFlow()` fails.
 - Give the flow `"hideNav": true, "hideTopBar": true` so it looks like a plain page.
 - Make your Save button's action `advanceFlow()`, which runs the script.
 - In the script, `publishData({type: 'Notice', data: {title: newTitle, ...}})` creates a record, naming each input by its `name`.

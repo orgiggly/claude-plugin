@@ -1419,7 +1419,7 @@ type PublishDataStepOptions = FlowStepBaseOptions & {
   publishVariant?: string;
 };
 
-/** Runs a small imperative script as the flow's Finish action. The script uses the Orgiggly formula language with statements (`;`-separated) and assignments, plus a small allow-list of host functions. v1 hosts: `publishData({type, data})` — `data` is a single object or array, returns the created record(s) with id; `setAppValue(key, value)` — writes an app-level value (persisted via localStorage); `navigate(cursorKey)` — moves the cursor on completion. Async host calls must appear at statement top-level or as the RHS of an assignment (`postId = publishData(...)`) — not nested inside other expressions. Example for a new-post flow:
+/** Runs a small imperative script as the flow's Finish action. The script uses the Orgiggly formula language with statements (`;`-separated) and assignments, plus a small allow-list of host functions. v1 hosts: `publishData({type, data})` — `data` is a single object or array, returns the created record(s) with id; `setAppValue(key, value)` — writes an app-level value (persisted via localStorage); `navigate(cursorKey)` — moves the cursor on completion. Async host calls must appear at statement top-level, as the RHS of an assignment (`postId = publishData(...)`), or as a branch of a conditional statement (`ok && publishData(...)`) — not nested inside other expressions. Example for a new-post flow:
 ```
 post = publishData({type: "TravelPost", data: {AuthorId: whoAmI, Details: comment}});
 publishData({type: "Photo", data: photos.map((p) => ({Image: p.url, takenAt: p.takenAt, postId: post.id}))});

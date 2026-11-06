@@ -42,15 +42,17 @@ Templates are re-rendered whenever values change. The rendering engine uses **DO
 5. **Rich visuals:** gradients, rounded corners (`border-radius`), shadows for depth
 6. **Progress and trends:** draw a bar, ring or trend line with the builtins, never hand-built divs: `${progressBar(done, {max: goal})}`, `${progressRing(score, {max: 100})}`, `${sparkline(map(weeks, (w) => w.total))}`. They work anywhere in a template, including inside a card.
 7. **Theme colours:** `var(--og-accent)`, `var(--og-text)`, `var(--og-muted)`, `var(--og-border)`, `var(--og-surface)` and `var(--og-bg)` follow the app's theme. The builtins above use them by default.
+8. **Sticky bars:** the site's own header is sticky at the top, so a bar that should stay in view while the page scrolls uses `position: sticky; top: var(--og-header-height, 0px)` — with `top: 0` it slides under the header and disappears.
 
 ### Navigation & Click Actions
 
 <!-- BEGIN GENERATED: click-vocabulary — edit packages/shared/src/prompts/clickAttributes.ts and run `npm run generate:model`; do not edit this block by hand -->
-A Content node's `htmlTemplate` is the platform's click surface, and it has exactly **two** channels: a real `href` for a genuine hyperlink, and `data-action` for every behaviour. Behaviour is never spelled out in the attribute — it is a named action declared in the node's `actions` field, which the template invokes by name.
+A Content node's `htmlTemplate` is the platform's click surface. It has **two** channels, plus `data-share-url` for sharing: a real `href` for a genuine hyperlink, and `data-action` for every behaviour. Behaviour is never spelled out in the attribute — it is a named action declared in the node's `actions` field, which the template invokes by name. Sharing is an attribute rather than an action because `data-share-url` opens the share sheet straight from the tap, which an action's script cannot.
 
 | Pattern | HTML | Purpose | Status |
 |---------|------|---------|--------|
 | Declared action | `<button data-action="openTab" data-param-id="${id}">Open</button>` | Invoke a named action declared in the node's `actions` field — a `script`; to move screens it calls `navigate('screen')`, usually as the last line. `data-param-*` values are render-time interpolated literals, read into `$params` with no click-time evaluation. If the action declares `confirm`, the click asks first and the script runs only on confirm; `data-confirm-title` and `data-confirm-body` override that confirm's wording per element (render-time literals, like `data-param-*` — they cannot create a confirm the action does not declare). See below | current |
+| Share a link | `<button data-share-url="https://…" data-share-title="${title}" data-share-text="${text}">Share</button>` | Open the device's share sheet with the url (plus the optional title and text); where there is no share sheet, copy the url and say "Link copied". All three are render-time interpolated literals, like `data-param-*`. An attribute rather than an action host because the share sheet needs the tap itself, which an action's async script does not keep on iOS | current |
 | External link | `<a href="https://example.com" target="_blank">Visit</a>` | A genuine hyperlink — `http(s):`, `mailto:`, `tel:` and `/`-absolute URLs are left to the browser | current |
 | Navigate to screen | `<a href="screenName">Go</a>` | Static link to another screen | current |
 

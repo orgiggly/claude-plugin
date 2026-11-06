@@ -2,7 +2,7 @@
 
 # Host functions
 
-Imperative actions callable from script-style formula contexts. Async host calls must appear at **statement top-level** or as the **RHS of an assignment** — never nested inside another expression. Bind a result to a variable first if you need to use it.
+Imperative actions callable from script-style formula contexts. Async host calls must appear at **statement top-level**, as the **RHS of an assignment**, or as a **branch of a conditional statement** (`ok && publishData(...)`, `done || navigate('home')`, `(ok ? navigate('a') : navigate('b'))`) — never nested inside another expression. Bind a result to a variable first if you need to use it. Wrap a `? :` statement in parentheses when more follows it: `;` binds looser than `? :`, so `ok ? a() : null; b()` would run `b()` only when `ok` is false, and is refused.
 
 Sync hosts behave like ordinary built-in functions and may be called anywhere.
 

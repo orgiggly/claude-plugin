@@ -107,7 +107,7 @@ For any other node type (or before writing a non-trivial instance of one of the 
 
 ## HTML Content & Navigation
 
-See detailed reference in sections below. Content nodes use `@` + backtick template literals with inline styles. Clicks have exactly two channels: a real `href` for a genuine hyperlink, and `data-action="<name>"` on a `<button>` for every behaviour, naming an action declared in the node's `actions` field. An action composes an optional `script` (`setAppValue`, `publishData`, `updateData`, `setValue`, `speak`, …) with an optional `navigate`, so "act and move" is ONE tap with no flow — prefer it over a flow that exists only to run one script. Pass record ids as `data-param-*` bindings and resolve them on the destination with `byId('Type', $args.id)`.
+See detailed reference in sections below. Content nodes use `@` + backtick template literals with inline styles. Clicks have two channels, plus `data-share-url` for sharing: a real `href` for a genuine hyperlink, and `data-action="<name>"` on a `<button>` for every behaviour, naming an action declared in the node's `actions` field. An action composes an optional `script` (`setAppValue`, `publishData`, `updateData`, `setValue`, `speak`, …) with an optional `navigate`, so "act and move" is ONE tap with no flow — prefer it over a flow that exists only to run one script. Pass record ids as `data-param-*` bindings and resolve them on the destination with `byId('Type', $args.id)`.
 
 ## Data Binding
 

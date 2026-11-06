@@ -3,6 +3,15 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.32.0
+
+- **Games that replay.** `rand(max, key)` with a key always gives the same number for the same key, so a game built from named rolls (`rand(6, seed + '/gig/' + i)`) plays back exactly and can be tested. `rand(max)` on its own is still random.
+- **Act only when something is true.** A script can now write `ok && publishData(...)`, `done || navigate('home')` or `(ok ? navigate('a') : navigate('b'))`, so a button can check first and then save, without a separate action for each case.
+- **A Share button.** `<button data-share-url="…">` opens the phone's share sheet with a link, or copies the link and says "Link copied" where there is no share sheet.
+- **A flow can be its own page.** A flow placed in a folder or straight under the app opens with `navigate('<flow name>')`. It no longer needs a screen around it.
+- **Bars that stay in view.** A bar that should stick while the page scrolls uses `top: var(--og-header-height, 0px)` to sit just below the site's header instead of sliding under it.
+- **Delete records from an app you haven't published yet.** `og data delete` now works on an app that only has a draft.
+
 ## 0.31.0
 
 - **Update without restarting.** Type `/orgiggly:update` and Claude fetches the newest version. Then type `/reload-plugins` and your session switches to it, conversation and all. The "a newer version is out" line now points here instead of asking you to restart Claude Code. In a cloud environment, updating still means changing the setup script and starting a new session; `/orgiggly:update` tells you how.
