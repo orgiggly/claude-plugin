@@ -3,6 +3,11 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.33.0
+
+- **Maths for curves and distances.** Formulas now have `pow(base, exponent)`, `exp(x)`, `log(x)` (or `log(x, base)`) and `sqrt(x)`. A result that isn't a real number, such as `sqrt(-1)` or `log(0)`, comes back empty rather than as `NaN` or infinity.
+- **Joined html stays html.** `join` over a list of `` html`…` `` pieces now gives an html piece, so `` html`<ul>${join(items.map((i) => html`<li>${i}</li>`), '')}</ul>` `` shows the list instead of escaped tags. The separator is treated as text.
+
 ## 0.32.0
 
 - **Games that replay.** `rand(max, key)` with a key always gives the same number for the same key, so a game built from named rolls (`rand(6, seed + '/gig/' + i)`) plays back exactly and can be tested. `rand(max)` on its own is still random.
