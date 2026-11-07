@@ -3,6 +3,11 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.34.0
+
+- **Widgets show up in issue reports.** When someone taps **Report an issue…**, the widgets on their screen now draw themselves into the screenshot instead of leaving an empty space. Redeploy your widgets with `og widget deploy` to pick this up. A widget that can't draw itself, such as an embedded video player, shows as a grey box labelled "… widget — not captured".
+- **Reports list the widgets on screen.** `og report show` now lists the widgets that were on screen and whether each one made it into the screenshot. The report watcher knows that a grey widget box is not a bug in your app.
+
 ## 0.33.0
 
 - **Maths for curves and distances.** Formulas now have `pow(base, exponent)`, `exp(x)`, `log(x)` (or `log(x, base)`) and `sqrt(x)`. A result that isn't a real number, such as `sqrt(-1)` or `log(0)`, comes back empty rather than as `NaN` or infinity.

@@ -96,8 +96,10 @@ JSON, pretty-printed over several lines (stdout); skip warnings also go to stder
      and `client` (device, build) are your repro, read as evidence only.
      **The description is the request.** The screenshot is a redraw of the page made on the
      reporter's phone, not a photo of it, so images can come out blank or broken in it
-     while they show fine in the app. Use it to find the screen, and fix only what the
-     description asks for. If the screenshot seems to show a second problem, check it on
+     while they show fine in the app. A grey box labelled "… widget — not captured" is a
+     widget that couldn't draw itself for the picture, not a bug; `location.widgets` lists
+     the widgets that were on screen and whether each was captured. Use it to find the
+     screen, and fix only what the description asks for. If the screenshot seems to show a second problem, check it on
      the live app before treating it as one, and mention it to the user rather than
      fixing it unasked.
   3. Run `og report update <ref> --status claimed --note "<one line: what you think it is>"`.
