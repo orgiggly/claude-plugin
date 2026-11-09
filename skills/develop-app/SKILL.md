@@ -80,6 +80,8 @@ Let them choose, and mention the upgrade once only. Run `og upgrade` (or
 checkout link: pass it on as it is, and say they pay on Stripe's page, since
 nothing has been charged yet. Never open the link yourself. Once they say
 they've paid, re-run `og whoami`, and the `apps:` line should read `paid plan`.
+The plan updates a few seconds after payment; if it still says `free plan`,
+wait a few seconds and re-run it once before suggesting anything else.
 For a paid plan or a raised limit, drop the upgrade option and offer "email
 dave@orgiggly.com to raise it" instead (`og upgrade` refuses both). If they say they have a
 code (a launch post or an email offers some worth extra apps), `og redeem

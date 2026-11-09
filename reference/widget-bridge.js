@@ -27,6 +27,7 @@ var OrgigglyWidget = (() => {
     connectWidget: () => connectWidget,
     onCommand: () => onCommand,
     onConnection: () => onConnection,
+    onReportState: () => onReportState,
     onSnapshot: () => onSnapshot,
     postImage: () => postImage,
     postValue: () => postValue,
@@ -35,6 +36,24 @@ var OrgigglyWidget = (() => {
     runAction: () => runAction,
     setFullscreen: () => setFullscreen
   });
+
+  // ../widget-bridge/src/reportState.ts
+  var handler;
+  var onReportState = (getter) => {
+    handler = getter;
+    return () => {
+      if (handler === getter) handler = void 0;
+    };
+  };
+  var takeReportState = () => {
+    if (!handler) return void 0;
+    try {
+      const json = JSON.stringify(handler());
+      return json === void 0 ? void 0 : JSON.parse(json);
+    } catch {
+      return void 0;
+    }
+  };
 
   // ../../node_modules/html-to-image/es/util.js
   function resolveUrl(url, baseUrl) {
@@ -910,10 +929,10 @@ var OrgigglyWidget = (() => {
     return toJpeg(root, options);
   };
   var override;
-  var onSnapshot = (handler) => {
-    override = handler;
+  var onSnapshot = (handler2) => {
+    override = handler2;
     return () => {
-      if (override === handler) override = void 0;
+      if (override === handler2) override = void 0;
     };
   };
   var takeSnapshot = async (pixelRatio) => {
@@ -938,15 +957,15 @@ var OrgigglyWidget = (() => {
     params === void 0 ? { kind: "action", name } : { kind: "action", name, params }
   );
   var onConnection = (listener) => {
-    const handler = (event) => {
+    const handler2 = (event) => {
       if (event.source !== window.parent) return;
       const data = event.data;
       if (data && typeof data === "object" && data.kind === "connection") {
         listener(data);
       }
     };
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
+    window.addEventListener("message", handler2);
+    return () => window.removeEventListener("message", handler2);
   };
   var commandHandlers = /* @__PURE__ */ new Map();
   var commandListening = false;
@@ -957,19 +976,19 @@ var OrgigglyWidget = (() => {
       if (event.source !== window.parent) return;
       const data = event.data;
       if (!data || typeof data !== "object" || data.kind !== "command") return;
-      const handler = commandHandlers.get(data.name);
-      if (!handler) {
+      const handler2 = commandHandlers.get(data.name);
+      if (!handler2) {
         console.warn(`[widget] no handler for command "${data.name}"`);
         return;
       }
-      handler(data.args ?? {});
+      handler2(data.args ?? {});
     });
   };
-  var onCommand = (name, handler) => {
-    commandHandlers.set(name, handler);
+  var onCommand = (name, handler2) => {
+    commandHandlers.set(name, handler2);
     listenForCommands();
     return () => {
-      if (commandHandlers.get(name) === handler) commandHandlers.delete(name);
+      if (commandHandlers.get(name) === handler2) commandHandlers.delete(name);
     };
   };
   var requestConnectionRefresh = (provider) => post({ kind: "connectionRefresh", provider });
@@ -984,12 +1003,16 @@ var OrgigglyWidget = (() => {
       }
       if (data && typeof data === "object" && data.kind === "snapshot" && typeof data.id === "string") {
         const { id } = data;
+        const state = takeReportState();
         void takeSnapshot(
           typeof data.pixelRatio === "number" ? data.pixelRatio : 1
         ).then(
-          (dataUrl) => post(
-            dataUrl === void 0 ? { kind: "snapshotResult", id } : { kind: "snapshotResult", id, dataUrl }
-          )
+          (dataUrl) => post({
+            kind: "snapshotResult",
+            id,
+            ...dataUrl === void 0 ? {} : { dataUrl },
+            ...state === void 0 ? {} : { state }
+          })
         );
       }
     });

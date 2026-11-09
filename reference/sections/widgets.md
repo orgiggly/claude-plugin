@@ -54,6 +54,7 @@ The bridge API (all on the global `OrgigglyWidget`):
 | `channel.postImage(dataUrl)` | Uploads an image (e.g. `canvas.toDataURL()`); the node's value becomes `{ url, ext }`. |
 | `channel.setFullscreen(on)` | Asks the app to make the widget fill the screen, or go back. |
 | `OrgigglyWidget.onCommand(name, (args) => …)` | Handles `sendToWidget(<node name>, name, args)` from an app script. |
+| `OrgigglyWidget.onReportState(() => state)` | Gives an issue report the widget's own state (JSON: the current step, score, selection). Called when someone files "Report an issue…"; keep it small and leave out anything private. |
 
 The frame resizes to the page's height on its own; keep `body` auto-height.
 

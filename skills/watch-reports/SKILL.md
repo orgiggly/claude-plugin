@@ -98,7 +98,9 @@ JSON, pretty-printed over several lines (stdout); skip warnings also go to stder
      reporter's phone, not a photo of it, so images can come out blank or broken in it
      while they show fine in the app. A grey box labelled "… widget — not captured" is a
      widget that couldn't draw itself for the picture, not a bug; `location.widgets` lists
-     the widgets that were on screen and whether each was captured. Use it to find the
+     the widgets that were on screen, whether each was captured, and `fullscreen: true` for
+     one overlaid full screen. `state.json` holds `app` (the app's state) and, when widgets
+     were on screen, `widgets[]`: each one's params and the state it reported. Use it to find the
      screen, and fix only what the description asks for. If the screenshot seems to show a second problem, check it on
      the live app before treating it as one, and mention it to the user rather than
      fixing it unasked.

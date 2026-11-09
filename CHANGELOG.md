@@ -3,6 +3,14 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.36.0
+
+- **Report an issue from a full-screen widget.** On orgiggly.com, turn on **Dev mode** from the menu under your picture. Your picture gets an orange ring, and the site's header stays on screen above a full-screen widget, so **Report an issue…** is always within reach. Dev mode stays on across your devices until you turn it off.
+- **Widgets can add their own state to a report.** Call `OrgigglyWidget.onReportState(() => ({ … }))` in a widget, and a report filed while it's on screen includes what that returns, beside the parameters the widget was given. Redeploy the widget with `og widget deploy` to pick this up.
+- **Full-screen widgets in reports.** A report's screenshot now covers the whole screen when a widget is full screen, instead of leaving the widget out, and `og report show` marks a widget that was full screen.
+- **The app limit after a lapse.** Claude now notices you can't add an app when you're over the limit after a paid plan lapsed (`og whoami` reads `3 of 1`), not only when you're exactly at it.
+- **After paying, back to the conversation.** When you pay from a checkout link Claude gave you (`og upgrade`, `og buy-credits`), Stripe's page now tells you to go back to the conversation instead of offering the dashboard.
+
 ## 0.35.0
 
 - **Bring an app from claude.ai or ChatGPT into your repo.** Ask Claude Code to work on an app you built with the Orgiggly connector: it fetches the app into a folder, and from then on the folder and git hold it. You can still edit it in claude.ai, ChatGPT or the web admin.
