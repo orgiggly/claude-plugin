@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.35.0
+
+- **Bring an app from claude.ai or ChatGPT into your repo.** Ask Claude Code to work on an app you built with the Orgiggly connector: it fetches the app into a folder, and from then on the folder and git hold it. You can still edit it in claude.ai, ChatGPT or the web admin.
+- **Each side says when the other changed the app.** After your first `og` write, an app is marked as kept in a repo. If it's later changed in claude.ai, ChatGPT or the web admin, the next `og` write says what changed and how to fetch it, and a draft it replaces is first saved to a file. Claude in claude.ai or ChatGPT tells you your repo doesn't have the change it made.
+- **`og release-org <you>/<app>`** stops treating an app as kept in a repo, for when you go back to editing it only in Claude or ChatGPT.
+- **Apps taken offline when a paid plan lapses.** `og whoami` marks such an app `(offline: plan lapsed)`. Visitors see an "offline" page and nothing is lost; you can still change and publish it, and Claude tells you the two ways to bring it back.
+
 ## 0.34.0
 
 - **Widgets show up in issue reports.** When someone taps **Report an issue…**, the widgets on their screen now draw themselves into the screenshot instead of leaving an empty space. Redeploy your widgets with `og widget deploy` to pick this up. A widget that can't draw itself, such as an embedded video player, shows as a grey box labelled "… widget — not captured".

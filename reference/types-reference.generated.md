@@ -667,18 +667,25 @@ type AppOptions = CommonOptions & DataOptions & {
    */
   authMode?: "public" | "private";
   /**
-   * Built-in theme preset for the site chrome (header bar + tab strip). 'dark' flips both surfaces to dark with a neon accent. Defaults to 'light'.
+   * Built-in theme preset for the site chrome (header bar + tab strip) and the MUI components inside the org. 'dark' flips both surfaces to dark with a neon accent; 'auto' follows the visitor's device light/dark setting. Defaults to 'light'.
    * `light`: Light header and tab strip — the default
    * `dark`: Dark header and tab strip with a neon accent
-   * Presets the site chrome only (header bar + tab strip), not the page body. Override individual colors with `themeColors`.
+   * `auto`: Follows the visitor's device light/dark setting
+   * Override individual colors with `themeColors`. Under 'auto', `themeColors` styles the light side and `themeColorsDark` the dark side; the dark side keeps `themeColors.accent` unless `themeColorsDark` sets its own. The platform `--og-*` CSS variables and the page's default text colour follow the active side, so an htmlTemplate that reads them (or leaves text colour unset) switches too. The PWA launch screen uses the light side.
    */
-  theme?: "light" | "dark";
+  theme?: "light" | "dark" | "auto";
   /**
    * Per-color overrides on top of the theme preset. Any field omitted falls back to the preset.
    * Per-color overrides on top of the theme preset. Anything omitted falls back to the preset.
    * Covers the chrome: `bg`, `surface`, `accent`, `text`, `mutedText` and `border`. Set `accent` alone to brand the org without redesigning it.
    */
   themeColors?: ThemeColors;
+  /**
+   * Per-color overrides for the dark side of theme 'auto'. Any field omitted falls back to the dark preset; accent falls back to themeColors.accent. Ignored unless theme is 'auto'.
+   * Colour overrides for the dark side of the 'auto' theme. Anything omitted falls back to the dark preset.
+   * Only read when `theme` is 'auto' and the visitor's device is in dark mode. Same fields as `themeColors`. `accent` falls back to `themeColors.accent`, so a brand colour carries across unless you tune it for dark; no other light-side override leaks into dark.
+   */
+  themeColorsDark?: ThemeColors;
   /**
    * App-wide stylesheet, injected once and present on every screen. Plain CSS, not a formula. Per-screen <style> content nodes still work and, living later in the document, win ties for screen-specific overrides.
    * CSS that every screen shares — one copy here instead of a <style> block copied into each screen.

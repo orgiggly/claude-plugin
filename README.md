@@ -145,6 +145,11 @@ rather than hanging: add that domain to the environment and try again.
   Your app is hosted on orgiggly.com under your own name.
 - **Nothing to download separately.** The CLI ships inside this plugin as a
   self-contained bundle (`bin/og-public.mjs`) with a `bin/og` shim.
+- **Built an app in claude.ai or ChatGPT first?** Ask Claude Code to work on it:
+  it fetches the app into a folder, and from then on the folder (and git) holds
+  it. You can still edit it in claude.ai, ChatGPT or the web admin. Each side
+  says when the other changed it, and `og release-org <you>/<app>` hands it back
+  to Claude or ChatGPT alone.
 
 ## What it runs, sends and fetches
 

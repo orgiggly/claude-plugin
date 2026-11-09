@@ -59,8 +59,9 @@ loosely, pick it from that list rather than asking.
 ### The app limit — check it before building a NEW app
 
 `apps:` reads `1 of 1 (free plan)`, `2 of 5 (paid plan)`, `1 of 3 (free plan,
-raised to 3)` or `4 (unlimited)`. When it reads **`N of N`** (used equals limit),
-the user can't create another app — `og create-org` will refuse it. Changing an
+raised to 3)` or `4 (unlimited)`. When the first number is **at or above** the
+second (`1 of 1`, or `3 of 1` after a paid plan lapsed), the user can't create
+another app — `og create-org` will refuse it. Changing an
 app they already have is unaffected.
 
 So if the request is for a **new** app (Step 1 makes that plain, or Step 2's
@@ -96,6 +97,15 @@ og delete-org {username}/{oldapp} --yes    # deletes it
 
 Only the app's creator can delete it. Then check `og whoami` shows the freed slot
 before you create the new app.
+
+### An app marked offline
+
+If `og whoami` marks an app `(offline: plan lapsed)`, the user's paid plan ended
+and that app went offline: visitors see an "offline" page, and nothing is lost.
+You can still change, check and publish it, but a published change stays offline
+too. Say so before working on it, and give the two ways back: choose which app
+stays live at orgiggly.com/admin, or renew the paid plan (`og upgrade` prints a
+checkout link; offer it once, as above).
 
 ---
 
@@ -200,6 +210,32 @@ og fetch-org {username}/{appname} --tree --pretty --output {appname}/config.json
 ```
 
 Do not ask the user which mode — the fetch result decides.
+
+### An app that's also edited in claude.ai, ChatGPT or the web admin
+
+The copy on orgiggly.com isn't only yours to change. The user (or a co-admin)
+can edit the same app in claude.ai or ChatGPT through the Orgiggly connector, or
+in the web admin. Nothing locks it, so expect it:
+
+- **The first `og` write marks the app as kept in a repo.** From then on the
+  connector tells whoever edits it there that this repo doesn't have their
+  change.
+- **Every `og` write says when the app changed elsewhere since the last one.**
+  The warning starts `Warning: {username}/{appname} changed on the server since`
+  and lists what moved (a draft saved, a version published). The write still goes ahead, so tell the
+  user, then bring their change in: run the `og fetch-org` line the warning
+  prints, with `--output {appname}/config.json`, read `git diff`, redo your
+  edit on top, and write again. When the write replaced a draft made elsewhere,
+  the warning names a file holding a copy of it; diff against that.
+- **`versionId` changes on every save.** In a diff of a fetched config, that
+  line isn't a change anyone made.
+
+**Moving an app from Claude or ChatGPT into a repo** is just MAINTAIN: fetch it
+as above, commit it as the baseline, and carry on. The fetched config is the
+whole app, and writing it back unchanged changes nothing. If the user later
+retires the repo copy and goes back to editing only in Claude or ChatGPT,
+`og release-org {username}/{appname}` clears the mark, so the connector stops
+mentioning the repo.
 
 ### The app's memory — `{appname}/CLAUDE.md`
 
@@ -980,8 +1016,9 @@ git add {appname} && git commit -m "feat({appname}): {short description of the c
 
 Use a message that names what changed (e.g. `feat(bookclub): add a schedule
 screen`). Paired with the Step 2 "before" snapshot, this gives a clean
-before→after diff of the app. If the user later edited the app in the web admin
-before promoting, re-fetch first so the commit captures the real live state:
+before→after diff of the app. If the user later edited the app in the web admin,
+claude.ai or ChatGPT before promoting, re-fetch first so the commit captures the
+real live state:
 
 ```bash
 og fetch-org {username}/{appname} --tree --pretty --output {appname}/config.json
