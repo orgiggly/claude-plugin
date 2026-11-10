@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.37.0
+
+- **One broken image no longer blanks a widget's screenshot.** A widget with an image that has no `src` yet, or whose address answers with something that isn't a picture, used to send no screenshot at all to an issue report. Now just that image is left out and the rest of the widget is drawn. Redeploy the widget with `og widget deploy` to pick this up.
+
 ## 0.36.0
 
 - **Report an issue from a full-screen widget.** On orgiggly.com, turn on **Dev mode** from the menu under your picture. Your picture gets an orange ring, and the site's header stays on screen above a full-screen widget, so **Report an issue…** is always within reach. Dev mode stays on across your devices until you turn it off.

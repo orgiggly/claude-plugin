@@ -918,6 +918,10 @@ var OrgigglyWidget = (() => {
       height: window.innerHeight,
       backgroundColor: backgroundOf(),
       imagePlaceholder: GREY_PIXEL,
+      // An image that loads but won't decode — an `<img>` with no `src` (it
+      // fetches the page itself) or a URL that answers with HTML — otherwise
+      // rejects the whole capture. Leave just that image undrawn.
+      onImageErrorHandler: () => void 0,
       style: {
         width,
         height,
