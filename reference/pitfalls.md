@@ -35,7 +35,8 @@ Traps per node type: things a config can say that validate but don't behave the 
 
 ## Subsection node pitfalls
 
-- `isRepeating: true` requires a `data: { dataType, source }` binding. Without it the subsection renders nothing.
+- `isRepeating: true` requires a `data: { dataType, source }` binding or a `maxLength` (a fixed length such as `"@365"`). Without either the subsection renders nothing.
+- `compute` on a repeating subsection creates NO rows — the row count comes only from `data` or `maxLength`. To repeat over a computed list, set `"maxLength": "@length(list)"` and read `list[$index].field` in the children. `compute` on any container (screen, subsection, folder, form) is also never saved with a form or publish; hold state in a `variable` instead.
 - Default vertical margin between repeating subsections is set by the platform; do not add `marginBottom` manually unless you want to override.
 - WHERE clauses on a subsection's `data` use `this` to refer to the iterating record (NOT `it` — that's for filter/map/reduce inside formulas).
 - When a record occupies a RANGE of the parent's rows — a multi-day event across a day list, a stint across laps — use `data.span` instead of writing an equality filter. It replaces the `whereClause` you would otherwise write: `{ "type": "subsection", "isRepeating": true, "data": { "dataType": "Event", "source": "storage", "span": { "startField": "Start", "endField": "End", "axis": "@day", "mode": "repeat" } } }`. Here `axis` is a formula for the CURRENT row's position, normally the variable the parent repeating node computes per row (e.g. a `variable` named `day` whose compute is `@today() + $index`); `startField`/`endField` are fields on the bound objectType. Both must be real declared fields or the org fails validation, and a span on a node without `isRepeating: true` is rejected because there are no rows to cover.

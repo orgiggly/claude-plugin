@@ -140,6 +140,16 @@ The user's interactions accumulate here. Persisted to localStorage (and optional
 
 *Anchor:* `packages/shared/src/orgicore/types/appState.ts:28`
 
+### Output member
+
+> A node that has a name in the **output object** — the plain object a form saves, a publish writes and the record editor reads (`selectRootOutputObject`).
+
+A leaf (an input, a `variable`, a `content` block) is a member through its own value. A container's own value never is: its part of the output is built only from its children. A container is **transparent** (no member of its own; its children's members are flattened into its parent's — a screen, a non-repeating subsection, a folder), an **object** member (`isOwnScope`: children nested under its name) or a **list** member (`isRepeating`: one entry per row). So `compute` on a container is readable by name in formulas but never saved, and on a repeating node it creates no rows (#3041). Don't call this a "slot" — see the disambiguation entry.
+
+*How we say it:* "Screens are transparent, so `answer1` sits at the top of the output object." • "Make it a `variable` so it becomes an output member."
+
+*Anchor:* `packages/shared/src/orgicore/selectors/appstate/evaluation/createSelectOutput.ts`
+
 ---
 
 ## 3. Authoring & evaluation
@@ -529,7 +539,7 @@ The `transitionRulesMirror` CF triggers on a config publish (`latestVersion`), e
 
 ## Disambiguation — words to qualify
 
-Four words in our space are overloaded enough that bare usage is ambiguous. Always qualify them.
+Five words in our space are overloaded enough that bare usage is ambiguous. Always qualify them.
 
 ### "the agent"
 
@@ -566,6 +576,16 @@ Three different things:
 - **The demo app** — the static `/demo` route in the web app.
 - **Demo mode** — the `demoMode: true` generation config knob (Haiku + `note_assumption`).
 - **demoSource** — the `demoSource: "demo"` server tag that triggers rate-limit + canonical-prompt guards.
+
+Always say which.
+
+### "slot"
+
+Four different things — and none of them is "a node's place in the output object" (that is an **output member**):
+- **Feature slot** — a zero-parameter `function` one feature provides for others to fill (see **Slot / seam**).
+- **Iteration slot** — one index of a repeating node; the reducer's `insertSlot` / `INSERT_SLOT` adds one.
+- **Span slots** — the parent's rows a `data.span` record covers.
+- **Config-root slot** — a top-level section of an org config (`plugins`, `objectTypes`, …) as the outline prints it (`outline/slots.ts`, `docs/OUTLINE.md` "Slots").
 
 Always say which.
 

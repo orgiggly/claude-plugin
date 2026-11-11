@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.38.0
+
+- **Widgets stay small.** When an app needs a widget (a canvas, a game board, a map), Claude now keeps the widget to that surface and builds the rest with ordinary app parts: the list of saved items, opening one, deleting one. Those parts can then be changed in the web admin and checked by `og test`.
+- **`og --version` shows the plugin's version.** It used to print `0.1.0` whichever version you had.
+- **Passing records to a widget.** `og reference widgets` now shows how to hand a widget a record as it is, with no need to turn it into text first, and `og reference data` says when `$data` holds a type's records.
+- **Fewer failed browser checks in a cloud session.** Claude now tries the draft check with the browser tools the machine already has before installing any, and runs its own page checks from a folder where they work.
+
 ## 0.37.0
 
 - **One broken image no longer blanks a widget's screenshot.** A widget with an image that has no `src` yet, or whose address answers with something that isn't a picture, used to send no screenshot at all to an issue report. Now just that image is left out and the rest of the widget is drawn. Redeploy the widget with `og widget deploy` to pick this up.

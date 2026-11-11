@@ -722,6 +722,17 @@ shows in a locked-down frame) when the thing needs:
 - **to update in place** when the data changes, without losing that state;
 - **to send something back**: a value the app stores, or an app action it runs.
 
+**Keep a widget to the part that needs one.** The widget owns its drawing or
+play surface and the controls on that surface (a toolbar, a Save button that
+calls an app action). The rest stays in the app as ordinary nodes: the list of
+records, opening one, deleting one, sign-in prompts, anything that reads or
+writes records. Pass the widget the one record it is working on, not the
+collection. Three reasons: `og test` and `og check-draft` cover the app's
+nodes with no browser script; a config change goes through the draft, while a
+widget deploy is live at once; and the next session reads a small page, not
+the whole app. The test: with the widget taken out, the app still lists, opens
+and deletes its records.
+
 A widget costs a deploy and a sandbox, so don't use one for plain markup. And
 **don't fake one with a huge inline SVG or data blob in a template**: tens of KB
 of SVG paths bloat the config, re-render on every data change, and still can't
@@ -959,14 +970,20 @@ If it says the browser check was skipped (no Playwright), the render wasn't
 checked — say so. If your Claude Code has the Playwright MCP tools, you can open
 the preview link with them instead.
 
-In a cloud session (`CLAUDE_CODE_REMOTE` is `true`) Playwright isn't
-installed, but the machine has a Chromium the check can use. `check-draft`
-needs nothing from the repo, so run it from a scratch folder that has
-Playwright, once per session:
+In a cloud session (`CLAUDE_CODE_REMOTE` is `true`) the machine has a Chromium
+the check can use, and often its own Playwright too. Run `check-draft` as
+above first. Only if it says the browser check was skipped, give it a
+Playwright: `check-draft` needs nothing from the repo, so run it from a scratch
+folder that has one, once per session:
 
 ```bash
 mkdir -p /tmp/og-browser && cd /tmp/og-browser && npm i playwright >/dev/null && og check-draft {username}/{appname}
 ```
+
+That folder is for `check-draft` only. Its Playwright is newer than the
+machine's browsers, and only `check-draft` knows to fall back to the Chromium
+that's there. Run a headless script of your own (a widget check, a screenshot)
+from another folder, where `require('playwright')` finds the machine's own.
 
 If it then says `browser: not checked — the app couldn't load here because
 this network refuses …`, the environment's network is Custom and the app

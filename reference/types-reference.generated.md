@@ -458,7 +458,7 @@ interface CommonOptions {
   /**
    * Formula for the value this node starts with, until something stores a different one (use @prefix)
    * The value this node starts with. Anything the user types — or the app stores — replaces it.
-   * Every node can hold a value, not just input fields. A screen, container or content block with a default value becomes a named slot the rest of the app can read by the node's name and write to. Write the formula with other fields referenced by their plain names, combined with the built-in functions (`+` concatenates strings, `formatDate`, `length`, `sum`, …) — open the formula reference for the full list. The formula applies until something stores a value at this node; from then on the stored value wins, and clearing it falls back to this formula again.
+   * On a field or a content block, this is the value it starts with, and the rest of the app reads it by the node's name. Write the formula with other fields referenced by their plain names, combined with the built-in functions (`+` concatenates strings, `formatDate`, `length`, `sum`, …) — open the formula reference for the full list. The formula applies until something stores a value at this node; from then on the stored value wins, and clearing it falls back to this formula again. On a container (screen, subsection, folder, form) the container's value is made from its children: a `compute` here is only readable by name in formulas and is never saved with a form or publish — to hold state, use a `variable`. On a repeating node it does not create rows: use `maxLength: "@length(list)"` and read `list[$index]` in the children.
    * Examples: firstName + ' ' + lastName, price * quantity, formatDate(created, 'fullDate')
    */
   compute?: unknown;
@@ -475,7 +475,7 @@ interface CommonOptions {
   hidden?: boolean | string;
   /**
    * Max items for repeating nodes
-   * Caps how many items pagination will reveal. Needs `isRepeating` and `pageSize` to have any effect.
+   * Number of items a repeating node shows. With no data binding it sets a fixed length (e.g. `365`, `@length(items)`); with data it caps the list. With `pageSize`, it caps how many items "load more" can reveal.
    * On a data-bound node the ceiling is min(rows returned, maxLength), so it trims how far "load more" can go rather than the query itself. Nodes that cannot repeat ignore it entirely.
    * Examples: 500, @matchCount, @length(curGroupMatches)
    */

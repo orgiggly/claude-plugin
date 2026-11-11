@@ -68,6 +68,8 @@ The `$data` special variable provides access to all data objects grouped by type
 - `$data.Story` — all Story objects as an array
 - `$data.Task` — all Task objects as an array
 
+`$data.<Type>` holds a type's records only when the app loads them: some node binds the type (a `data` block with a `source`), or the type has records in `objectInstances`. Any other type reads as an empty list, with no error (the validator warns `undeclared-data-read`). When no screen should list the records, bind the type from a hidden repeating subsection (`"hidden": "@true"`).
+
 Use with `uniq()` to extract unique field values:
 - `uniq($data.Story, "category")` — unique category values across all Stories
 

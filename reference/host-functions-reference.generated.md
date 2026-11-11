@@ -105,7 +105,7 @@ setPresenceContext(null)
 clearValues(...names: string[]): void
 ```
 
-Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
+Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Names only — unlike `setValues`, a pointer key such as `rows[0].qty` is not accepted. Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
 
 **Examples:**
 
@@ -484,16 +484,17 @@ setValue("")
 ### `setValues` _(async)_
 
 ```
-setValues(values: {[fieldName: string]: any}): void
+setValues(values: {[fieldNameOrPointerKey: string]: any}): void
 ```
 
-Writes SEVERAL fields at once, by name, as ONE atomic state update (#407). Each key is a node name resolved from this content node's scope outward — exactly the names a formula here could read — and every value is evaluated against the same state snapshot before any write lands, so `setValues({a: b, b: a})` is a genuine swap with no half-applied render in between. A name nothing in scope declares throws (nothing is written). Use it for any control that must move two or more fields together — swap, reset-to-defaults, apply-a-preset; for one field use `setValue` (own value) or `setAppValue` (app variable).
+Writes SEVERAL fields at once as ONE atomic state update (#407). A plain key is a node name resolved from this content node's scope outward — exactly the names a formula here could read. A key containing `[` or `.` is a pointer key read from the app root, as `setAppValue` takes it — so one call can fill cells of a repeating section (`'rows[2].qty'`); write it in the short form the app uses (`rows[2].qty`, not `sheet.rows[2].qty`), and writing past the last row extends the section. Every value is evaluated against the same state snapshot before any write lands, so `setValues({a: b, b: a})` is a genuine swap with no half-applied render in between; `undefined` clears a field. A key that resolves to nothing throws (nothing is written). Use it for any control that must move two or more fields together — swap, reset-to-defaults, apply-a-preset, fill a row; for one field use `setValue` (own value) or `setAppValue` (app variable).
 
 **Examples:**
 
 ```
 setValues({myLanguage: otherLanguage, otherLanguage: myLanguage})
 setValues({minPrice: 0, maxPrice: 1000, sortBy: "newest"})
+setValues({'rows[0].qty': 1, 'rows[1].qty': 2})
 ```
 
 <!-- BEGIN PROMPT-STRIP: host-context-content:data-script -->
@@ -596,7 +597,7 @@ setPresenceContext(null)
 clearValues(...names: string[]): void
 ```
 
-Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
+Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Names only — unlike `setValues`, a pointer key such as `rows[0].qty` is not accepted. Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
 
 **Examples:**
 
@@ -999,7 +1000,7 @@ setPresenceContext(null)
 clearValues(...names: string[]): void
 ```
 
-Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
+Wipes everything the user has entered under each NAMED node — its own value, every descendant field, and every slot of a repeating section — in one atomic update. Names resolve like a formula read: this node's scope outward, then any name unique across the app (an ambiguous name throws and nothing is cleared). Names only — unlike `setValues`, a pointer key such as `rows[0].qty` is not accepted. Use it to reset a section for a fresh round — e.g. a game's per-round inputs when a new game starts, which otherwise keep last game's typing because the slots reuse the same index.
 
 **Examples:**
 

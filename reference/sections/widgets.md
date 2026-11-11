@@ -126,6 +126,19 @@ what `runAction` may call:
 
 Elsewhere in the app, `@counter` is whatever the widget last sent with `postValue`.
 
+**Passing records.** A parameter can carry any JSON value, so hand the widget
+records as they are; there's no need to turn them into a string first (declare
+the parameter as `"type": "text"`):
+
+```json
+"parameters": { "drawing": "@filter($data.Drawing, it.id == openId)[0]" }
+```
+
+`$data.<Type>` only holds a type the app loads: one that some node binds with a
+`data` block, or that has records in `objectInstances` (see `og reference data`).
+A list of the records elsewhere in the app is such a binding, so a widget that
+shows one record needs nothing more.
+
 ## Testing locally
 
 The deployed app shows one data state, behind a draft and a cache, so review the
