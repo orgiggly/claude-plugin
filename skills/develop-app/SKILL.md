@@ -773,12 +773,19 @@ change, no `localStorage`). Then:
 4. **Deploy it:**
 
    ```bash
-   og widget deploy {name} --file "{appname}/widgets/{name}/index.html"
+   og widget deploy {name} --file "{appname}/widgets/{name}/index.html" \
+     --description "{one line on what it does}" \
+     --param {param}="{what it means}"
    ```
 
    It inlines the bridge, checks the page (name, under 2 MB, an `<html>` page),
    uploads it to the user's own widget folder, and prints a plugin block with
    their uid as `widgetOwner`. Any signed-in account may deploy one.
+
+   `--description` (one line, at most 300 characters) and one `--param` per
+   parameter the page reads from `init` are what search shows for the widget.
+   The first deploy of a name is refused without a description. Later deploys
+   keep the description and parameters unless you pass them again.
 5. **Wire it into the config:** paste the plugin block into `plugins`, add a
    `parameters` entry for each param the page reads, put a node of that `type`
    on a screen, declare any `actions` the page calls with `runAction`, and set
@@ -970,14 +977,16 @@ If it says the browser check was skipped (no Playwright), the render wasn't
 checked — say so. If your Claude Code has the Playwright MCP tools, you can open
 the preview link with them instead.
 
-In a cloud session (`CLAUDE_CODE_REMOTE` is `true`) the machine has a Chromium
-the check can use, and often its own Playwright too. Run `check-draft` as
-above first. Only if it says the browser check was skipped, give it a
-Playwright: `check-draft` needs nothing from the repo, so run it from a scratch
-folder that has one, once per session:
+In a cloud session (Claude Code's has `CLAUDE_CODE_REMOTE` set to `true`;
+Codex cloud's runs as the user `agent`) the machine has a Chromium the check
+can use, and often its own Playwright too. Run `check-draft` as above first.
+Only if it says the browser check was skipped, give it a Playwright:
+`check-draft` needs nothing from the repo, so run it from a scratch folder that
+has one, once per session. The cache flag is there because the home folder may
+be read-only:
 
 ```bash
-mkdir -p /tmp/og-browser && cd /tmp/og-browser && npm i playwright >/dev/null && og check-draft {username}/{appname}
+mkdir -p /tmp/og-browser && cd /tmp/og-browser && npm i --cache /tmp/og-npm-cache playwright >/dev/null && og check-draft {username}/{appname}
 ```
 
 That folder is for `check-draft` only. Its Playwright is newer than the

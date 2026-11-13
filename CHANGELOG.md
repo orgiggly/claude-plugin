@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.39.0
+
+- **Describe a widget when you deploy it.** `og widget deploy` takes `--description "<one line>"` and a `--param name="what it means"` for each parameter the widget reads. Claude now passes them, so your widgets can be found by what they do. A widget's first deploy needs a description; later deploys keep it unless you pass a new one.
+
 ## 0.38.0
 
 - **Widgets stay small.** When an app needs a widget (a canvas, a game board, a map), Claude now keeps the widget to that surface and builds the rest with ordinary app parts: the list of saved items, opening one, deleting one. Those parts can then be changed in the web admin and checked by `og test`.
