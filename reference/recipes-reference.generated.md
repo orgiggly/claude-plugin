@@ -7,7 +7,7 @@ Task-shaped, working config snippets. Each recipe is a complete minimal app that
 - `board-diagram` — Draw a board or grid from a position string
 - `daily-push-reminder` — A daily push reminder at a set time
 - `dates-and-rounding` — Dates and rounded numbers in templates
-- `edit-record` — Edit a record with inputs, then save it
+- `edit-record` — Add and edit a record on one screen
 - `per-user-vs-shared` — Per-user vs shared data, and reading the current user
 - `sign-in-gate` — Hide controls from signed-out visitors
 - `template-buttons` — Buttons built inside a template formula
@@ -329,17 +329,18 @@ binds `"source": "storage"`.
 <!-- /recipe: dates-and-rounding -->
 
 <!-- recipe: edit-record -->
-## `edit-record` — Edit a record with inputs, then save it
+## `edit-record` — Add and edit a record on one screen
 
-An `<input>` inside a content template writes to **that content node's own value**, not
-to a record field. So give each editable field its own content node: seed it from the
-record with `compute`, put one input in its template, and read it back by the node's
-name. A third content node's `save` action then patches the record with
-`updateData({type, id, patch})`, which merges the patch over the stored record and writes
-it to the same scope it was read from. Pass the record's `id` into the edit screen with
-`navigate('editVisit', {id})` and resolve it once with `byId('Visit', $args.id)`.
-Guard that with `|| ({})` so the screen still renders before the data arrives.
-Use `publishData` instead of `updateData` to create a new record.
+Put the fields in a one-step `flow` with `hideNav` and `hideTopBar`. A flow's inputs reset
+each time someone navigates to it. Plain inputs on a screen keep the last record's values,
+so the second record you open shows the first one's text. Open the screen with
+`navigate('editVisit', {id})` for an existing record, or `navigate('editVisit')` for a new
+one, and resolve it once with `byId('Visit', $args.id) || ({})` (empty until the data
+arrives, and for a new record). Seed each input from it with `compute`. Save calls
+`advanceFlow()`, and the flow's `script` step writes: `updateData` merges a patch into an
+existing record, and `publishData` creates one. An async call like these may sit in a
+parenthesised conditional branch, as below, but not inside a larger expression. Then
+`navigate('home')`. The full app is `recipes/edit-records`.
 
 ```json
 {
@@ -357,17 +358,26 @@ Use `publishData` instead of `updateData` to create a new record.
         "label": "Visits",
         "_children": [
           {
+            "type": "content",
+            "name": "addBar",
+            "htmlTemplate": "@`<button data-action=\"add\" style=\"margin: 12px 0; padding: 10px 18px; background: #0e7490; color: #fff; border: none; border-radius: 8px; font: inherit; cursor: pointer;\">Add a visit</button>`",
+            "actions": {
+              "add": { "script": "navigate('editVisit')" }
+            }
+          },
+          {
             "type": "subsection",
             "name": "visitList",
             "isRepeating": true,
+            "showHeader": false,
             "data": { "dataType": "Visit", "source": "storage" },
             "_children": [
               {
                 "type": "content",
                 "name": "visitRow",
-                "htmlTemplate": "@`<button data-action=\"edit\" data-param-id=\"${id}\" style=\"display: block; width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; font: inherit; cursor: pointer;\"><b>${country}</b> — ${visitedOn || 'no date yet'}<div style=\"color: #64748b;\">${note || ''}</div></button>`",
+                "htmlTemplate": "@`<button data-action=\"open\" data-param-id=\"${id}\" style=\"display: block; width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; font: inherit; cursor: pointer;\"><b>${country}</b> — ${visitedOn || 'no date yet'}</button>`",
                 "actions": {
-                  "edit": {
+                  "open": {
                     "params": ["id"],
                     "script": "navigate('editVisit', {id: $params.id})"
                   }
@@ -378,37 +388,64 @@ Use `publishData` instead of `updateData` to create a new record.
         ]
       },
       {
-        "type": "screen",
-        "name": "editVisit",
-        "label": "Edit visit",
+        "type": "folder",
+        "name": "components",
         "_children": [
           {
-            "type": "variable",
-            "name": "visit",
-            "compute": "@byId('Visit', $args.id) || ({})"
-          },
-          {
-            "type": "content",
-            "name": "visitDate",
-            "compute": "@visit.visitedOn || ''",
-            "htmlTemplate": "@`<label style=\"display: block; margin-bottom: 12px;\">Date visited<br><input type=\"date\" value=\"${visitDate}\" style=\"font: inherit; padding: 8px;\"></label>`"
-          },
-          {
-            "type": "content",
-            "name": "visitNote",
-            "compute": "@visit.note || ''",
-            "htmlTemplate": "@`<label style=\"display: block; margin-bottom: 12px;\">Note<br><textarea rows=\"3\" style=\"font: inherit; padding: 8px; width: 100%; box-sizing: border-box;\">${visitNote}</textarea></label>`"
-          },
-          {
-            "type": "content",
-            "name": "saveBar",
-            "htmlTemplate": "@`<div style=\"display: flex; gap: 8px;\"><button data-action=\"save\" style=\"padding: 10px 20px; background: #0e7490; color: #fff; border: none; border-radius: 8px; font: inherit; cursor: pointer;\">Save</button><button data-action=\"cancel\" style=\"padding: 10px 20px; background: #e2e8f0; border: none; border-radius: 8px; font: inherit; cursor: pointer;\">Cancel</button></div>`",
-            "actions": {
-              "save": {
-                "script": "updateData({type: 'Visit', id: visit.id, patch: {visitedOn: visitDate, note: visitNote}}); back()"
+            "type": "screen",
+            "name": "editVisit",
+            "label": "Visit",
+            "_children": [
+              {
+                "type": "variable",
+                "name": "visit",
+                "compute": "@byId('Visit', $args.id) || ({})"
               },
-              "cancel": { "script": "back()" }
-            }
+              {
+                "type": "flow",
+                "name": "visitForm",
+                "label": "",
+                "hideNav": true,
+                "hideTopBar": true,
+                "_children": [
+                  {
+                    "type": "screen",
+                    "name": "stepVisitFields",
+                    "label": "",
+                    "_children": [
+                      {
+                        "type": "textInput",
+                        "name": "editCountry",
+                        "label": "Country",
+                        "required": true,
+                        "compute": "@visit.country"
+                      },
+                      {
+                        "type": "textInput",
+                        "name": "editVisitedOn",
+                        "label": "Date visited",
+                        "compute": "@visit.visitedOn"
+                      },
+                      {
+                        "type": "content",
+                        "name": "formActions",
+                        "htmlTemplate": "@`<div style=\"display: flex; gap: 8px; margin-top: 16px;\"><button data-action=\"save\" style=\"padding: 10px 20px; background: #0e7490; color: #fff; border: none; border-radius: 8px; font: inherit; cursor: pointer;\">Save</button><button data-action=\"cancel\" style=\"padding: 10px 20px; background: #e2e8f0; border: none; border-radius: 8px; font: inherit; cursor: pointer;\">Cancel</button></div>`",
+                        "actions": {
+                          "save": { "script": "advanceFlow()" },
+                          "cancel": { "script": "back()" }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "script",
+                    "name": "stepSaveVisit",
+                    "label": "Save",
+                    "script": "let data = {country: editCountry, visitedOn: editVisitedOn || ''};\n($args.id ? updateData({type: 'Visit', id: $args.id, patch: data}) : publishData({type: 'Visit', data: data}));\nnavigate('home')"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
@@ -424,8 +461,7 @@ Use `publishData` instead of `updateData` to create a new record.
         "icon": "public",
         "fields": [
           { "name": "country", "type": "text" },
-          { "name": "visitedOn", "type": "text" },
-          { "name": "note", "type": "text", "variant": "multiline" }
+          { "name": "visitedOn", "type": "text" }
         ]
       }
     ]
@@ -558,8 +594,10 @@ A control that saves **per-user** records gates on `"@$userKey == 'anon'"` inste
 Someone signed in with Google who hasn't picked a username yet is signed in, but can't
 own records yet.
 
-`hidden` only hides a control; the server doesn't check it. For shared data that one
-person curates, warn that anyone could still change it until owner-only writes ship.
+`hidden` only hides a control; the server doesn't check it, so any signed-in visitor can
+still write this type. For shared data that one person curates, give the type
+`"writeAccess": "admins"`, which the server enforces, and hide its controls with
+`"@$isOrgAdmin != true"` instead (`recipes/owner-only-list` is the whole app).
 `"authMode": "private"` does not fix this. It only hides the whole app behind a sign-in
 card.
 

@@ -73,7 +73,10 @@ The frame resizes to the page's height on its own; keep `body` auto-height.
   survive a reload back with `postValue`, then read it back as a param.
 - **External files:** `<script src>` and images load from any CDN. `fetch()` needs
   the server to allow any origin (`Access-Control-Allow-Origin: *`), as jsdelivr,
-  unpkg and cdnjs do.
+  unpkg and cdnjs do. A cloud coding sandbox may refuse those hosts to your own
+  `curl` ("the egress proxy refused the connection") while the viewer's browser loads
+  them fine. That says nothing about the URL. If you need the file locally (to test or
+  inline it), `npm pack <package>@<version>` usually still works there.
 - **Under 2 MB** after the bridge is inlined. Load big data or libraries from a CDN.
 - **No embedded players or signed-in services.** A user widget always gets the
   strictest sandbox: YouTube or Spotify players, and the viewer's connected

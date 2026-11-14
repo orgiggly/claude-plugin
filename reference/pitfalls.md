@@ -24,6 +24,7 @@ Traps per node type: things a config can say that validate but don't behave the 
 - `data.whereClause` filters ROOT records only. Descendants are always reached through their parent link, so a clause cannot prune a subtree.
 - `labelField` names the record field used as the row label; omit it and the ObjectType's best name field is used. A typo degrades silently to that fallback instead of erroring, so check the name against the ObjectType's fields.
 - `detail` names a node nested INSIDE the tree's own `_children` array — e.g. `{ "type": "tree", "nodeTypes": { "Task": { "detail": "taskDetail" } }, "_children": [{ "type": "content", "name": "taskDetail", "htmlTemplate": "@`…`" }] }`. This is NOT the list master-detail pattern: a screen declared elsewhere in the app (say under a `components` folder) will NOT be found, and the tree needs no cursor-linked detail screen. Omit `detail` entirely and a default form is generated from the ObjectType's fields — prefer that unless a custom layout is actually wanted.
+- A `detail` node's declared actions act on the APP, like any other content node's: `navigate('postEditor', {id: $params.id})` opens that app screen with `$args.id` set, and Back returns to the tree with the same record open. `setAppValue('curPostId', $params.id)` writes the app-level variable. Inside the detail, a bare name such as `${title}` or `${id}` reads the record's own fields.
 - One level can mix types: `"allowedChildTypes": ["Epic", "Task"]` offers the user a type picker when adding a child.
 
 ## Screen node pitfalls

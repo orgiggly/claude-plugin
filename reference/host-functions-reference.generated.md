@@ -194,7 +194,7 @@ updateData({type: "Traveller", id, patch: {Name, Role, Bio}})
 deleteData({type: string, id: string | string[]}): void
 ```
 
-Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
+Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved, but a deleted record leaves `$data` at once, for every visitor: there is no need to filter on `isDeleted`, and an app cannot list or restore its deleted records, so don't build a bin or an undo on it. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
 
 **Examples:**
 
@@ -210,7 +210,7 @@ deleteData({type: "Post", id: id}) // Photo declares parent: {type: "Post", idFi
 deleteFile(url: string | string[]): void
 ```
 
-Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record restorable, so calling `deleteFile` beside it sacrifices restore of the photo. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
+Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record in storage, so calling `deleteFile` beside it means the photo is gone even if the record is ever recovered. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
 
 **Examples:**
 
@@ -686,7 +686,7 @@ updateData({type: "Traveller", id, patch: {Name, Role, Bio}})
 deleteData({type: string, id: string | string[]}): void
 ```
 
-Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
+Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved, but a deleted record leaves `$data` at once, for every visitor: there is no need to filter on `isDeleted`, and an app cannot list or restore its deleted records, so don't build a bin or an undo on it. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
 
 **Examples:**
 
@@ -702,7 +702,7 @@ deleteData({type: "Post", id: id}) // Photo declares parent: {type: "Post", idFi
 deleteFile(url: string | string[]): void
 ```
 
-Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record restorable, so calling `deleteFile` beside it sacrifices restore of the photo. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
+Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record in storage, so calling `deleteFile` beside it means the photo is gone even if the record is ever recovered. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
 
 **Examples:**
 
@@ -1089,7 +1089,7 @@ updateData({type: "Traveller", id, patch: {Name, Role, Bio}})
 deleteData({type: string, id: string | string[]}): void
 ```
 
-Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved; org-level filters (a `whereClause` on the subsection, or `filter(..., !it.isDeleted)` in a template) hide them from the UI. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
+Soft-deletes one record (when `id` is a string) or N records (when `id` is an array of strings) by setting `isDeleted: true`. Records remain in storage with their fields preserved, but a deleted record leaves `$data` at once, for every visitor: there is no need to filter on `isDeleted`, and an app cannot list or restore its deleted records, so don't build a bin or an undo on it. Cascades through declared parent relations: every loaded record of an object type whose `parent: {type, idField}` points at a deleted record is soft-deleted too, recursively, children before parents — so do NOT filter and delete children by hand when the child type declares `parent`. Only children currently loaded in $data are found, so the child type must be declared as a data source by some node. Restoring a parent does not restore its children. To remove records permanently, use `hardDelete`. Throws if any referenced record is not currently loaded in $data.
 
 **Examples:**
 
@@ -1105,7 +1105,7 @@ deleteData({type: "Post", id: id}) // Photo declares parent: {type: "Post", idFi
 deleteFile(url: string | string[]): void
 ```
 
-Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record restorable, so calling `deleteFile` beside it sacrifices restore of the photo. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
+Permanently deletes an uploaded file (an image a `fileInput` stored, by its URL) from this org's Storage — the blob a record field points at, not the record. Opt in for records that are genuinely gone: `deleteData` is a soft delete that keeps the record in storage, so calling `deleteFile` beside it means the photo is gone even if the record is ever recovered. Only files under THIS org's own upload prefix are touched; any other URL (a web-search pick, another org's file, an empty field) is silently skipped, never an error, so it is safe to call unconditionally. A file that is already gone is tolerated. Accepts an array for multi-file fields.
 
 **Examples:**
 

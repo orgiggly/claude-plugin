@@ -3,6 +3,15 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.41.0
+
+- **Shared data can be locked to you.** For a list only you should edit (club results, a portfolio), Claude now locks it so only you and your app's admins can save to it, instead of warning that anyone could change it.
+- **Editing a record shows that record.** The `edit-record` recipe now opens each record with fresh fields, so the second one you open no longer shows the first one's text, and the same screen adds a new record.
+- **Buttons and links in a tree's record view now work.** An action or link in a record tree's custom `detail` (say an "Open in editor" button doing `navigate('write', {id: $params.id})`, or `setAppValue(...)`) used to do nothing. It now opens the app's screen, and Back returns to the same record. It's a platform fix, so apps you've already built get it with no change.
+- **Deleted records are gone for good, as far as the app can tell.** The reference used to say a deleted record stays in `$data` behind an `isDeleted` filter and can be restored. It can't: `deleteData` removes it from `$data` at once for every visitor, so Claude no longer builds a "deleted items" list or an undo on it.
+- **The record tree is described as it really is:** a drill-in list on a phone, and two panes (the list beside the open record) at desktop width.
+- **A refused CDN download in a cloud session no longer looks like a broken URL.** The widgets reference now says a cloud sandbox may block `curl` to jsdelivr, unpkg or cdnjs while the viewer's browser loads them fine, and that `npm pack` usually still works for a local copy.
+
 ## 0.40.0
 
 - **Search other people's apps.** `og search <words>` finds public apps and widgets by what they do and what's inside them (screens, flows, object types, widgets). Each result comes with the `og outline` command that shows the matching part, so Claude can learn how something was built before building yours. `og search --recipes` looks only at recipes: small apps that each show one pattern.

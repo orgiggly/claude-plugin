@@ -497,14 +497,16 @@ Tell the user which you chose in one sentence they can follow, e.g. "Your visits
 are saved per person — everyone who signs in gets their own map." `og reference
 recipes` has working snippets for both gates and both scopes.
 
-**Shared data isn't locked to its owner yet.** Hiding the edit controls only
-hides them; it doesn't stop a determined visitor saving to the shared records.
-Until owner-only writes ship, before the first publish of an app with shared
-data that the user edits, say:
+**Lock shared data the owner curates with `"writeAccess": "admins"` on its
+object type.** Hiding the edit controls only hides them; `writeAccess` is what
+the server checks, so only the app's owner and its admins can save to that type.
+Hide the controls with `"@$isOrgAdmin != true"` to match. `og reference recipes
+sign-in-gate` has the snippet, and `recipes/owner-only-list` is a whole app
+built this way. Leave `writeAccess` off when visitors are meant to add records
+(a guestbook, sign-ups), and say so before the first publish:
 
-> Anyone who opens this app could change its shared data — not just add to it —
-> if they went around the buttons. Hiding them only hides them. Say if that's a
-> problem before we publish.
+> Anyone signed in can add to this app's shared list, and change what's there,
+> if they went around the buttons. Say if only you should be able to.
 
 Never offer `"authMode": "private"` as the fix: it hides screens, not data.
 

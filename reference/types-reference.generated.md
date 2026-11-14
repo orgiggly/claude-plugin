@@ -846,7 +846,7 @@ type RepeatOptions = CommonOptions & {
   max?: number | string;
 };
 
-/** A hierarchical data structure with typed nodes and parent-child relationships. When data-bound (data.source set), nodeTypes keys are ObjectType names and the hierarchy is linked via each type's parentRef field; renders as a mobile-first drill-in editor on the site. */
+/** A hierarchical data structure with typed nodes and parent-child relationships. When data-bound (data.source set), nodeTypes keys are ObjectType names and the hierarchy is linked via each type's parentRef field; on the site it renders as a drill-in list on a phone and as two panes, the list beside the open record's detail, at desktop width. */
 type TreeOptions = CommonOptions & IterationOptions & DataOptions & {
   type: "tree";
   /**
