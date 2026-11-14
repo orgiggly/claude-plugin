@@ -350,6 +350,21 @@ Object types live in the org config's top-level `objectTypes` slot — a sibling
 
 *Anchor:* `packages/shared/src/orgicore/integration/metamodel/types.ts`
 
+### Recipe
+
+> A small published app under the `recipes/` namespace that exists to show one feature or pattern, and nothing else: a booking flow, a realtime turn rule, a feature install, a widget.
+
+It is checked in at `orgs/recipes/<name>/` like every other org, and kept small enough to read whole at `og outline --level 2`. Recipes are public, and search flags them (`recipe: true`) and ranks them ×1.5, so `og search --recipes` is the first place to look for how something is done. Good `lab/` apps become recipes by being cloned and trimmed; `lab/` stays the sandbox and stays out of search. The owner is the Recipes user (see [Identities](#7-identities)).
+
+Two other things share the word. Always say which:
+- **A recipe** (this entry): a `recipes/<name>` app.
+- **The `recipes` reference topic**: worked how-tos read with `og reference recipes <name>` (#2456), such as the ai-progress recipes.
+- **The `mock/recipes` feature**: a recipe-book feature bundle that orgs install. It is a [feature](#feature), not a recipe.
+
+*How we say it:* "Is there a recipe for a booking flow?" • "Promote that lab app to a recipe."
+
+*Anchor:* `orgs/recipes/`, `og search --recipes`, `.claude/rules/org-development.md` → Recipes
+
 ---
 
 ## 5. AI generation
@@ -472,13 +487,14 @@ Read-only, no auth mocking. **Dual-mode** (feat/e2e-site-emulator): by default t
 
 > The dev/test identity zoo defined in `apps/web/src/utils/firebase/auth/mock.ts`.
 
-Three distinct purposes — qualify by which one:
+Four distinct purposes — qualify by which one:
 
 - **Mock user** — `mock-user-123` / `mock@localhost.dev`. The single dev identity for manual local testing. "Sign in as Mock" on the localhost login page.
 - **Lab user** — `lab-user-1` / `lab@localhost.dev`. The default identity for skill-created orgs under the `lab/` namespace.
+- **Recipes user** — `recipes-user-1` / `recipes@localhost.dev`. Owns the `recipes/` namespace. It has no Firebase Auth account and no sign-in: the admin CLI publishes as it by passing its uid to `create-org` (the command is in `.claude/rules/org-development.md` → Recipes). Unlike the other three it is not in `ALLOWED_DEV_UIDS`, since nothing signs in as it.
 - **E2E user** — `e2e-user-1` / `e2e-user-2` / `e2e-stripe-user`, etc. Isolated test identities, one per spec area, kept separate so test state doesn't leak across runs.
 
-All three are whitelisted in `cloud-functions/src/auth.ts` (`ALLOWED_DEV_UIDS`) and only work on the `orgiggly-dev` Firebase project.
+The Mock, Lab and E2E users are whitelisted in `cloud-functions/src/auth.ts` (`ALLOWED_DEV_UIDS`) and only work on the `orgiggly-dev` Firebase project.
 
 *How we say it:* "Sign in as Mock and try it." • "Use the Lab user for skill orgs." • "That spec needs its own E2E user."
 
@@ -534,6 +550,17 @@ The `transitionRulesMirror` CF triggers on a config publish (`latestVersion`), e
 *How we say it:* "Dave filed a report on webberoonies from his phone; the watcher claimed it." • "Track it on the issues org."
 
 *Anchor:* `packages/shared/src/types/issueReport.ts`, `packages/cli/src/commands/report.ts`, `.claude/skills/watch-reports/SKILL.md`
+
+### Resolution / Email updates
+
+> A report's **resolution** is how it ended, beside its status; **email updates** is the reporter's choice to hear about it by email.
+
+- **Resolution** — one of `fixed`, `wont-fix`, `duplicate`, `not-a-bug` (set when a report is closed or published), or `forwarded` (handed to Orgiggly's own issues app, set with any status). Written by an owner with `og report update --resolution`. Status says *where* a report is; resolution says *why it stopped*, and is what the reporter reads in plain words.
+- **Email updates** — the pre-ticked "Email me updates" switch in the report dialog, stored as `emailUpdates` on the record. Write-once, like the reporter's other facts. It decides whether the reporter gets the filing and outcome emails (epic #3111).
+
+*How we say it:* "Closed as a duplicate — the resolution says so." • "She left email updates on, so she'll hear when it's fixed."
+
+*Anchor:* `packages/shared/src/types/issueReport.ts` (`ISSUE_REPORT_RESOLUTIONS`), `apps/web/src/apps/site/components/ReportIssueForm.tsx`
 
 ---
 

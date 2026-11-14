@@ -3,6 +3,13 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.40.0
+
+- **Search other people's apps.** `og search <words>` finds public apps and widgets by what they do and what's inside them (screens, flows, object types, widgets). Each result comes with the `og outline` command that shows the matching part, so Claude can learn how something was built before building yours. `og search --recipes` looks only at recipes: small apps that each show one pattern.
+- **Read a public widget's code.** `og widget source <owner>/<name>` prints the source of any widget a public app uses, or saves it with `--out`.
+- **Forwarding a report keeps it open.** `og report forward` used to close your report. Now it stays open, marked as passed to the Orgiggly team, shows their notes as they work on it, and closes the same way their copy does (`fixed` when the platform fix ships). A report can be forwarded once, and only while it's `new` or `claimed`.
+- **People who report an issue hear back.** When someone else reports an issue on your app, they get an email saying it's been passed on, and one more when you publish a fix or close it, unless they turned email updates off. You get no email about reports you file on your own apps.
+
 ## 0.39.0
 
 - **Describe a widget when you deploy it.** `og widget deploy` takes `--description "<one line>"` and a `--param name="what it means"` for each parameter the widget reads. Claude now passes them, so your widgets can be found by what they do. A widget's first deploy needs a description; later deploys keep it unless you pass a new one.

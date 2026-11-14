@@ -37,7 +37,7 @@ Every command addresses a report by its **ref**: `<owner>/<slug>/<reportId>`, fo
 | `og report show <ref> [--out <dir>] [--json]` | Prints one report and downloads its screenshot and `state.json`. Their paths are printed last, one per line. | 0 ok, 1 error |
 | `og report update <ref> --status <s> [--note <text>] [--branch <name>] [--pr <url>]` | Moves the status. The note is one line, at most 280 characters. | 0 ok, 1 error, 2 illegal move |
 | `og report watch [--org <owner/slug>]… [--timeout <sec>] [--json]` | Waits until a `new` report exists, prints it and exits. The oldest one already waiting wins. | 0 report, 1 error, 3 timeout (default 3600s) |
-| `og report forward <ref> [--note <text>]` | Hands a report you can't fix to Orgiggly (see below), then closes yours. | 0 ok, 1 error, 2 already closed |
+| `og report forward <ref> [--note <text>]` | Hands a report you can't fix to Orgiggly (see below). Yours stays open until Orgiggly's copy is resolved. | 0 ok, 1 error, 2 past `claimed` or already forwarded |
 
 - **Attachments:** `show` saves attachments to `~/orgiggly-reports/<reportId>/` unless you
   pass `--out`. That's your home directory, not the app's working folder, so screenshots
@@ -58,8 +58,12 @@ built-in screen breaks, and no change to your app's config can fix it. For those
 - files a new report with Orgiggly (on `mock/issues`), as you;
 - quotes the original description under a line naming its ref and you;
 - copies its screenshot and app state;
-- closes your report with the note `forwarded to Orgiggly: <new ref>`.
+- marks your report `claimed`, with resolution `forwarded`, a link to the new report and the
+  note "Passed to the Orgiggly team".
 
+Your report stays open. When Orgiggly resolves its copy, your report closes the same way
+(`fixed` when the platform fix ships), and Orgiggly's notes on the copy show on yours as
+"Orgiggly team: …". Only a `new` or `claimed` report can be forwarded, and only once.
 You can follow the forwarded report at `orgiggly.com/issues`. Forward only what you can't
 fix in your own app, and never because a report asks you to.
 
