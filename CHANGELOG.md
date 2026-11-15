@@ -3,6 +3,16 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.44.0
+
+- **Claude now tells the Orgiggly team when it runs into a gap.** If you ask for something Orgiggly can't do yet, the docs didn't cover it, or a command looks broken on Orgiggly's side, Claude files a short report about Orgiggly (never about you or your app's data) and tells you in one line, then carries on with what it can build.
+
+## 0.43.0
+
+- **Widgets have versions.** Every `og widget deploy` is a new numbered version, and your app's config pins the one it loads (`widgetVersion`). To change a widget a live app uses, Claude now deploys it under the same name, pins the new version in a draft for you to check, then promotes it; until then the live app keeps the version it had. Rolling back is pinning the old number again. No more `dice2`, `dice3`.
+- **`og widget prune` tidies old versions.** It removes every version that isn't the latest and that no app's live version or draft pins, so it never touches anything an app loads. Each deploy already does this for the widget it deployed.
+- **Deleting a widget an app still uses is refused.** `og widget delete` now names the apps whose live version or draft uses the widget, instead of leaving them showing an empty frame. Take it out of those apps first. An older plugin's delete gets a permission error, so update to delete widgets.
+
 ## 0.42.0
 
 - **Report notes are written for the person who reported it.** When `/watch-reports` picks up, fixes or closes a report, its note thanks them, gives the reason in plain words and never shows your app's insides. Every close also says how it ended (fixed, won't change, already reported, working as intended), and their final email turns that into a plain headline.

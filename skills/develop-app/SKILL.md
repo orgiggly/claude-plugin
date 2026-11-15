@@ -730,9 +730,9 @@ calls an app action). The rest stays in the app as ordinary nodes: the list of
 records, opening one, deleting one, sign-in prompts, anything that reads or
 writes records. Pass the widget the one record it is working on, not the
 collection. Three reasons: `og test` and `og check-draft` cover the app's
-nodes with no browser script; a config change goes through the draft, while a
-widget deploy is live at once; and the next session reads a small page, not
-the whole app. The test: with the widget taken out, the app still lists, opens
+nodes with no browser script; a config change is one edit, while a widget
+change is a deploy, a new version and a pin; and the next session reads a small
+page, not the whole app. The test: with the widget taken out, the app still lists, opens
 and deletes its records.
 
 A widget costs a deploy and a sandbox, so don't use one for plain markup. And
@@ -788,32 +788,50 @@ change, no `localStorage`). Then:
    parameter the page reads from `init` are what search shows for the widget.
    The first deploy of a name is refused without a description. Later deploys
    keep the description and parameters unless you pass them again.
-5. **Wire it into the config:** paste the plugin block into `plugins`, add a
-   `parameters` entry for each param the page reads, put a node of that `type`
-   on a screen, declare any `actions` the page calls with `runAction`, and set
-   the top-level `"minClientVersion": 5`. Validation (Step 5) checks all of it.
 
-**A deploy is live at once; there is no draft.** Every app that names the widget
-picks it up on its next reload. For a widget a **live** app already uses, deploy
-the change under a new name (`{name}2`) and point the draft at it, so the app
-switches when the draft is promoted. To remove a widget, take it out of the
-config first, then `og widget delete {name}`.
+   Every deploy is a new numbered version of the widget, and the output says
+   which (`Deployed widget "{name}" as version 3`). The plugin block it prints
+   pins that number as `widgetVersion`.
+5. **Wire it into the config:** paste the plugin block into `plugins` (keep its
+   `widgetVersion`), add a `parameters` entry for each param the page reads,
+   put a node of that `type` on a screen, declare any `actions` the page calls
+   with `runAction`, and set the top-level `"minClientVersion": 6`, which a pin
+   needs. Validation (Step 5) checks all of it.
 
-Before deploying a `{name}2`, run `og widget list`. It shows every widget in the
-user's folder and when each was last updated, which is how the old `{name}` and
-any earlier `{name}2` are found. Widgets are shared by all the user's apps, and
-the list doesn't say which app uses which. So check this app's config, and ask
-the user about their other apps, before offering to `og widget delete` the ones
-nothing uses.
+**Changing a widget: deploy, pin, check, promote.** An app loads the version its
+plugin's `widgetVersion` names, so a deploy changes nothing an app shows until
+a config pins it. Keep the widget's name: never deploy a changed page under a
+new one.
+
+1. Deploy the change (step 4). It prints the new version number.
+2. In the draft, set the plugin's `widgetVersion` to that number, then validate
+   and publish the draft (Steps 5 and 6).
+3. Check the draft with the user. The live app still loads the old version.
+4. Promote the draft. The live app switches to the new version.
+
+To roll back, pin the earlier number again and publish. A plugin with no
+`widgetVersion` loads whatever was deployed last, at once, in every app that
+names it, so always keep the pin.
+
+**Old versions.** `og widget prune` removes every version that isn't the latest
+and that no app's live version or draft pins; `og widget prune {name}` does one
+widget. Each deploy already does this for the widget it deployed, so the folder
+rarely holds more than the pinned copies. It can't remove anything an app
+loads, so there's no need to ask the user first. Publishing refuses a pin to a
+version that no longer exists.
+
+**Deleting a widget.** `og widget delete {name}` is refused while any app's live
+version or draft uses the widget, and the refusal names those apps. Widgets are
+shared by all the user's apps (`og widget list` shows them all). Take the plugin
+and its nodes out of each app the refusal names, publish and promote, then
+delete again.
 
 Commit the widget's folder with the rest of the app, and note its name in the
 app's `CLAUDE.md`.
 
-**A change to a widget alone** (the page changed, the config didn't) has no
-draft, so it skips Steps 5 and 6's publishing. Once it's deployed, still finish
-with the end of Step 6: the "after" commit, the app's memory, and, in a cloud
-session, saving the work to `main`. Skip that last part and the next session
-starts without the change, even though the live app has it.
+**A change to a widget alone** (the page changed, nothing else did) still moves
+the pin, so it goes through Steps 5 and 6 like any other change: validate,
+publish the draft, check it, promote.
 
 ---
 
@@ -1206,12 +1224,49 @@ any showcase app whose structure you borrowed (Step 3b).
 
 ---
 
+## When Orgiggly gets in your way
+
+Tell the Orgiggly team when the platform, not the user's app, stops you. Do it
+straight away, without asking first. File a report when:
+
+- the user needs something Orgiggly can't do (no node, function or setting
+  does it, and `og reference` confirms it's missing);
+- the reference docs didn't answer a question and you had to guess;
+- an `og` command failed in a way that looks like an Orgiggly bug, not a
+  mistake in the config;
+- you needed a workaround to get the job done.
+
+```bash
+og report file --platform --kind gap --title "No calendar feed for events" \
+  --app {username}/{appname} --model <your exact model id> <<'EOF'
+Asked for: a calendar link members can subscribe to in Google Calendar.
+Tried: the recipes and flows references; nothing exports .ics.
+Workaround: none; told the user it isn't possible yet.
+EOF
+```
+
+- `--kind` is `gap` (missing capability), `friction` (possible but painful),
+  `bug` (Orgiggly misbehaved) or `docs` (the docs didn't say). Pass your own
+  exact model id with `--model`; the CLI can't detect it.
+- The body says what was asked, what you tried, what you expected and any
+  workaround. Write it about Orgiggly, never about the user: no names, emails,
+  records, tokens or file contents beyond a minimal snippet of config.
+- File one report per distinct problem per session. Never retry a filing; if
+  it fails or is refused, mention that and carry on.
+- Then tell the user in one line, e.g. "I've let the Orgiggly team know
+  that calendar feeds aren't possible yet.", and carry on with what can be
+  built. Don't pretend the missing piece exists.
+
+---
+
 ## Guardrails
 
 - **One CLI, running as the user.** Every command is subject to the security
   rules. Don't reach for commands outside the CLI's public
   surface (see `og --help`).
 - **Never publish an invalid config** — Step 5 must be clean first.
+- **A platform gap gets reported and told, not hidden** — see "When Orgiggly
+  gets in your way".
 - **Draft before live** — default to `--draft`; only promote on the user's say-so.
 - **Smallest change that works** when maintaining — don't rewrite an app to add a
   tab.

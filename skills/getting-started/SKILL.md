@@ -274,3 +274,8 @@ them at the limit before a new app. Never up front.
   explicit stop that says how to resume (type `/orgiggly` again).
 - **Don't promise what isn't built.** No custom domains, no features that
   aren't live.
+- **Report what looks like Orgiggly's fault.** Once they're signed in, a step
+  that fails like a platform bug (not a typo or a network blip) gets one
+  `og report file --platform --kind bug` and a one-line "I've let the Orgiggly
+  team know", the way `develop-app`'s "When Orgiggly gets in your way" says.
+  Then carry on or stop as the step says.

@@ -95,6 +95,7 @@ a value out, and an action.
   "name": "tapcounter",
   "runtime": "sandboxed",
   "widgetOwner": "<your uid, as printed>",
+  "widgetVersion": 3,
   "htmlTemplate": "",
   "parameters": [
     { "name": "name", "type": "text", "description": "Who to greet" },
@@ -104,9 +105,12 @@ a value out, and an action.
 ```
 
 - `name` must stay the deployed widget's name: it's how the app finds the page.
+- `widgetVersion` pins the version the app loads (see **Versions** below). Keep
+  the number the deploy printed.
 - `runtime: "sandboxed"` and `htmlTemplate: ""` are both required.
-- Set the app's top-level `"minClientVersion": 5` (or higher). An older app would
-  otherwise ignore `widgetOwner`.
+- Set the app's top-level `"minClientVersion": 6` (or higher). An older app would
+  otherwise ignore `widgetVersion` and load the latest deploy. A plugin with no
+  `widgetVersion` needs only 5.
 - `embedsThirdPartyMedia` and `connections` are first-party only; the validator
   rejects them on a plugin with `widgetOwner`.
 
@@ -169,15 +173,42 @@ paste back to you, so you can bake the values in as defaults. If the harness say
 ## Deploying
 
 ```bash
-og widget deploy <name>                 # reads ./widgets/<name>/index.html
+og widget deploy <name> --description "<one line>"   # reads ./widgets/<name>/index.html
 og widget deploy <name> --file page.html
+og widget prune [name]
 og widget delete <name>
 ```
 
 Names are lower-case letters and digits, starting with a letter, at most 40
-characters: no `-`, because the app calls the plugin by name like a function. A redeploy
-shows up on the app's next plain reload. Opening the deployed URL in a browser downloads
-the page instead of running it; only an app runs a widget, inside its sandbox, so test
-in the harness. You need to be signed in (`og login`); any account may
-deploy one. Deleting a widget leaves any plugin that names it
-showing an empty frame, so remove the plugin too.
+characters: no `-`, because the app calls the plugin by name like a function.
+Opening the deployed URL in a browser downloads the page instead of running it;
+only an app runs a widget, inside its sandbox, so test in the harness. You need
+to be signed in (`og login`); any account may deploy one.
+
+The first deploy of a name needs `--description` (one line on what the widget
+does) and a `--param name="what it means"` per parameter the page reads: search
+shows both. Later deploys keep them unless you pass them again.
+
+## Versions
+
+Every deploy is a new numbered version (`Deployed widget "<name>" as version 3`),
+kept alongside the earlier ones. An app loads the version its plugin's
+`widgetVersion` names, so a deploy changes no app until a config pins it:
+
+1. Deploy the change.
+2. Set `widgetVersion` to the new number in the app's draft, and publish the draft.
+3. Check the draft; the live app still loads the old version.
+4. Promote. The live app switches.
+
+Roll back by pinning an earlier number. Keep the widget's name; a change never
+needs a new one. A plugin with no `widgetVersion` loads the latest deploy at
+once, on every app's next reload.
+
+`og widget prune` removes every version that isn't the latest and that no app's
+live version or draft pins (`og widget prune <name>` does one widget). Each
+deploy prunes the widget it deployed, and nothing an app loads is ever removed.
+Publishing refuses a pin to a version that's gone.
+
+`og widget delete <name>` removes the widget and every version, and is refused
+while any app's live version or draft uses it; the refusal names those apps.
+Take the plugin out of each one and publish first.
