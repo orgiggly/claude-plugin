@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.42.0
+
+- **Report notes are written for the person who reported it.** When `/watch-reports` picks up, fixes or closes a report, its note thanks them, gives the reason in plain words and never shows your app's insides. Every close also says how it ended (fixed, won't change, already reported, working as intended), and their final email turns that into a plain headline.
+- **`/watch-reports` describes forwarding as it now works.** A report handed to the Orgiggly team stays open, shows their notes, and closes the way their copy does, so there's nothing more to do on it.
+- **A way to tell Orgiggly what's missing.** `og report file --platform --kind gap|friction|bug|docs --title "<one line>"`, with the details on stdin, files a report on Orgiggly's own queue. Tokens, home folder paths and email addresses are removed before it leaves your machine, and you get no receipt email, only one when it's resolved. A later release teaches Claude when to use it.
+
 ## 0.41.0
 
 - **Shared data can be locked to you.** For a list only you should edit (club results, a portfolio), Claude now locks it so only you and your app's admins can save to it, instead of warning that anyone could change it.

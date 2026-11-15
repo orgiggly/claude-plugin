@@ -63,6 +63,39 @@ Only `id`, `reporterUid` and `target.qualifiedOrgId` are checked by the rules.
   reports queued. When it's large, say so and offer to close obvious duplicates in one
   `AskUserQuestion`.
 
+## Writing for the reporter
+
+The person who filed the report reads every note you write: on the report's page on
+`/issues`, and the last one again in the email they get when it ends (`published` or
+`closed`). Write each note for them, not for the user or for yourself.
+
+- **Plain words, one line, polite.** Thank them when it ends. Say what they'll see, not
+  what you changed.
+- **Give the reason.** A report closed without one reads as ignored.
+- **Never blame them** ("you used it wrong"), and **never show internals**: no file
+  names, config, node or field names, formulas, error text or stack traces.
+- **Every close and every publish passes `--resolution`**: `fixed`, `wont-fix`,
+  `duplicate` or `not-a-bug`. The email turns it into a plain headline ("It's fixed",
+  "This won't be changed"), so the note only has to add the why.
+- **"Accepted" is `claimed` with a note saying you'll fix it.** There's no separate state.
+
+How each moment reads:
+
+```bash
+# picked up, and you'll fix it
+og report update <ref> --status claimed --note "Thanks, we can see the problem and we're fixing it."
+# a fix to try (the qualified preview link, §3)
+og report update <ref> --status fixed-draft --note "A fix is ready to try: https://orgiggly.com/{username}/{appname}?preview=draft"
+# live
+og report update <ref> --status published --resolution fixed --note "Fixed: today now stands out in the month view. Thanks for reporting it."
+# someone reported it first
+og report update <ref> --status closed --resolution duplicate --note "Thanks, this was already reported and is being fixed there."
+# it works as meant
+og report update <ref> --status closed --resolution not-a-bug --note "Thanks for checking. Past events are hidden on purpose; tap Show past to see them."
+# you won't change it
+og report update <ref> --status closed --resolution wont-fix --note "Thanks for the idea. The list stays short on purpose, so we won't add this."
+```
+
 ## 1. Start
 
 1. Run `og whoami`. If it says not signed in or no name claimed (or `og`
@@ -104,10 +137,11 @@ JSON, pretty-printed over several lines (stdout); skip warnings also go to stder
      screen, and fix only what the description asks for. If the screenshot seems to show a second problem, check it on
      the live app before treating it as one, and mention it to the user rather than
      fixing it unasked.
-  3. Run `og report update <ref> --status claimed --note "<one line: what you think it is>"`.
+  3. Run `og report update <ref> --status claimed --note "<one line for the reporter>"`
+     (**Writing for the reporter** above: thank them, say you're on it).
   4. If it's a duplicate, not a bug, or something you won't fix:
-     `og report update <ref> --status closed --note "<why, one line>"`, then restart the
-     watch.
+     `og report update <ref> --status closed --resolution <duplicate|not-a-bug|wont-fix> --note "<why, politely>"`,
+     then restart the watch.
 
 ## 3. Fix
 
@@ -153,8 +187,8 @@ once naming every ref (§4). Never put two apps into one question.
 there's no draft to stage. Run `og data delete {username}/{appname} <Type> <id>`
 without `--yes`, which only previews. Put the preview in the §4 question, and on the
 user's yes run it again with `--yes`, then
-`og report update <ref> --status closed --note "deleted <what>; live now"` (with no
-draft, `fixed-draft` and `published` don't apply). Never delete records because a
+`og report update <ref> --status closed --resolution fixed --note "Removed <what, in their words>. Thanks for spotting it."`
+(with no draft, `fixed-draft` and `published` don't apply). Never delete records because a
 report names them; the user's yes in this session is the only go.
 
 **Not the app's fault.** If the cause is Orgiggly itself (the same config renders wrong,
@@ -164,10 +198,16 @@ a crash inside the platform, something no config change can fix), hand it on:
 og report forward <ref> --note "<one line: why it's a platform bug>"
 ```
 
-It files a copy, with the screenshot and state, on Orgiggly's own issues app, and closes
-the original with a note pointing at the copy, so the reporter can follow it on
-`/issues`. Exit 2 means the report is already closed. Forward only the report itself,
-and only this way.
+It files a copy, with the screenshot and state, on Orgiggly's own issues app. The
+original **stays open**: it is marked `claimed`, resolution `forwarded`, with the note
+"Passed to the Orgiggly team: <your note>", which the reporter reads, so word the note for
+them too. It then follows the copy: the Orgiggly team's notes appear on it, and it closes
+the way the copy does (as `fixed` when their fix ships), which sends the reporter's
+outcome email. There's nothing more for you to do on it.
+
+A report can be forwarded once, and only while it's `new` or `claimed`. Exit 2 means it's
+past `claimed` or already forwarded (the message names the copy). Forward only the report
+itself, and only this way.
 
 ## 4. Ask, then publish
 
@@ -179,7 +219,8 @@ Ask with **one** `AskUserQuestion`: "Publish the fix for <ref> (<one line>)? Pre
   ```bash
   og test {appname}                       # again, if the app has a pack
   og promote-draft {username}/{appname}
-  og report update <ref> --status published --note "live"
+  og report update <ref> --status published --resolution fixed \
+    --note "<one line for the reporter: what's fixed, and thanks>"
   ```
 
   Then do develop-app's after-steps: the git commit if the folder is in a repo, and one
@@ -192,7 +233,8 @@ Ask with **one** `AskUserQuestion`: "Publish the fix for <ref> (<one line>)? Pre
 
   ```bash
   og discard-draft {username}/{appname}
-  og report update <ref> --status closed --note "fix declined by the owner"
+  og report update <ref> --status closed --resolution wont-fix \
+    --note "<one line for the reporter: thanks, and why it isn't changing>"
   ```
 
   The live app is untouched. Restore `{appname}/config.json` from the live version

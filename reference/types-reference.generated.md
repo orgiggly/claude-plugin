@@ -1526,6 +1526,33 @@ type ContentOptions = CommonOptions & {
    */
   purpose?: string;
   /**
+   * Declared type of the value this content node holds, in the field-type grammar: a builtin (text, number, boolean, temporal, ...), a declared objectType name, or list<T> / map<T> of either. The closing gate checks the node's `compute` against it.
+   * `variable`: No particular type; the gate checks nothing
+   * `text`: The node holds text
+   * `number`: The node holds a number
+   * `boolean`: The node holds true or false
+   * `temporal`: The node holds a date or time
+   * `parentRef`: A record-tree parent link; meaningful on an object type's field, not here
+   * `image`: The node holds an image URL
+   * `imageUpload`: The node holds the URL of an uploaded image
+   * Declare it on a content node whose template renders a field and writes the value back (a star rating, a custom picker, a bound `<input>`), so the value has a stated type. Besides the builtins offered, type a declared object type name or `list<T>` / `map<T>` (for example `list<text>`). The closing gate warns when the default value (`compute`) is plainly a different type, such as a text default on a `number` field. Leave it empty on a content node that only displays.
+   */
+  fieldType?: "variable" | "text" | "number" | "boolean" | "temporal" | "parentRef" | "image" | "imageUpload" | string;
+  /**
+   * Validation rules for the value this content node holds
+   * Rules the node's value must pass, each with its own error message. For a content node whose template renders a field.
+   * `expression` is a formula evaluated in the node's scope and written without the `@` prefix, so sibling fields can be referenced by name. The rule passes when the expression is true.
+   * Examples: { "expression": "rating >= 1 && rating <= 5", "errorMessage": "Choose 1 to 5." }
+   */
+  validation?: ValidationRule | ValidationRule[];
+  /**
+   * If true or expression evaluates to true, the content node must hold a value
+   * `true`: The node must hold a value
+   * `false`: The value may be left empty
+   * Accepts a formula, so the value can be conditionally required. For a custom message, or a rule spanning two fields, use `validation` instead.
+   */
+  required?: boolean | string;
+  /**
    * Named click actions for this node's template, keyed by action name. The template invokes one with data-action="<name>" on a <button> (preferred — a real button role) or <a>, binding param values via render-time interpolated data-param-<name> attributes. Each action is a `script`; navigation is a host call in the script (navigate / replaceScreen / back). Structured replacement for the legacy rel=/setValue=/data-script/data-args click attributes. A SANDBOXED WIDGET on this node can invoke the same actions by name (channel.runAction(name, params)) — the widget names the action, this config decides what it does; only params the action declares are passed through.
    * Named click behaviours the template invokes with data-action attributes — each one a script; to move screens it calls navigate('screen'), usually as the last line.
    * Each key is an action name; the template invokes it with a data-action attribute on a button (preferred — a real button role) or anchor, binding param values through render-time interpolated data-param attributes. Click-time dispatch evaluates no formulas: the action runs `script` with $params in scope. To move screens, end the script with navigate('screen', {id: $params.id}), replaceScreen('screen') or back(); a failure earlier in the script aborts the navigation. The structured replacement for the legacy rel=, setValue=, data-script and data-args click attributes. A second dispatch channel exists for a sandboxed-widget node: the widget calls channel.runAction(name, params) and the platform runs the action of that name declared HERE, so the widget can never do more than this config allows. That channel passes only the params the action declares (a widget is deployed separately from the org config, so an undeclared param means the two have drifted) and its params are runtime JSON rather than interpolated string literals.

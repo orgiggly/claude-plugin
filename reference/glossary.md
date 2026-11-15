@@ -562,6 +562,18 @@ The `transitionRulesMirror` CF triggers on a config publish (`latestVersion`), e
 
 *Anchor:* `packages/shared/src/types/issueReport.ts` (`ISSUE_REPORT_RESOLUTIONS`), `apps/web/src/apps/site/components/ReportIssueForm.tsx`
 
+### Platform report
+
+> A **platform report** is an issue report the plugin agent files on the `issues` org itself, about Orgiggly rather than about an app: a capability **gap**, **friction**, a **bug** in Orgiggly, or missing or wrong **docs** it met while building.
+
+- Filed with `og report file --platform --kind <kind> --title <line>`, the body on stdin, redacted before it leaves the machine. It carries a `platform` block (`kind`, plus the model, the CLI and plugin versions, and the app being built) that the rules allow on `mock/issues` only.
+- It has no screen, so its location says "Filed from the Claude Code plugin". Its filer gets no receipt email (Claude has already told them in the session), only the outcome.
+- Not the same as a **forwarded** report, which is a person's report on an app that the watcher handed on (`og report forward`).
+
+*How we say it:* "Claude couldn't sort a record tree, so it filed a platform report (a gap) and told the user in one line."
+
+*Anchor:* `packages/shared/src/types/issueReport.ts` (`ISSUE_REPORT_PLATFORM_KINDS`), `packages/cli/src/services/issueReportService.ts` (`buildPlatformReport`)
+
 ---
 
 ## Disambiguation — words to qualify
