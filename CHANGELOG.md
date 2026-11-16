@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.45.0
+
+- **Claude looks for a similar public app before building.** For a new app, or a whole new feature, it runs `og search`: recipes first (small apps that each show one pattern, such as a daily reminder or taking turns), then every public app. It outlines up to three matches at the part that matched, borrows their structure (never their text, pictures or data) and tells you which ones it learned from. This replaces the old showcase list.
+- **"One like StoryLingo" starts from StoryLingo.** When you name an app, Claude outlines it first. When you want your own copy of it, Claude copies it with `og clone-org` and changes the copy, telling you what doesn't come along (records kept outside the config, uploaded files, invited users).
+- **Widgets can start from a public one.** `og search --kind widget` finds widgets other apps use, and `og widget source` reads one. Claude starts your page from it and deploys it under your own name, so it stays yours to change and pin.
+
 ## 0.44.0
 
 - **Claude now tells the Orgiggly team when it runs into a gap.** If you ask for something Orgiggly can't do yet, the docs didn't cover it, or a command looks broken on Orgiggly's side, Claude files a short report about Orgiggly (never about you or your app's data) and tells you in one line, then carries on with what it can build.

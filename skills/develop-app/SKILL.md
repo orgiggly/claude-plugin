@@ -386,35 +386,58 @@ a local copy.
 
 ---
 
-## Step 3b — Look at what exists
+## Step 3b — Look for a similar public app
 
 **CREATE, or a MAINTAIN change that adds a whole new feature** (a game mode, a
 booking flow, a live view): before writing anything, look at how published
-Orgiggly apps already solve something similar. Every published app's structure
-is public, and seeing a working shape beats inventing one from the schema.
+Orgiggly apps already solve something similar. Every public app's structure
+can be read, and a working shape beats one invented from the schema.
+
+**The user named an app** ("one like dave/StoryLingo", or an
+`orgiggly.com/<owner>/<app>` address): outline that app first, and search only
+for what it lacks. **They want their own copy of it** ("copy it", "my own
+version of it"): don't rebuild it. Clone it, fetch the copy's draft, and carry
+on as MAINTAIN:
 
 ```bash
-og data fetch mock/orgiggly showcase --pretty   # the showcase: one row per app
+og clone-org <owner/app> {appname}   # a draft in your namespace; records and files stay behind
+og fetch-org {username}/{appname} --draft --tree --pretty --output {appname}/config.json
 ```
 
-Each row has `qualifiedOrgId`, `name`, `description`, `category`, `complexity`
-and `features` (e.g. `realtime`, `flows`, `forms`, `ai-chat`,
-`html-templates`). Pick **at most three** whose `features` or `description`
-match the brief, then outline each:
+A clone is a new app, so **The app limit** check applies. Records kept outside the
+config, uploaded files and the source's invited users don't come along, so tell
+the user what the copy starts without.
+
+Otherwise, search. Recipes come first: small apps under `recipes/` that each
+show one pattern (turn-taking rules, a daily reminder, editing records). Then
+search every public app:
 
 ```bash
-og outline <user/app> --level 1   # screens, sections, types: ~10% of the config's bytes
-og outline <user/app> --level 3   # every field, when one node is worth a close look
+og search --recipes                 # every recipe, one line each
+og search booking calendar          # every word must match
+og search --uses flow --has rules   # by what's inside: node types, flows, rules, widgets
 ```
 
-Always pass the qualified `<user/app>` id: a local file with the same name wins
-over the app (`og reference outline` explains the notation). Borrow the
-**structure** (how screens, data types and flows are put together) and never
-the content (text, images, data). Reach for `og fetch-org <user/app>` only to
-copy one specific node, after a level-3 outline showed it's the one you want.
+Each match lists what matched (a screen, a data type, a widget) with a
+ready-to-run outline command pointing at that part. Pick **at most three**
+matches that fit the brief, and run the commands they print:
 
-Skip this step for a small edit to an existing app. Name any app you borrowed a
-shape from in the Step 7 summary.
+```bash
+og outline <owner/app> --at objectTypes.Booking --level 1   # just the part that matched
+og outline <owner/app> --level 1   # the whole app: screens, sections, types, ~10% of the config
+og outline <owner/app> --level 3   # every field, when one node is worth a close look
+```
+
+Always pass the qualified `<owner/app>` id: a local file with the same name
+wins over the app (`og reference outline` explains the notation). Borrow the
+**structure** (how screens, data types and flows fit together), never the
+content (text, images, data). Use `og fetch-org <owner/app>` only to copy one
+node, after a level-3 outline showed it's the one you want. A match that is a
+widget can be read with `og widget source` (see **Building a widget**).
+
+No good match is a normal result: build from the schema. Skip this step for a
+small edit to an existing app. Name any app you borrowed a shape from in the
+Step 7 summary.
 
 ---
 
@@ -751,6 +774,17 @@ change, no `localStorage`). Then:
    bridge with exactly `<script src="widget-bridge.js"></script>`. Start from
    the plugin's `reference/examples/widget-hello.html`; the plugin's
    `reference/` folder is two levels up from this skill's base directory.
+   **Or start from a public widget** that does much the same job.
+   `og search --kind widget <words>` finds one, and each result prints the
+   command that reads its HTML, plus the apps that use it:
+
+   ```bash
+   og widget source <owner>/<name> --out "{appname}/widgets/{name}/index.html"
+   ```
+
+   It becomes your page: change what the brief needs and deploy it under your
+   own name (step 4). Point the app at your own deploy, never at someone else's
+   widget: they can change it, and only your own can be versioned and pinned.
 2. **Set up the local loop.** Copy `reference/widget-bridge.js` and
    `reference/examples/widget-harness.html` into the widget's folder, then serve
    it (`npx --yes serve .` or `python3 -m http.server` from that folder; not
@@ -1220,7 +1254,7 @@ Tell the user what changed and where it lives:
   link can view; sign in to mark countries. Visits are saved per person."
 
 Summarise the nodes/features you added or edited in one or two lines, and name
-any showcase app whose structure you borrowed (Step 3b).
+any public app or widget you borrowed from (Step 3b).
 
 ---
 
