@@ -11,6 +11,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/save-to-main.mjs\"",
+            "timeout": 20
+          }
+        ]
+      }
     ]
   }
 }

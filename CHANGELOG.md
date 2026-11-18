@@ -3,6 +3,14 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.46.0
+
+- **Cloud sessions keep your apps on `main`.** Claude now saves to `main` after every commit in a Claude Code cloud session, even though the session's own instructions say to push only to its `claude/…` branch, and it no longer asks each time. A new check stops a session from ending while app work is missing from `main`. Before this, some sessions left whole apps on their branch, so the next session started without them.
+- **Claude presses your app's buttons itself.** After a change, `og check-draft --tap` taps the app's main actions in the draft preview and checks what comes up, so you're no longer asked to try each button. Your app's saves are held back while it does this, unless it's checking that saving works, and then it lists what it saved so it can tidy up.
+- **Widgets get checked too.** `og check-draft` now looks inside each widget on the page and reports a widget that didn't draw or hit an error, instead of an "OK" that never looked at it.
+- **A free logo, or an AI one.** Asked for a logo, Claude offers to draw one itself for free, or to generate one with AI for about 11 credits, and waits for you to pick. `og update-org-logo --file logo.svg` now takes the drawing as it is.
+- **`og whoami` shows your username.** It's the name your own records are filed under, which can differ from the name your apps are published under. Using the wrong one with `og data --user` now gets a clear message instead of an empty result or records nobody sees.
+
 ## 0.45.0
 
 - **Claude looks for a similar public app before building.** For a new app, or a whole new feature, it runs `og search`: recipes first (small apps that each show one pattern, such as a daily reminder or taking turns), then every public app. It outlines up to three matches at the part that matched, borrows their structure (never their text, pictures or data) and tells you which ones it learned from. This replaces the old showcase list.

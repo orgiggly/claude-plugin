@@ -110,7 +110,9 @@ when the session ends, and each new session starts from `main`. So after each
 publish Claude commits the app's folder (`config.json`, the app's `CLAUDE.md`,
 its widgets and its `tests/`), pushes the session's own `claude/…` branch, and
 then saves the same work to `main`. If `main` is protected, it opens a pull
-request instead and gives you the link to merge it.
+request instead and gives you the link to merge it. If a session is about to
+end with app work that isn't on `main` yet, the plugin's Stop hook reminds
+Claude to save it first.
 
 Every cloud session works on a new `claude/…` branch of its own; that's how
 Claude Code cloud sessions work, not something Orgiggly sets up. So the old

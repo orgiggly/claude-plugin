@@ -203,6 +203,10 @@ before `og promote-draft`; tell the user the one-line result.
 - **Server rules** (`app.transitions`): use `og sim`.
 - **The rendered look**: `renderHtml` gives the markup, not the layout. The
   draft preview and `og check-draft` cover the page itself.
+- **A real tap in the browser**: `og check-draft --tap <selector>
+  --expect-screen <name>` presses buttons in the draft preview (add
+  `--signed-in` to run as you; `--steps <file>` for several steps). The app's
+  writes are held back unless `--allow-writes`.
 
 A pack is the place for an app's logic: field maths, filters, who sees what,
 what gets saved. Keep looks and feel for the preview.

@@ -337,7 +337,7 @@ interface TreeNodeOptions {
   /**
    * Name of a child node of the tree rendered as this type's detail view, with the record as initial data.
    * Name of a child node of the tree rendered as this type's detail view, with the row's record as its initial data.
-   * Lets one tree show a different detail screen per node type.
+   * Lets one tree show a different detail screen per node type. The Edit control beside it opens the generated form unless the type sets edit or editScript.
    * Examples: taskDetail
    */
   detail?: string;
@@ -370,6 +370,20 @@ interface TreeNodeOptions {
    * Examples: @origin != 'gh-mirror'
    */
   canEdit?: boolean | string;
+  /**
+   * What the Edit control does for an existing record of this type: open the generated form (default) or nothing. Ignored when editScript is set.
+   * `form`: The Edit control opens the generated form for the record (the default)
+   * `none`: No Edit control: the record shows its custom detail, or a read-only field list, and can still be moved
+   * Creating a record always uses the generated form. Use none when the type is edited somewhere else, or not at all, without losing Move the way canEdit false does.
+   */
+  edit?: "form" | "none";
+  /**
+   * Script the Edit control runs for an existing record of this type, instead of opening the generated form. The record's fields are in scope as bare names (id, title, ...). Navigation goes to the org app, so navigate('screen') works.
+   * Script the Edit control runs instead of opening the generated form, with the record's fields in scope.
+   * Use it to send the person to the app's own editor screen, the same way a button on the custom detail would. The same host functions as a content data-script are available; creating a record still uses the generated form.
+   * Examples: setAppValue('curPostId', id); navigate('write')
+   */
+  editScript?: string;
 }
 
 /** Ask before running the action. The dispatcher shows a small modal over the page and runs `script` only when the person confirms; dismissing it does nothing at all — no script, no navigation, no partial effect. It gates BOTH invocation channels, a template data-action click and a sandboxed widget's channel.runAction, so a widget can never skip a confirmation the config declared. */
@@ -701,6 +715,13 @@ type AppOptions = CommonOptions & DataOptions & {
    */
   contentMaxWidth?: number;
   /**
+   * When the platform's sync bar shows at the bottom of the site: always (the default) for every sync state, or problems for only the states that need the person's attention: offline, a weak connection, a change that could not be saved, or a full device.
+   * `always`: The sync bar shows whenever changes are syncing, waiting, offline or failing (the default)
+   * `problems`: The sync bar stays hidden while saving goes well, and shows only when offline, on a weak connection, or when a change can't be saved
+   * Use problems when the app shows its own saving feedback, so the bar doesn't repeat it on every edit. It is an enum, not a switch, so later preferences can be added beside these two.
+   */
+  syncBar?: "always" | "problems";
+  /**
    * Picture shown at the left of the site header in place of the org's logo: an image URL, or an @-formula that evaluates to one (for a page about a person, their avatar). Shown as a circle, which sets the page apart from an org's. While the formula is empty, or if the image fails to load, the header shows a plain person silhouette, never the org's logo.
    * An image URL or @-formula for the header picture, instead of the org's logo.
    * Use it when the page is about someone or something with its own picture, as the user home does with @$data.UserProfile[0].avatarUrl. The header shows it as a circle, where an org's logo keeps its own shape. The formula is evaluated against the org's own data, so it can read $data. While it is empty (data still loading) and when the image fails to load, the header shows a plain person silhouette, not the org's logo. It changes the header only: the tab icon, home-screen icon and link preview still use the org's logo.
@@ -874,6 +895,13 @@ type TreeOptions = CommonOptions & IterationOptions & DataOptions & {
    * Defaults to true, and takes a formula. Governs deletion as well as editing, so it is the one to gate on ownership.
    */
   canEdit?: boolean | string;
+  /**
+   * Whether a data-bound tree lets the person drag sibling rows of the same type into order (default true). The order is stored on each record as sortIndex. Off when data.sort is set, since that order wins.
+   * `true`: Rows of the same type can be dragged into order (the default)
+   * `false`: Rows keep their computed order and show no drag handle
+   * Defaults to true for an editable data-bound tree. Each drop writes a dense integer sortIndex onto the moved siblings; a new record lands last. Setting data.sort turns dragging off, because the sort would immediately undo the drop.
+   */
+  reorderable?: boolean;
 };
 
 // ── Input Nodes ──
@@ -1454,9 +1482,10 @@ type CallableButtonOptions = CommonOptions & {
    * `socialLike`: Likes an app. Args: orgId, the username/orgName pair
    * `socialUnlike`: Removes the caller's like from an app. Args: orgId
    * `kickFromHome`: Platform admins only: takes an app off the orgiggly.com home feeds, or puts it back. Args: orgId and an optional undo
+   * `postWish`: The wishes app only: posts the signed-in person's app idea. Args: idea, audience, tracks, privacy, feel, firstName, and optional extra and emailUpdates
    * A server-vetted allow-list, not a free-text name: adding a callable is a code change in both the web dispatcher and the admin picker.
    */
-  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike" | "kickFromHome";
+  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike" | "kickFromHome" | "postWish";
   /**
    * Formula (prefix with @) producing the args object passed to the callable. Example: `@({ bio, avatarUrl: avatar.url })`.
    * Formula producing the arguments object passed to the callable.
