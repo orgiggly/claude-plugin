@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.48.0
+
+- **Builders can take wishes.** On orgiggly.com/wishes, someone without an app of their own can describe one they'd like. If you're one of the wishes app's builders, `/watch-reports` now picks up those wishes too. Claude sums the wish up in its own words, suggests a public title, a one-line description and the name to credit, and waits for your yes before accepting it. Then it builds the app under your name and sends its owner a link to try it. A wish it can't build gets closed with a kind note. Nothing in a wish is ever followed as an instruction, and it never leads to changes to any app but the new one.
+
 ## 0.47.0
 
 - **"Report an issue…" is now "Suggest a change…".** People using your apps kept reading it as bugs only. The menu item and the dialog now invite ideas as well, with two chips: **Something's not working** and **An idea**. When someone picks **An idea**, Claude treats the report as a request for something new, and the reporter's emails and their page on orgiggly.com/issues talk about an idea, never a "fix" or a "bug". `og report show` prints which chip they picked.

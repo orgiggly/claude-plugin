@@ -1482,10 +1482,9 @@ type CallableButtonOptions = CommonOptions & {
    * `socialLike`: Likes an app. Args: orgId, the username/orgName pair
    * `socialUnlike`: Removes the caller's like from an app. Args: orgId
    * `kickFromHome`: Platform admins only: takes an app off the orgiggly.com home feeds, or puts it back. Args: orgId and an optional undo
-   * `postWish`: The wishes app only: posts the signed-in person's app idea. Args: idea, audience, tracks, privacy, feel, firstName, and optional extra and emailUpdates
    * A server-vetted allow-list, not a free-text name: adding a callable is a code change in both the web dispatcher and the admin picker.
    */
-  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike" | "kickFromHome" | "postWish";
+  functionName: "setUserProfile" | "triggerWorldcupSync" | "socialFollow" | "socialUnfollow" | "socialLike" | "socialUnlike" | "kickFromHome";
   /**
    * Formula (prefix with @) producing the args object passed to the callable. Example: `@({ bio, avatarUrl: avatar.url })`.
    * Formula producing the arguments object passed to the callable.
