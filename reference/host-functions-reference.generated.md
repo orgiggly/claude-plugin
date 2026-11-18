@@ -452,6 +452,20 @@ copyText(rosterText)
 copyText($params.link)
 ```
 
+### `signIn` _(async)_
+
+```
+signIn(): void
+```
+
+Opens sign-in for a signed-out visitor, exactly as the header's Sign in does: Google sign-in, or the sign-in page when the app offers name + PIN login. Use it for a "Sign in to …" link beside something only signed-in people can do, and hide that link once `$authKind` is a real account. Does nothing when the visitor is already signed in or in a design preview. Content actions only, because the Google sign-in window opens only in response to a tap.
+
+**Examples:**
+
+```
+signIn()
+```
+
 ### `enablePush` _(async)_
 
 ```

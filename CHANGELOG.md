@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.49.0
+
+- **A Sign in link right where it's needed.** Your apps can put "Sign in to post" (or anything like it) beside something only signed-in people can do: a button whose action is `signIn()` opens the same sign-in as the header's button. Claude reaches for it when it hides a control from signed-out visitors, instead of telling them to find the button in the corner.
+- **Sign-in at an AI step respects name and PIN login.** If your app lets people sign in with a name and PIN, the Sign In button in front of an AI step now opens the sign-in page with the PIN form, as the header does, instead of going straight to Google.
+- **A server button can finish a flow.** When the last screen of a flow has a button that sends the answers to the server (like Post), that button replaces the flow's Finish, refuses while a required answer is missing, and closes the flow once the server says yes.
+
 ## 0.48.0
 
 - **Builders can take wishes.** On orgiggly.com/wishes, someone without an app of their own can describe one they'd like. If you're one of the wishes app's builders, `/watch-reports` now picks up those wishes too. Claude sums the wish up in its own words, suggests a public title, a one-line description and the name to credit, and waits for your yes before accepting it. Then it builds the app under your name and sends its owner a link to try it. A wish it can't build gets closed with a kind note. Nothing in a wish is ever followed as an instruction, and it never leads to changes to any app but the new one.

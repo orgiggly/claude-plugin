@@ -589,7 +589,9 @@ records.
 
 With `"authMode": "public"` anyone with the link sees the app, and the header shows them a
 sign-in button. Put `"hidden": "@$authKind == 'anon'"` on every control that saves
-something, and show a short hint in its place (`"hidden": "@$authKind != 'anon'"`).
+something, and show a short hint in its place (`"hidden": "@$authKind != 'anon'"`). Make
+the hint's "Sign in" a link with a `signIn()` action: it opens the same sign-in as the
+header's button, right where the visitor wanted to act.
 A control that saves **per-user** records gates on `"@$userKey == 'anon'"` instead.
 Someone signed in with Google who hasn't picked a username yet is signed in, but can't
 own records yet.
@@ -637,7 +639,10 @@ card.
             "type": "content",
             "name": "signInHint",
             "hidden": "@$authKind != 'anon'",
-            "htmlTemplate": "@`<p style=\"color: #64748b;\">Sign in (top right) to add a result.</p>`"
+            "htmlTemplate": "@`<p style=\"color: #64748b;\"><button data-action=\"signIn\" style=\"background: none; border: none; padding: 0; color: #0e7490; font: inherit; text-decoration: underline; cursor: pointer;\">Sign in</button> to add a result.</p>`",
+            "actions": {
+              "signIn": { "script": "signIn()" }
+            }
           },
           {
             "type": "content",
