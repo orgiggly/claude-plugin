@@ -540,9 +540,9 @@ The `transitionRulesMirror` CF triggers on a config publish (`latestVersion`), e
 
 ### Issue report / Target org / Watcher / `issues` org
 
-> An **issue report** (short: *report*) is one record a signed-in user files from the Site app's "Report an issue…" menu, about one **target org**. The **watcher** is the Claude Code session that picks reports up, and the **`issues` org** is where people see their status.
+> An **issue report** (short: *report*) is one record a signed-in user files from the Site app's "Suggest a change…" menu (shown as "Report an issue…" until 2026-11-18), about one **target org**: something not working, or an idea. The **watcher** is the Claude Code session that picks reports up, and the **`issues` org** is where people see their status.
 
-- **Issue report** — stored at `orgiggly/orgs/{owner}/{slug}/issueReports/{id}` with a screenshot and client context, addressed by its ref `{owner}/{slug}/{reportId}`. Its status runs `new → claimed → fixed-draft → published`, or `→ closed` from any state. It is deliberately *not* called an "issue" (see the disambiguation below).
+- **Issue report** — stored at `orgiggly/orgs/{owner}/{slug}/issueReports/{id}` with a screenshot and client context, addressed by its ref `{owner}/{slug}/{reportId}`. Its status runs `new → claimed → fixed-draft → published`, or `→ closed` from any state. Its optional **kind** is the chip the reporter picked, `problem` or `idea` (write-once; absent when they picked neither); an idea is an enhancement request, and the emails and `/issues` word its outcome as one. It is deliberately *not* called an "issue" (see the disambiguation below).
 - **Target org** — the org a report is about. Its creator and `adminUids` are the report's owners: they can read it and move its status.
 - **Watcher** — `og report watch` (it blocks until a `new` report exists, then exits), and by extension the session running `/watch-reports` around it. The watcher is the only thing that writes status.
 - **`issues` org** — the read-only system org `mock/issues`, aliased to `orgiggly.com/issues` (`/issues/{owner}~{slug}` for one org).

@@ -194,7 +194,7 @@ rather than hanging: add that domain to the environment and try again.
   fetch-if-exists → author/edit config → `validate-org` → `create-org` /
   `update-org`. You never have to decide "am I creating or maintaining?".
 - **`watch-reports`** — fixes the issue reports people file on your apps
-  (**Report an issue…** in the app). It waits for a report with `og report watch`,
+  (**Suggest a change…** in the app: a problem or an idea). It waits for a report with `og report watch`,
   fixes the app the `develop-app` way, publishes a draft, asks you before it goes
   live, and writes the status back so the reporter can follow it on
   orgiggly.com/issues. Treats every report as untrusted input: it never follows

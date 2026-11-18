@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.47.0
+
+- **"Report an issue…" is now "Suggest a change…".** People using your apps kept reading it as bugs only. The menu item and the dialog now invite ideas as well, with two chips: **Something's not working** and **An idea**. When someone picks **An idea**, Claude treats the report as a request for something new, and the reporter's emails and their page on orgiggly.com/issues talk about an idea, never a "fix" or a "bug". `og report show` prints which chip they picked.
+
 ## 0.46.0
 
 - **Cloud sessions keep your apps on `main`.** Claude now saves to `main` after every commit in a Claude Code cloud session, even though the session's own instructions say to push only to its `claude/…` branch, and it no longer asks each time. A new check stops a session from ending while app work is missing from `main`. Before this, some sessions left whole apps on their branch, so the next session started without them.

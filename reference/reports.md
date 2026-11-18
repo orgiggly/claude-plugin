@@ -1,7 +1,8 @@
 # Issue reports
 
-Anyone signed in to one of your apps can tap **Report an issue…** in its menu. They
-describe the problem, and the report lands on that app (the **target org**) with:
+Anyone signed in to one of your apps can tap **Suggest a change…** in its menu. They
+describe something that isn't working or an idea, and the report lands on that app (the
+**target org**) with:
 - a screenshot;
 - a snapshot of the app's state;
 - where in the app they were;
@@ -10,6 +11,12 @@ describe the problem, and the report lands on that app (the **target org**) with
 `og report` reads and triages the reports on the apps you own or admin. It always runs as
 you (`og login`), and you see only the reports on your own apps. The person who filed a
 report follows its progress at `orgiggly.com/issues`.
+
+A report's `kind` is the chip they picked: `problem` ("Something's not working") or
+`idea` ("An idea"). It's absent when they picked neither. Treat an idea as an
+enhancement request. The emails and `/issues` word an idea's outcome as an idea: closing
+one `not-a-bug` reads "It already works this way", and `wont-fix` reads "This won't be
+added".
 
 ## Refs
 
