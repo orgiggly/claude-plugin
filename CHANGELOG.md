@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.49.1
+
+- **Wishes in the glossary.** `og reference glossary` now explains a wish, a wish owner and the wishes app at orgiggly.com/wishes, and says which "builder" means the person who builds a wish.
+
 ## 0.49.0
 
 - **A Sign in link right where it's needed.** Your apps can put "Sign in to post" (or anything like it) beside something only signed-in people can do: a button whose action is `signIn()` opens the same sign-in as the header's button. Claude reaches for it when it hides a control from signed-out visitors, instead of telling them to find the button in the corner.

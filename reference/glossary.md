@@ -574,11 +574,23 @@ The `transitionRulesMirror` CF triggers on a config publish (`latestVersion`), e
 
 *Anchor:* `packages/shared/src/types/issueReport.ts` (`ISSUE_REPORT_PLATFORM_KINDS`), `packages/cli/src/services/issueReportService.ts` (`buildPlatformReport`)
 
+### Wish / Wish owner / Wishes org
+
+> A **wish** is an app idea someone without an app of their own posts on the **wishes org**; a builder takes it on and makes the app in their own namespace.
+
+- **Wish** — stored as an issue report on the wishes org carrying a write-once `wish` block (the six answers and the first name to credit), which only the `postWish` callable can write. It walks the ordinary report statuses: posted (`new`), accepted (`claimed`), ready to try (`fixed-draft`), live (`published`), or `closed`.
+- **Wish owner** — the signed-in person who posted it (the report's `reporterUid`). Deliberately not bare "owner": a report's owners are the target org's creator and admins, and a wish owner is not an admin of their app unless it is handed over. In user-facing copy say "your wish" and "your app".
+- **Wishes org** — the system org `mock/wishes`, aliased to `orgiggly.com/wishes`: the public page (only words the builder wrote), the make-a-wish flow and the wish owner's own list.
+
+*How we say it:* "Jean posted a wish; david accepted it and built it as `david/choir-rota`." • "The wish owner tries the first version before it goes live."
+
+*Anchor:* `packages/shared/src/types/wish.ts`, `cloud-functions/src/wishes.ts`, `orgs/mock/wishes/`
+
 ---
 
 ## Disambiguation — words to qualify
 
-Five words in our space are overloaded enough that bare usage is ambiguous. Always qualify them.
+Six words in our space are overloaded enough that bare usage is ambiguous. Always qualify them.
 
 ### "the agent"
 
@@ -618,6 +630,14 @@ Three different things:
 
 Always say which.
 
+### "builder"
+
+Two different things:
+- **The builder API** — the fluent `b.app({...})` declaration API (see **Builder**).
+- **A builder (person)** — whoever accepts and builds a wish: an admin of the wishes org running the watcher. "Builder alert email" uses this sense.
+
+Say "the builder API" for the code.
+
 ### "slot"
 
 Four different things — and none of them is "a node's place in the output object" (that is an **output member**):
@@ -634,7 +654,6 @@ Always say which.
 
 This file is the canonical reference. When the language shifts (we coin a new term, deprecate an old one, or land a disambiguation), update this file *first*, then propagate to:
 
-- The Language section on `mock/orgiggly` (public-facing mirror)
 - The blog post on `mock/blog` (if substantive enough to warrant a new post)
 - Any rules under `.claude/rules/` that reference the deprecated term
 

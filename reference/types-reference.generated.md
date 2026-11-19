@@ -764,6 +764,20 @@ type ScreenOptions = CommonOptions & ContainerOptions & DataOptions & {
    * Examples: true, @curPhase == 'playing'
    */
   hideHeader?: boolean | string;
+  /**
+   * Wording of the flow's Next button while this screen is the current step. Accepts a formula evaluated in the screen's scope, so an optional question can read Skip until it is answered. A blank result falls back to Next. Ignored outside a flow.
+   * Wording of the Next button while this step is showing. Blank falls back to Next; ignored outside a flow.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Examples: Continue, @feel ? 'Next' : 'Skip'
+   */
+  nextLabel?: string;
+  /**
+   * Wording of the flow's Finish button when this screen is the last step. Accepts a formula evaluated in the screen's scope. A blank result falls back to Finish. Ignored outside a flow.
+   * Wording of the Finish button when this is the last step. Blank falls back to Finish; ignored outside a flow.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Examples: Send, Post my wish
+   */
+  finishLabel?: string;
 };
 
 /** A grouping container for organizing content. Repeating for collections; a repeating subsection can render inline (the default) or as a master/detail editor with add, remove and reorder controls. */
@@ -1095,6 +1109,20 @@ type FlowStepBaseOptions = CommonOptions & {
    * Defaults to true. Turn it off when the user should read or check the result before moving on.
    */
   autoAdvance?: boolean;
+  /**
+   * Wording of the flow's Next button while this step is current. Accepts a formula evaluated in the step's scope. A blank result falls back to Next.
+   * Wording of the flow's Next button while this step is showing. Blank falls back to Next.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Examples: Continue
+   */
+  nextLabel?: string;
+  /**
+   * Wording of the flow's Finish button when this step is last. Accepts a formula evaluated in the step's scope. A blank result falls back to Finish.
+   * Wording of the flow's Finish button when this is the last step. Blank falls back to Finish.
+   * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.
+   * Examples: Send, Continue to payment
+   */
+  finishLabel?: string;
   /**
    * Custom label for the primary action button. Falls back to variant default when unset.
    * Label on the step's primary button. Falls back to the variant's own default.
