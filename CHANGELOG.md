@@ -3,6 +3,10 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.50.0
+
+- **A wish owner hears what was built.** When `/watch-reports` sends a wish's first version, the note is now a short summary for its owner: what the app does, what to try first, then the link. Status notes can run to several lines and up to 1000 characters (they were one line, 280 characters). The owner sees the lines in their "ready to try" email, on their report and on their wishes page.
+
 ## 0.49.1
 
 - **Wishes in the glossary.** `og reference glossary` now explains a wish, a wish owner and the wishes app at orgiggly.com/wishes, and says which "builder" means the person who builds a wish.

@@ -42,7 +42,7 @@ Every command addresses a report by its **ref**: `<owner>/<slug>/<reportId>`, fo
 |---|---|---|
 | `og report list [--org <owner/slug>]… [--status <s>]… [--json]` | Reports across your apps, newest first. Default: every status but `closed`. Apps you can't read are skipped with a warning. | 0 ok, 1 error |
 | `og report show <ref> [--out <dir>] [--json]` | Prints one report and downloads its screenshot and `state.json`. Their paths are printed last, one per line. | 0 ok, 1 error |
-| `og report update <ref> --status <s> [--note <text>] [--branch <name>] [--pr <url>]` | Moves the status. The note is one line, at most 280 characters. On a wish it also takes `--public-title`, `--public-line`, `--credit-name` and `--app` (see Wishes). | 0 ok, 1 error, 2 illegal move |
+| `og report update <ref> --status <s> [--note <text>] [--branch <name>] [--pr <url>]` | Moves the status. The note is at most 1000 characters, usually one line; a wish's summary of what was built (at `fixed-draft`) runs to a few lines, which its owner sees with their line breaks. On a wish it also takes `--public-title`, `--public-line`, `--credit-name` and `--app` (see Wishes). | 0 ok, 1 error, 2 illegal move |
 | `og report watch [--org <owner/slug>]… [--timeout <sec>] [--json] [--no-wishes]` | Waits until a `new` report exists, prints it and exits. The oldest one already waiting wins. `--no-wishes` leaves wishes out. | 0 report, 1 error, 3 timeout (default 3600s) |
 | `og report forward <ref> [--note <text>]` | Hands a report you can't fix to Orgiggly (see below). Yours stays open until Orgiggly's copy is resolved. | 0 ok, 1 error, 2 past `claimed` or already forwarded |
 
