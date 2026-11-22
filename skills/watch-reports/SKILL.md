@@ -211,21 +211,22 @@ line, except the short summary at step 6.
 6. **First version saved.** Once develop-app's draft is created and `og check-draft`
    passes, record the app and send the wish owner a **short summary of what you built**:
    2 to 5 short lines, written for them, not a developer. Say what the app does and what to
-   try first, then put the try link on a line of its own. Use plain words: no file names, node
-   types or a recap of your changes, and stay under 1000 characters. The note keeps its line
-   breaks in their "ready to try" email, on `/issues` and on their wishes page. Put real new
-   lines inside the quotes, not `\n`:
+   try first. Use plain words: no file names, node types or a recap of your changes, and stay
+   under 1000 characters. **Leave the link out of a wish's notes**: `--app` gives the email,
+   `/issues` and their wishes page their own button to the app, so a link in the note shows
+   twice. The note keeps its line breaks in all three places. Put real new lines inside the
+   quotes, not `\n`:
 
    ```bash
    og report update <ref> --status fixed-draft --app {username}/{newapp} --note "Allotment Swap lets your plot neighbours list spare seedlings and produce, and ask for what they need.
-   Try adding something you have spare, then look at the Wanted list.
-   https://orgiggly.com/{username}/{newapp}?preview=draft"
+   Try adding something you have spare, then look at the Wanted list."
    ```
 
 7. **Make it live** on the user's yes to one `AskUserQuestion`, as in **Ask, then
    publish** below: `og promote-draft {username}/{newapp}`, give it a logo (develop-app's **Logo**), then
-   `og report update <ref> --status published --resolution fixed --note "<it's live, and thanks>"`.
-   The public wishes page then shows it with its logo, built for their first name.
+   `og report update <ref> --status published --resolution fixed --note "<it's live, and thanks>"`,
+   again with no link. The public wishes page then shows it with its logo, built for their
+   first name.
 8. **Go back to watching** (§5). From now on the wish owner asks for changes from inside
    their app, as ordinary reports on `{username}/{newapp}`, which this loop already covers.
 

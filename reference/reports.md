@@ -87,7 +87,7 @@ A wish moves through the same statuses, and some moves need more from you:
 | Move to | Needs | The person who posted it sees |
 |---|---|---|
 | `claimed` | `--public-title`, `--public-line`, `--credit-name` | Accepted, being built |
-| `fixed-draft` | `--app <owner/slug>` | Ready to try, with a link to the app |
+| `fixed-draft` | `--app <owner/slug>` | Ready to try, with a button to the app (so leave links out of a wish's notes) |
 | `published` | the app already recorded, or `--app` | Live |
 | `closed` | `--resolution` and a kind `--note` | Why it wasn't built |
 
