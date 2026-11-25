@@ -862,6 +862,7 @@ var OrgigglyWidget = (() => {
     return () => style.remove();
   };
   var captureSelf = async ({ pixelRatio }) => {
+    const restoreCanvases = await holdCanvasFrames();
     const unfreeze = freezeMotion();
     const restoreSvg = inlineSvgStyles();
     try {
@@ -869,8 +870,39 @@ var OrgigglyWidget = (() => {
     } finally {
       restoreSvg();
       unfreeze();
+      restoreCanvases();
     }
   };
+  var FRAME_WAIT_MS = 250;
+  var holdCanvasFrames = () => new Promise((resolve) => {
+    const held = [];
+    const restore = () => {
+      for (const canvas of held) {
+        Reflect.deleteProperty(canvas, "toDataURL");
+      }
+    };
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      resolve(restore);
+    };
+    setTimeout(finish, FRAME_WAIT_MS);
+    requestAnimationFrame(() => {
+      if (done) return;
+      for (const canvas of document.querySelectorAll("canvas")) {
+        let frame;
+        try {
+          frame = canvas.toDataURL();
+        } catch {
+          continue;
+        }
+        canvas.toDataURL = () => frame;
+        held.push(canvas);
+      }
+      finish();
+    });
+  });
   var SVG_STYLE_PROPS = [
     "fill",
     "fill-opacity",

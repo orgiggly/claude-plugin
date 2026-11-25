@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.50.2
+
+- **Report screenshots show animated widgets on iPhone.** A widget that redraws every frame, such as a 3D board, used to come out as an empty box in a "Suggest a change" screenshot on iPhone and in Safari. Run `og widget deploy` again for each such widget to pick this up.
+- **`signIn()` can say why it is asking.** Pass `{ title, message }` to word the sign-in window.
+- **A callable button can sign the person in first.** Set `signInFirst` and a signed-out tap opens sign-in, then makes the call as them, with no second tap.
+
 ## 0.50.1
 
 - **No more doubled links in a wish's notes.** The wish owner's email, report and wishes page each give them a button to their app, so `/watch-reports` now leaves the link out of the summary it sends and out of the "it's live" note.

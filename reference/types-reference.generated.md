@@ -1520,6 +1520,13 @@ type CallableButtonOptions = CommonOptions & {
    */
   args?: string;
   /**
+   * Formula (prefix with @). When it gives `true` or an object, a signed-out tap opens sign-in first, and the call goes out once the person is signed in, as them, with no second tap. An object's `title` and `message` word the sign-in sheet, as `signIn({ title, message })` does. Nothing is sent if they close the sheet, and nothing is kept across a reload.
+   * Signed out, the tap signs the person in first, then makes the call as them.
+   * Give `@true`, or an object such as `@({ title: 'Where shall we send your app?', message: 'We will email you when it is ready.' })` to word the sheet. Leave it unset for callables an anonymous visitor may call.
+   * Examples: @true, @({ title: 'Where shall we send your app?', message: 'We will email you when it is ready.' })
+   */
+  signInFirst?: string;
+  /**
    * Button label. Can be a formula (prefix with @) or template string.
    * Button label.
    * Template string: an `@` prefix makes the value a backtick template, so `${...}` interpolates; a plain string with no `@` is used verbatim.

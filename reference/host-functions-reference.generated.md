@@ -455,15 +455,16 @@ copyText($params.link)
 ### `signIn` _(async)_
 
 ```
-signIn(): void
+signIn(options?: { title?: string; message?: string }): void
 ```
 
-Opens sign-in for a signed-out visitor, exactly as the header's Sign in does: Google sign-in, or the sign-in page when the app offers name + PIN login. Use it for a "Sign in to …" link beside something only signed-in people can do, and hide that link once `$authKind` is a real account. Does nothing when the visitor is already signed in or in a design preview. Content actions only, because the Google sign-in window opens only in response to a tap.
+Opens sign-in for a signed-out visitor, exactly as the header's Sign in does: the sign-in window (Google or email and password), or the sign-in page when the app offers name + PIN login. Use it for a "Sign in to …" link beside something only signed-in people can do, and hide that link once `$authKind` is a real account. Optional `title` replaces the window's "Sign in" heading (up to 60 characters) and `message` adds one line of plain text above the choices (up to 200), so the window can say why it is asking; both are ignored by the name + PIN sign-in page. Does nothing when the visitor is already signed in or in a design preview. Content actions only, because the Google sign-in popup opens only in response to a tap.
 
 **Examples:**
 
 ```
 signIn()
+signIn({ title: 'Where shall we send your app?', message: "We'll email you when it's ready to try." })
 ```
 
 ### `enablePush` _(async)_
