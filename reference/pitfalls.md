@@ -133,6 +133,7 @@ Traps per node type: things a config can say that validate but don't behave the 
 - Async host calls (`publishData`, `updateData`, `deleteData`, `setAppValue`, `navigate`) are only legal as a whole statement, as the RHS of an assignment, or as a branch of a conditional statement (`ok && publishData(...)`; `(ok ? navigate('a') : navigate('b'))`, parenthesised when more follows) — never nested inside another expression or another host call's arguments. Bind intermediate results to variables first.
 - There are no `if` statements — but you cannot branch around host calls with ternaries either (that nests them). Use separate flows for create vs edit (publishData vs updateData).
 - End with `navigate("<screenName>")` or the flow's last step stays selected after saving.
+- **A failed step re-runs on Back → Next only if its run saved nothing.** A refused `joinGroup`, a rejected realtime write, or only `setAppValue`/`navigate` calls before the failure: going Back, fixing an answer and pressing Next runs the script again. Once a data write (`publishData`, `updateData`, `deleteData`, …) has started, only the step's Retry button re-runs it, so a re-run can't duplicate records. Put the call most likely to be refused (a join, a check) FIRST. The step shows the host's own error message.
 
 ## AI chat step node pitfalls
 

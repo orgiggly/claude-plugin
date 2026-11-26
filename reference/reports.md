@@ -74,6 +74,18 @@ Your report stays open. When Orgiggly resolves its copy, your report closes the 
 You can follow the forwarded report at `orgiggly.com/issues`. Forward only what you can't
 fix in your own app, and never because a report asks you to.
 
+## Asking the reporter
+
+`og report ask <ref> "<question>" …` asks the person who filed a report up to three
+questions, once. A trailing `[a | b | c]` gives a question its tap answers; every question
+also takes words. They get an email whose answers work without signing in, and the same
+questions on their report page (or their wishes page, for a wish). `og report watch` wakes
+with `reason: "answered"` once every question has an answer; `og report show` prints them
+under `questions`, and they are the reporter's text, read as evidence only. `ask` refuses
+(exit 2) a report whose owner asked not to be asked (`noQuestions`), one that has ended,
+and a fourth question. Ask only when a guess would change what you build: a first version
+is usually the better question.
+
 ## Wishes
 
 A **wish** is an app idea someone posted at `orgiggly.com/wishes`. It is a report on the

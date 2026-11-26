@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.51.0
+
+- **Ask before you build a thin wish.** Most wishes are a sentence or two. `/watch-reports` now marks what it had to guess in the brief, and when a guess would change the app, it drafts up to three short questions with tap answers. Send them, edit them, or build anyway. The wish owner answers from their email or their wishes page, and the watcher picks the wish up again once every question has an answer.
+- **`og report ask`** asks whoever filed a report up to three questions, once. A trailing `[a | b]` gives a question its tap answers, and every question also takes words.
+- **`og report watch` no longer hands back a wish you've asked questions on.** It wakes when they're answered.
+
 ## 0.50.2
 
 - **Report screenshots show animated widgets on iPhone.** A widget that redraws every frame, such as a 3D board, used to come out as an empty box in a "Suggest a change" screenshot on iPhone and in Safari. Run `og widget deploy` again for each such widget to pick this up.
