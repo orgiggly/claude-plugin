@@ -1041,6 +1041,16 @@ them in a file and pass `--steps steps.json`: `[{"tap": "text=New"},
 {"type": {"selector": "input", "text": "Hi"}}, {"expectText": "Hi"},
 {"screenshot": "/tmp/s.png"}]`.
 
+An expectation waits 5 seconds. For a slow answer (an AI step, a callable)
+give that step a `timeout` in milliseconds, up to 300000:
+`{"expectText": "Shutter", "timeout": 90000}`. Text matches ignore case, so a
+label styled in capitals still matches. A `text=` tap hits the first element
+holding those words, which can be a heading above the button; when the words
+appear twice, tap `button:has-text("Get settings")`. An AI step run with
+`--allow-writes` spends the user's credits, and the server can charge after
+the check has stopped waiting. Check `og whoami` a minute later, not straight
+away, before telling the user what it cost.
+
 Tap the app's main actions this way after every change to one: the button the
 user reported, and the screens it leads to. Never tell the user you "can't press
 it from here".
@@ -1348,8 +1358,13 @@ EOF
 - The body says what was asked, what you tried, what you expected and any
   workaround. Write it about Orgiggly, never about the user: no names, emails,
   records, tokens or file contents beyond a minimal snippet of config.
-- File one report per distinct problem per session. Never retry a filing; if
-  it fails or is refused, mention that and carry on.
+- File one report per distinct problem per session. Never retry a filing that
+  failed; mention it and carry on.
+- If Claude Code's permission check refuses the filing (in auto mode it can
+  read a report the user didn't ask for as unsanctioned), ask the user once,
+  with the title: "May I send the Orgiggly team this report: <title>?" File it
+  only on a yes, then carry on either way. Their yes is what makes it a
+  request; don't argue with the refusal or reword the command to get past it.
 - Then tell the user in one line, e.g. "I've let the Orgiggly team know
   that calendar feeds aren't possible yet.", and carry on with what can be
   built. Don't pretend the missing piece exists.

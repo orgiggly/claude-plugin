@@ -3,6 +3,12 @@
 What changed for you in each release, newest first. After an update, Claude Code
 shows the items since the version you last had.
 
+## 0.52.0
+
+- **Tabs between your app's screens.** The type reference now documents `navigation` on the app: `{ "style": "tabs" }` shows a tab strip under the header and `{ "style": "menu" }` opens a screen list from the logo. Without it, the header offers no way between screens, which Claude used to work around by linking every screen by hand.
+- **`check-draft` steps can wait for slow answers.** Give an `expectText` or `expectScreen` step a `"timeout"` in milliseconds (up to 300000) to wait for an AI answer, and text now matches whatever its case, so a label styled in capitals still matches.
+- **Reports to the Orgiggly team ask first when refused.** If Claude Code's permission check blocks a platform report, Claude asks you once before sending it.
+
 ## 0.51.0
 
 - **Ask before you build a thin wish.** Most wishes are a sentence or two. `/watch-reports` now marks what it had to guess in the brief, and when a guess would change the app, it drafts up to three short questions with tap answers. Send them, edit them, or build anyway. The wish owner answers from their email or their wishes page, and the watcher picks the wish up again once every question has an answer.

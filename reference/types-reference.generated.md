@@ -252,6 +252,17 @@ interface ThemeColors {
   border?: string;
 }
 
+/** Optional top-level navigation chrome shown in the site header. Lists the app's top-level screens so visitors can jump between them. Omit (or use style 'none') to render nothing — the default. */
+interface NavigationConfig {
+  /**
+   * Navigation presentation: 'menu' makes tapping the app logo open a screen list (a bottom sheet on phones, a side drawer on wider screens — best for many screens), 'tabs' a scrollable tab strip below the header (best for a few), or 'none' for nothing.
+   * `none`: No app-level navigation is offered.
+   * `menu`: Tapping the app logo opens a screen list — a bottom sheet on phones, a side drawer on wider screens.
+   * `tabs`: Screens are presented as a tab strip.
+   */
+  style: "none" | "menu" | "tabs";
+}
+
 type ImageOptions = Dimension & {
   /**
    * `jpeg`: Smallest files, no transparency. The only format any org currently asks for.
@@ -728,6 +739,12 @@ type AppOptions = CommonOptions & DataOptions & {
    * Examples: @$data.UserProfile[0].avatarUrl
    */
   headerLogo?: string;
+  /**
+   * Top-level navigation in the site header, listing every screen that is a direct child of the app (screens inside a folder are left out). Unset means NO navigation: nothing in the header lets a visitor move between screens, so a multi-screen app either sets this or links its screens from its own content. `{ "style": "tabs" }` shows a scrollable tab strip under the header (best for a few screens); `{ "style": "menu" }` makes tapping the app logo open a screen list (best for many).
+   * Header navigation between the app's top-level screens. Unset means none: the header then offers no way to move between screens.
+   * `style: "menu"` makes tapping the logo open a screen list (a bottom sheet on phones, a side drawer when wider) and suits many screens; `"tabs"` shows a scrollable strip under the header and suits a few.
+   */
+  navigation?: NavigationConfig;
 };
 
 /** Generic container. Authored only through its variants — `tabGroup`, `tab`, `folder` — each written as its own `type`; a bare `appNode` is a plain container that just groups its children. */
@@ -753,8 +770,8 @@ type FolderOptions = AppNodeBaseOptions & {
 type ScreenOptions = CommonOptions & ContainerOptions & DataOptions & {
   type: "screen";
   /**
-   * Optional icon shown beside this screen in the top-level navigation (menu/tabs). An emoji (e.g. "🏆") or a Material icon name.
-   * Shown beside this screen in the nav menu or tab strip.
+   * Optional icon shown beside this screen in the top-level navigation, which appears only when the app sets `navigation` (menu or tabs). An emoji (e.g. "🏆") or a Material icon name.
+   * Shown beside this screen in the nav menu or tab strip, when the app sets `navigation`.
    */
   icon?: string;
   /**
